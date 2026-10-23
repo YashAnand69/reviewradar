@@ -2472,4 +2472,42 @@ main {
   }
 }
 
-.coverage-details{margin-top:8px}.coverage-details summary{cursor:pointer;font-size:13px;min-height:36px;line-height:36px}.coverage-details ul{margin:6px 0 0}.snapshot-actions{flex-wrap:wrap}
+.coverage-details {
+  margin-top: 8px;
+}
+.coverage-details summary {
+  cursor: pointer;
+  font-size: 13px;
+  min-height: 36px;
+  line-height: 36px;
+}
+.coverage-details ul {
+  margin: 6px 0 0;
+}
+.snapshot-actions {
+  flex-wrap: wrap;
+}
+
+/* Operational metadata uses readable contrast, including on a small viewport. */
+.analysis-mode,
+.snapshot-heading p,
+.source-counts,
+.quote-author small,
+.timeline-meta time,
+.timeline-meta > span:not(.bot-label):not(.author-label),
+.github-state dt,
+.local-state,
+.run-provenance,
+.list-count,
+.card-author,
+.card-top {
+  font-size: 12px;
+  color: var(--muted);
+}
+.eyebrow {
+  font-size: 11px;
+}
+.brand small {
+  font-size: 10px;
+  letter-spacing: 1px;
+}

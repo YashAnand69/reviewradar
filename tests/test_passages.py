@@ -77,3 +77,24 @@ def test_referential_followup_keeps_original_context_without_merging_distinct_as
         "Please add a test.",
         "Also explain the fallback.",
     ]
+
+
+def test_quoted_context_cannot_be_selected_as_a_new_request():
+    from reviewradar.model import ModelOutput, constrained_schema, quoted_only
+    from pathlib import Path
+    import json
+
+    path = (
+        Path(__file__).resolve().parents[1] / "fixtures/public/historical-sample.json"
+    )
+    raw = json.loads(path.read_text())
+    raw["prs"][0]["comments"][0]["body"] = (
+        "> Please add a test.\n\nI agree with the original review."
+    )
+    pr = normalize_snapshot(raw).prs[0]
+    schema = constrained_schema(ModelOutput, pr)
+    allowed = schema["$defs"]["SpanCandidate"]["properties"]["request_passage"]["enum"]
+    assert quoted_only("> Please add a test.")
+    assert not quoted_only("Please add a test.")
+    assert f"{pr.comments[0].id}/p0" not in allowed
+    assert f"{pr.comments[0].id}/p1" in allowed

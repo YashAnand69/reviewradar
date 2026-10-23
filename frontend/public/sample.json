@@ -1,9 +1,9 @@
 {
   "snapshot": {
     "schema_version": 1,
-    "id": "e840af628890b073128f5af9dc715a934994aa89c655b0bfc2a3f139080728bb",
+    "id": "dedb833f52b2271399b790c12483dfaf1afb293953cf86b9fa452116eae601dc",
     "fetched_at": "2026-10-23T08:02:44.527280Z",
-    "source": "github",
+    "source": "import",
     "owner": "YashAnand69",
     "prs": [
       {
@@ -127,13 +127,13 @@
     ]
   },
   "analysis": {
-    "id": "7fddbe76a4ad4fd5922bbc81442376e3",
-    "snapshot_id": "e840af628890b073128f5af9dc715a934994aa89c655b0bfc2a3f139080728bb",
+    "id": "cd37e8a309fb4561b537e2043d5bc93d",
+    "snapshot_id": "dedb833f52b2271399b790c12483dfaf1afb293953cf86b9fa452116eae601dc",
     "mode": "model",
     "scope": "human_review",
     "model": "reviewradar-gemma4-e2b",
-    "prompt_version": "human-review-spans-v3",
-    "created_at": "2026-10-23T08:31:58.874766Z",
+    "prompt_version": "human-review-passages-v9",
+    "created_at": "2026-10-23T08:53:10.296131Z",
     "complete": false,
     "warnings": [
       "Curated historical sample, not a complete inbox: only selected short human requests and author replies are included. Automated messages, other reviews, other comments and broader PR context are omitted. Open original GitHub sources for full context.",
@@ -154,10 +154,8 @@
         },
         "category": "change",
         "interpretation": "possibly_responded",
-        "rationale": "The request asks for a video or attached screenshots on the PR. The author update mentions adding local Talk preview screenshots to the description.",
-        "uncertainty": [
-          "low"
-        ],
+        "rationale": "The request asks for a video or attached screenshots on the PR. The response provides local Talk preview screenshots, which fulfills the requirement for attached screenshots.",
+        "uncertainty": [],
         "github": {
           "review_state": "CHANGES_REQUESTED",
           "thread_resolved": null,
@@ -173,14 +171,12 @@
         },
         "response": {
           "comment_id": "comment:5874038042",
-          "quote": "I reproduced the Pillow crash with bool, int16, and int32 batches."
+          "quote": "The grid now retains uint8 only for uint8 inputs and uses the previous float64 path for other dtypes."
         },
         "category": "change",
         "interpretation": "possibly_responded",
-        "rationale": "The request mentions an issue with integer bool image batches crashing in Image.fromArray. The response confirms reproducing the Pillow crash with bool, int16, and int32 batches and mentions the grid now retains uint8 only for uint8 inputs.",
-        "uncertainty": [
-          "low"
-        ],
+        "rationale": "The request asks about preserving input dtype causing crashes in Image.fromArray for integer bool image batches. The response addresses this by stating, \"The grid now retains uint8 only for uint8 inputs and uses the previous float64 path for other dtypes.\"",
+        "uncertainty": [],
         "github": {
           "review_state": "CHANGES_REQUESTED",
           "thread_resolved": null,
@@ -188,11 +184,11 @@
         }
       },
       {
-        "id": "09b60b0dc2a49dc1f973bf7a",
+        "id": "10587c29e69631a174211d75",
         "pr_id": "fossasia/visdom#1872",
         "request": {
           "comment_id": "review:5349785561",
-          "quote": "@YashAnand69 One issue I noticed opts.normalize=True is ignored for uint8 batches."
+          "quote": "@YashAnand69 One issue I noticed opts.normalize=True is ignored for uint8 batches. Could you take a look at this?"
         },
         "response": {
           "comment_id": "comment:5891608254",
@@ -200,10 +196,8 @@
         },
         "category": "question",
         "interpretation": "possibly_responded",
-        "rationale": "The request mentions that `opts.normalize=True` is ignored for uint8 batches. The response confirms reproducing the uint8 `opts.normalize=True` regression and mentions restoring the existing float-grid path when normalization is requested.",
-        "uncertainty": [
-          "low"
-        ],
+        "rationale": "The request asks about `opts.normalize=True` being ignored for uint8 batches. The response addresses this by stating, \"I reproduced the uint8 `opts.normalize=True` regression, then restored the existing float-grid path when normalization is requested.\"",
+        "uncertainty": [],
         "github": {
           "review_state": "CHANGES_REQUESTED",
           "thread_resolved": null,
@@ -233,25 +227,28 @@
       "comments_total": 6,
       "comments_processed": 6,
       "comments_excluded_bots": 0,
-      "elapsed_seconds": 11.899
+      "elapsed_seconds": 8.643
     }
   },
   "manifest": {
     "mode": "historical replay",
     "captured_at": "2026-10-23T08:02:44.527280Z",
-    "analysis_at": "2026-10-23T08:31:58.874766Z",
-    "input_snapshot_id": "e840af628890b073128f5af9dc715a934994aa89c655b0bfc2a3f139080728bb",
+    "analysis_at": "2026-10-23T08:53:10.296131Z",
+    "input_snapshot_id": "dedb833f52b2271399b790c12483dfaf1afb293953cf86b9fa452116eae601dc",
     "scope": "human_review",
     "source_limit": "Curated incomplete selection of six exact source bodies; omitted context may change interpretation.",
     "model_manifest": "model-manifest.json",
     "model": "google/gemma-4-E2B-it Q4_0",
     "runtime": "llama.cpp pinned source archive/binary, loopback local inference",
-    "prompt_version": "human-review-spans-v3",
-    "prompt_sha256": "47f9504ae08d0bb1305ac5ee9c15b7f13f54ea59ae646623c87d9fbeb1feafb2",
-    "analysis_seconds": 11.899,
+    "prompt_version": "human-review-passages-v9",
+    "analysis_seconds": 8.643,
     "hardware": "Apple Silicon macOS, 24 GiB RAM",
     "annotations": "Development sample; engineering review, not independent human ground truth.",
     "rights": "Third-party comments retain original attribution. See fixtures/public/PROVENANCE.md.",
-    "not_live": true
+    "not_live": true,
+    "source_fixture_id": "e840af628890b073128f5af9dc715a934994aa89c655b0bfc2a3f139080728bb",
+    "implementation_sha256": "9f2de1acef50135d7e4149248cde6aa416ff064d4ab3f3e833773bf8de8c8f65",
+    "run_method": "Actual POST /api/snapshots/import then POST /api/analyses on loopback backend; no result rewriting.",
+    "release_commit_at_run": "1a16ee8dc7f49b238d07d83cc328c7f0ccaabe74"
   }
 }

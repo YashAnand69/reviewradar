@@ -6,7 +6,7 @@ import time
 import uuid
 
 from .config import Settings
-from .model import Candidate, LocalModel, ModelFailure, Oversize, PROMPT_VERSION
+from .model import Candidate, LocalModel, ModelFailure, Oversize, PROMPT_VERSION, quoted_only
 from .schemas import (
     Analysis,
     Card,
@@ -42,6 +42,7 @@ def validate_candidates(candidates: list[Candidate], pr: PR) -> list[Card]:
         if (
             not candidate.request_quote.strip()
             or candidate.request_quote not in request.body
+            or quoted_only(candidate.request_quote)
         ):
             raise ModelFailure(
                 "Model request quote did not match its original source. This PR remains incomplete."

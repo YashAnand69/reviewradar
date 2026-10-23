@@ -209,6 +209,7 @@ function App() {
   const [connected, setConnected] = useState(false);
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const activeAnalysisId = useRef<string | null>(null);
   const [manifest, setManifest] = useState<Record<string, unknown> | null>(
     null,
   );
@@ -251,6 +252,7 @@ function App() {
     nextManifest: Record<string, unknown> | null = null,
   ) {
     setSnapshot(nextSnapshot);
+    activeAnalysisId.current = nextAnalysis?.id ?? null;
     setAnalysis(nextAnalysis);
     setDecisions(Object.fromEntries(nextDecisions.map((d) => [d.card_id, d])));
     setSelected(nextAnalysis?.cards[0]?.id ?? null);
@@ -270,7 +272,10 @@ function App() {
     try {
       await work();
     } catch (cause) {
-      const message = cause instanceof Error ? cause.message : "This action could not be completed. Retry or inspect the original sources.";
+      const message =
+        cause instanceof Error
+          ? cause.message
+          : "This action could not be completed. Retry or inspect the original sources.";
       if (showImport) setImportError(message);
       else setError(message);
     } finally {
@@ -443,6 +448,7 @@ function App() {
         : "Preparing the chronology baseline",
       async () => {
         const result = await api.analyse(snapshot.id, mode);
+        activeAnalysisId.current = result.id;
         setAnalysis(result);
         setDecisions({});
         setSelected(result.cards[0]?.id ?? null);
@@ -479,6 +485,9 @@ function App() {
         );
         saved = disposition;
       } else saved = await api.save(analysis.id, card.id, state, note);
+      // A slow save belongs to the analysis that started it, even if a new
+      // result with the same deterministic card ID has since been opened.
+      if (activeAnalysisId.current !== disposition.analysis_id) return;
       setDecisions((old) => ({ ...old, [card.id]: saved }));
       setStatus(
         REPLAY
@@ -486,6 +495,7 @@ function App() {
           : "Saved locally. GitHub was not changed.",
       );
     } catch (cause) {
+      if (activeAnalysisId.current !== disposition.analysis_id) return;
       setError(
         cause instanceof Error
           ? cause.message
@@ -515,10 +525,19 @@ function App() {
   }
   function downloadSnapshot() {
     if (!snapshot) return;
-    const url = URL.createObjectURL(new Blob([JSON.stringify(snapshot, null, 2)], {type:"application/json"}));
-    const link = document.createElement("a"); link.href=url; link.download=`reviewradar-source-${snapshot.id.slice(0,12)}.json`; link.click();
-    window.setTimeout(()=>URL.revokeObjectURL(url),1000);
-    setStatus("Source snapshot downloaded. It may include public discussion text; review before sharing.");
+    const url = URL.createObjectURL(
+      new Blob([JSON.stringify(snapshot, null, 2)], {
+        type: "application/json",
+      }),
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `reviewradar-source-${snapshot.id.slice(0, 12)}.json`;
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setStatus(
+      "Source snapshot downloaded. It may include public discussion text; review before sharing.",
+    );
   }
   async function openHistory() {
     setShowHistory(true);
@@ -543,8 +562,9 @@ function App() {
     try {
       localStorage.removeItem(`reviewradar:${analysis.id}`);
       setDecisions({});
-      for (const key of Object.keys(drafts.current)) if(key.startsWith(`${analysis.id}:`)) delete drafts.current[key];
-      setResetVersion(old=>old+1);
+      for (const key of Object.keys(drafts.current))
+        if (key.startsWith(`${analysis.id}:`)) delete drafts.current[key];
+      setResetVersion((old) => old + 1);
       setStatus(
         "Replay decisions reset in this browser. The historical source is unchanged.",
       );
@@ -771,7 +791,10 @@ function App() {
                   Inspect sources
                   <Glyph name="arrow" />
                 </button>
-                <button className="text-button" onClick={downloadSnapshot}>Save source JSON<Glyph name="download"/></button>
+                <button className="text-button" onClick={downloadSnapshot}>
+                  Save source JSON
+                  <Glyph name="download" />
+                </button>
               </div>
             </section>
             {!!warnings.length && (
@@ -779,12 +802,18 @@ function App() {
                 kind="warning"
                 title="Incomplete coverage — inspect the sources"
               >
-                <p>Some source context or analysis is missing. These results do not establish that a PR is clear of review work.</p>
-                <details className="coverage-details"><summary>View coverage details ({warnings.length})</summary><ul>
-                  {warnings.map((warning, index) => (
-                    <li key={`${index}:${warning}`}>{warning}</li>
-                  ))}
-                </ul></details>
+                <p>
+                  Some source context or analysis is missing. These results do
+                  not establish that a PR is clear of review work.
+                </p>
+                <details className="coverage-details">
+                  <summary>View coverage details ({warnings.length})</summary>
+                  <ul>
+                    {warnings.map((warning, index) => (
+                      <li key={`${index}:${warning}`}>{warning}</li>
+                    ))}
+                  </ul>
+                </details>
               </Note>
             )}
             <div className="scope-bar">
@@ -1099,8 +1128,13 @@ function App() {
                         baseline={isBaseline}
                         decision={decisions[selectedCard.id]}
                         replay={REPLAY}
-                        draft={drafts.current[`${analysis.id}:${selectedCard.id}`]}
-                        onDraft={(value)=>{drafts.current[`${analysis.id}:${selectedCard.id}`]=value;}}
+                        draft={
+                          drafts.current[`${analysis.id}:${selectedCard.id}`]
+                        }
+                        onDraft={(value) => {
+                          drafts.current[`${analysis.id}:${selectedCard.id}`] =
+                            value;
+                        }}
                         onSave={save}
                       />
                     ) : (
@@ -1257,7 +1291,11 @@ function App() {
             Each analysis stays bound to its original snapshot. Loading it does
             not refresh GitHub or apply decisions to newer evidence.
           </p>
-          {error && <p className="form-error" role="alert">{error}</p>}
+          {error && (
+            <p className="form-error" role="alert">
+              {error}
+            </p>
+          )}
           {!history.length && !busy && (
             <p className="empty-copy">
               No saved analyses yet. Import a source and run a baseline or local
@@ -1367,7 +1405,7 @@ function Evidence({
   decision: Disposition | undefined;
   replay: boolean;
   draft: string | undefined;
-  onDraft: (value:string)=>void;
+  onDraft: (value: string) => void;
   onSave: (
     card: Card,
     state: "open" | "reviewed",
