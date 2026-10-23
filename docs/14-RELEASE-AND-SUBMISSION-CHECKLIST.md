@@ -25,6 +25,8 @@ The public preview returns the saved v9 analysis with ID `cd37e8a309fb4561b537e2
 - [x] Frozen development/holdout pilot retained, including the quoted-duplicate failure and honestly relabelled regression.
 - [x] Source scan excludes credentials, weights, runtime binaries, local SQLite and full raw discussion histories.
 - [x] Clean source archive setup and startup verified; baseline works without model configuration.
+- [x] Actual managed macOS service stop/start, immutable source/decision restoration and frontend API session-renewal/save/export verified.
+- [x] Real model readiness, actionable reconnect and persistent retry implemented and regression-tested.
 - [x] Public replay deployment and saved JSON/assets verified by HTTP; local/replay adapter behavior checked in DOM tests.
 
 ## Required before calling the entry submission-ready

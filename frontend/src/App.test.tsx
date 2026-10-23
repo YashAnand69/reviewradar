@@ -17,6 +17,7 @@ import packet from "../public/sample.json";
 vi.mock("./api", () => ({
   api: {
     connect: vi.fn(),
+    health: vi.fn(),
     sample: vi.fn(),
     dispositions: vi.fn(),
     save: vi.fn(),
@@ -43,6 +44,14 @@ beforeEach(() => {
     status: "ok",
     version: "test",
     model_configured: true,
+    github_available: true,
+    mode: "local",
+  });
+  vi.mocked(api.health).mockResolvedValue({
+    status: "ok",
+    version: "test",
+    model_configured: true,
+    model_ready: true,
     github_available: true,
     mode: "local",
   });
@@ -273,5 +282,171 @@ describe("evidence workbench integration (DOM simulation, not a visual browser a
     fireEvent(dialog, new Event("cancel", { cancelable: true }));
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     expect(document.activeElement).toBe(opener);
+  });
+  it("disconnects after a failed save and reconnects without losing the draft or evidence", async () => {
+    const user = await openSample();
+    const failure = new Error(
+      "The local server is offline. Your typed notes remain. Start ReviewRadar, then choose Retry connection.",
+    );
+    failure.name = "LocalConnectionError";
+    vi.mocked(api.save).mockRejectedValueOnce(failure);
+    await user.type(
+      screen.getByRole("textbox", { name: /Note/ }),
+      "Keep my review context",
+    );
+    await user.click(screen.getByRole("button", { name: /Save note/ }));
+    await screen.findByText("Local connection needed");
+    expect(
+      (screen.getByRole("textbox", { name: /Note/ }) as HTMLTextAreaElement)
+        .value,
+    ).toBe("Keep my review context");
+    expect(
+      screen
+        .getByRole("button", { name: /Analyse locally/ })
+        .hasAttribute("disabled"),
+    ).toBe(true);
+    await user.click(screen.getByRole("button", { name: /Retry connection/ }));
+    await screen.findByText("Local workspace");
+    expect(
+      (screen.getByRole("textbox", { name: /Note/ }) as HTMLTextAreaElement)
+        .value,
+    ).toBe("Keep my review context");
+    expect(api.sample).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole("button", { name: /Save note/ }));
+    await screen.findByText("Saved locally. GitHub was not changed.");
+    expect(api.save).toHaveBeenLastCalledWith(
+      packet.analysis.id,
+      expect.any(String),
+      "open",
+      "Keep my review context",
+    );
+  });
+  it("checks connectivity when the tab returns without polling or clearing the workbench", async () => {
+    await openSample();
+    const failure = new Error("The local server stopped. Retry connection.");
+    failure.name = "LocalConnectionError";
+    vi.mocked(api.health).mockRejectedValueOnce(failure);
+    fireEvent(window, new Event("focus"));
+    await screen.findByText("Local connection needed");
+    expect(screen.getByRole("textbox", { name: /Note/ })).toBeTruthy();
+    expect(api.health).toHaveBeenCalledTimes(1);
+    fireEvent(window, new Event("focus"));
+    await screen.findByText("Local workspace");
+    expect(screen.queryByRole("alert")).toBeNull();
+    expect(
+      screen.getByText(
+        /Connection restored. Your evidence and notes were kept/,
+      ),
+    ).toBeTruthy();
+    expect(api.sample).toHaveBeenCalledTimes(1);
+  });
+  it("offers the working baseline when configuration exists but the model is offline", async () => {
+    vi.mocked(api.connect).mockResolvedValueOnce({
+      status: "ok",
+      version: "test",
+      model_configured: true,
+      model_ready: false,
+      model_reason: "Start the model service and check again.",
+      github_available: true,
+      mode: "local",
+    });
+    await openSample();
+    expect(screen.getByText("Local model is offline")).toBeTruthy();
+    expect(
+      screen
+        .getByRole("button", { name: /Analyse locally/ })
+        .hasAttribute("disabled"),
+    ).toBe(true);
+    expect(
+      screen
+        .getByRole("button", { name: /Chronology baseline/ })
+        .hasAttribute("disabled"),
+    ).toBe(false);
+    expect(
+      screen.getByRole("button", { name: /Check connection/ }),
+    ).toBeTruthy();
+  });
+  it("clears a recovered connection failure inside the open import dialog", async () => {
+    const user = await openSample();
+    const failure = new Error("The local server stopped. Retry connection.");
+    failure.name = "LocalConnectionError";
+    vi.mocked(api.importGithub).mockRejectedValueOnce(failure);
+    await user.click(screen.getByRole("button", { name: /Import your PRs/ }));
+    const dialog = screen.getByRole("dialog");
+    await user.type(
+      within(dialog).getByRole("textbox", { name: /GitHub account/ }),
+      "example",
+    );
+    await user.type(
+      within(dialog).getByRole("textbox", { name: /Pull-request URLs/ }),
+      "https://github.com/example/project/pull/7",
+    );
+    await user.click(
+      within(dialog).getByRole("button", { name: /Import public discussions/ }),
+    );
+    await waitFor(() =>
+      expect(within(dialog).getByRole("alert").textContent).toContain(
+        "server stopped",
+      ),
+    );
+    fireEvent(window, new Event("focus"));
+    await waitFor(() => expect(within(dialog).queryByRole("alert")).toBeNull());
+    expect(
+      (
+        within(dialog).getByRole("textbox", {
+          name: /GitHub account/,
+        }) as HTMLInputElement
+      ).value,
+    ).toBe("example");
+    expect(
+      screen.queryByText("Reconnect without losing your place"),
+    ).toBeNull();
+  });
+  it("preserves an unrelated save error when the connection is restored", async () => {
+    const user = await openSample();
+    const failure = new Error("The local server stopped. Retry connection.");
+    failure.name = "LocalConnectionError";
+    vi.mocked(api.health).mockRejectedValueOnce(failure);
+    fireEvent(window, new Event("focus"));
+    await screen.findByText("Local connection needed");
+    vi.mocked(api.save).mockRejectedValueOnce(
+      new Error("The local note could not be stored."),
+    );
+    await user.type(
+      screen.getByRole("textbox", { name: /Note/ }),
+      "Keep my next step",
+    );
+    await user.click(screen.getByRole("button", { name: /Save note/ }));
+    await screen.findByText(/Not saved. Your note remains here/);
+    fireEvent(window, new Event("focus"));
+    await screen.findByText("Local workspace");
+    expect(screen.getByRole("alert").textContent).toContain(
+      "note could not be stored",
+    );
+    expect(
+      (screen.getByRole("textbox", { name: /Note/ }) as HTMLTextAreaElement)
+        .value,
+    ).toBe("Keep my next step");
+  });
+  it("keeps Retry connection available after dismissing the error and preserves the draft", async () => {
+    const user = await openSample();
+    const failure = new Error("The local server stopped. Retry connection.");
+    failure.name = "LocalConnectionError";
+    vi.mocked(api.save).mockRejectedValueOnce(failure);
+    await user.type(
+      screen.getByRole("textbox", { name: /Note/ }),
+      "Do not lose this draft",
+    );
+    await user.click(screen.getByRole("button", { name: /Save note/ }));
+    await screen.findByText("Local connection needed");
+    await user.click(screen.getByRole("button", { name: /Dismiss error/ }));
+    expect(screen.queryByRole("alert")).toBeNull();
+    await user.click(screen.getByRole("button", { name: /Retry connection/ }));
+    await screen.findByText("Local workspace");
+    expect(
+      (screen.getByRole("textbox", { name: /Note/ }) as HTMLTextAreaElement)
+        .value,
+    ).toBe("Do not lose this draft");
+    expect(api.sample).toHaveBeenCalledTimes(1);
   });
 });

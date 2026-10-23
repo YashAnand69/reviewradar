@@ -61,6 +61,19 @@ python3.12 scripts/run_model.py --runtime /path/to/llama-server --model .model/g
 
 Leave that model process running in a separate terminal. The launcher verifies the GGUF checksum and known binary checksum or reported pinned source commit, binds loopback, authenticates calls, disables context shifting and refuses an occupied port. The tested source-archive build reports its commit as unknown; its exact binary and source-archive checksums are recorded rather than misrepresented. Other platforms must build a runtime that reports the pinned revision. Full discussion processing remains local after the explicit GitHub import. Setup/model downloads require internet; saved evidence processing does not.
 
+## Keep the app running on this Mac
+
+The foreground commands above stop when their terminal/process stops. An open browser tab cannot keep either service alive. For a durable **macOS login-session** service, after setup and with the pinned artifacts available:
+
+```sh
+.venv/bin/python scripts/local_services.py start --runtime /absolute/path/to/llama-server --model /absolute/path/to/gemma-4-E2B-it-Q4_0.gguf
+.venv/bin/python scripts/local_services.py status
+```
+
+The paths are saved privately under the ignored `.runtime/services/` directory. Later starts need only `.venv/bin/python scripts/local_services.py start`. Stop both owned services with `.venv/bin/python scripts/local_services.py stop`. These project-specific loopback jobs survive the chat/terminal closing and restart crashes. They end at logout/reboot; no login-startup item is installed. Start again after signing in. Other applications and occupied unmanaged ports are never taken over.
+
+The page checks the actual model identity/context before advertising readiness. A missing model leaves source reading and the explicit chronology baseline usable. If the app restarts, expired browser sessions refresh once after an authentication rejection. Network failures do not automatically repeat model runs or writes; unsaved notes remain in the open tab while you reconnect. Do not reload before saving a note. See [reliability and practical use](docs/16-RELIABILITY-AND-PRACTICAL-USE.md).
+
 ## Verify
 
 ```sh

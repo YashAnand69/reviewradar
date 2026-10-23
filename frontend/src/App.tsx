@@ -245,6 +245,9 @@ function App() {
   const [isSavedRun, setIsSavedRun] = useState(false);
   const [mobileDetail, setMobileDetail] = useState(false);
   const busyRef = useRef(false);
+  const connectionRevision = useRef(0);
+  const checkingConnection = useRef(false);
+  const connectionError = useRef<string | null>(null);
   const selectedHeading = useRef<HTMLHeadingElement>(null);
 
   function resetFilters() {
@@ -271,6 +274,32 @@ function App() {
     setManifest(nextManifest);
     resetFilters();
   }
+  function connectionFailed(cause: unknown) {
+    if (cause instanceof Error && cause.name === "LocalConnectionError") {
+      connectionRevision.current += 1;
+      connectionError.current = cause.message;
+      setConnected(false);
+      setHealth(null);
+      setError(cause.message);
+    }
+  }
+  function connectionRestored(result: Health, initial = false) {
+    const previous = connectionError.current;
+    connectionError.current = null;
+    setHealth(result);
+    setConnected(true);
+    if (previous) {
+      // Remove only the connection failure that was actually recovered. A
+      // separate import or save error still needs the user's attention.
+      setError((current) => (current === previous ? "" : current));
+      setImportError((current) => (current === previous ? "" : current));
+      setStatus(
+        "Connection restored. Your evidence and notes were kept. Retry any action that did not finish.",
+      );
+    } else if (initial) {
+      setStatus("Local workspace connected. Sources stay on this computer.");
+    }
+  }
   async function operation(label: string, work: () => Promise<void>) {
     if (busyRef.current) return;
     busyRef.current = true;
@@ -281,6 +310,7 @@ function App() {
     try {
       await work();
     } catch (cause) {
+      connectionFailed(cause);
       const message =
         cause instanceof Error
           ? cause.message
@@ -294,10 +324,9 @@ function App() {
   }
   async function connect() {
     await operation("Connecting to the local workspace", async () => {
+      connectionRevision.current += 1;
       const result = await api.connect();
-      setHealth(result);
-      setConnected(true);
-      setStatus("Local workspace connected. Sources stay on this computer.");
+      connectionRestored(result, true);
     });
   }
   async function loadSample() {
@@ -357,6 +386,38 @@ function App() {
     else void connect();
   }, []);
   useEffect(() => {
+    if (REPLAY) return;
+    let active = true;
+    async function checkConnection() {
+      if (
+        document.visibilityState === "hidden" ||
+        busyRef.current ||
+        checkingConnection.current
+      )
+        return;
+      checkingConnection.current = true;
+      const revision = connectionRevision.current;
+      try {
+        const result = await api.health();
+        if (active && revision === connectionRevision.current) {
+          connectionRestored(result);
+        }
+      } catch (cause) {
+        if (active && revision === connectionRevision.current)
+          connectionFailed(cause);
+      } finally {
+        checkingConnection.current = false;
+      }
+    }
+    window.addEventListener("focus", checkConnection);
+    document.addEventListener("visibilitychange", checkConnection);
+    return () => {
+      active = false;
+      window.removeEventListener("focus", checkConnection);
+      document.removeEventListener("visibilitychange", checkConnection);
+    };
+  }, []);
+  useEffect(() => {
     if (!busy) return;
     const start = Date.now();
     const timer = window.setInterval(
@@ -400,6 +461,8 @@ function App() {
       `${rejectedCount} card${rejectedCount === 1 ? " was" : "s were"} rejected because source evidence could not be verified. Inspect Sources; this view is incomplete.`,
     );
   const isBaseline = analysis?.mode === "baseline";
+  const modelReady =
+    connected && (health?.model_ready ?? health?.model_configured);
 
   async function githubImport(event: FormEvent) {
     event.preventDefault();
@@ -508,6 +571,7 @@ function App() {
       );
     } catch (cause) {
       if (activeAnalysisId.current !== disposition.analysis_id) return;
+      connectionFailed(cause);
       setError(
         cause instanceof Error
           ? cause.message
@@ -621,7 +685,7 @@ function App() {
         </div>
       </header>
       <main id="main" tabIndex={-1}>
-        <section className="intro">
+        <section className={`intro${snapshot ? " has-evidence" : ""}`}>
           <div>
             <p className="eyebrow">
               A LITTLE LESS REREADING. A CLEARER NEXT LOOK.
@@ -696,15 +760,6 @@ function App() {
             >
               <Glyph name="close" />
             </button>
-            {!connected && !REPLAY && (
-              <button
-                className="button small"
-                disabled={!!busy}
-                onClick={() => void connect()}
-              >
-                Retry connection
-              </button>
-            )}
             {REPLAY && !snapshot && (
               <button
                 className="button small"
@@ -715,6 +770,31 @@ function App() {
               </button>
             )}
           </div>
+        )}
+        {!REPLAY && !connected && !busy && (
+          <Note title="Reconnect without losing your place">
+            <p>
+              From the ReviewRadar project folder, run{" "}
+              <code>.venv/bin/python scripts/local_services.py start</code>,
+              then choose Retry connection. Keep this tab open to retain unsaved
+              notes. The app and model run on this computer; an open tab cannot
+              keep stopped services running.
+            </p>
+            <p>
+              Want to explore without local setup?{" "}
+              <a
+                href="https://yashanand69.github.io/reviewradar/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open the historical public replay.
+              </a>{" "}
+              It uses saved evidence, not your live GitHub data.
+            </p>
+            <button className="button small" onClick={() => void connect()}>
+              Retry connection
+            </button>
+          </Note>
         )}
         <div className="live-status" role="status" aria-live="polite">
           {status}
@@ -829,6 +909,30 @@ function App() {
                 </details>
               </Note>
             )}
+            {manifest && (
+              <details className="manifest">
+                <summary>Try the sample in 30 seconds</summary>
+                <ol>
+                  <li>
+                    Choose a request and read its exact reviewer quote beside
+                    the possible later response.
+                  </li>
+                  <li>
+                    Open the full comments or Sources. Decide whether the reply
+                    actually answers the request; the model cannot verify the
+                    code.
+                  </li>
+                  <li>
+                    Write what you will inspect or reply to next, then save your
+                    note. Mark reviewed locally only after your own check.
+                  </li>
+                </ol>
+                <p>
+                  This is a curated, incomplete historical example. Local
+                  decisions never update GitHub.
+                </p>
+              </details>
+            )}
             <div className="scope-bar">
               <span>
                 <span className="scope-dot" />
@@ -879,17 +983,17 @@ function App() {
                   <>
                     <button
                       className="button small"
-                      disabled={!!busy}
+                      disabled={!!busy || !connected}
                       onClick={() => void run("baseline")}
                     >
                       Chronology baseline
                     </button>
                     <button
                       className="button primary small"
-                      disabled={!!busy || !health?.model_configured}
+                      disabled={!!busy || !modelReady}
                       title={
-                        !health?.model_configured
-                          ? "Configure the local model to enable inference"
+                        !modelReady
+                          ? "Connect the local model to enable inference"
                           : undefined
                       }
                       onClick={() => void run("model")}
@@ -912,19 +1016,33 @@ function App() {
                 )}
               </div>
             </div>
-            {!REPLAY && !health?.model_configured && (
-              <Note title="Local model is not configured">
+            {!REPLAY && connected && !modelReady && (
+              <Note
+                title={
+                  health?.model_configured
+                    ? "Local model is offline"
+                    : "Local model is not configured"
+                }
+              >
                 <p>
                   You can inspect all source evidence and explicitly choose the
-                  chronology baseline. The baseline does not identify semantic
-                  requests or match replies.{" "}
+                  chronology baseline.{" "}
+                  {health?.model_reason ? `${health.model_reason} ` : ""}The
+                  baseline does not identify semantic requests or match replies.{" "}
                   <a
                     href={`${REPOSITORY}#run-locally`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Local model setup
-                  </a>
+                  </a>{" "}
+                  <button
+                    className="text-button"
+                    disabled={!!busy}
+                    onClick={() => void connect()}
+                  >
+                    Check connection
+                  </button>
                 </p>
               </Note>
             )}
@@ -1264,7 +1382,7 @@ function App() {
             <button
               className="button primary"
               type="submit"
-              disabled={!!busy || !health?.github_available}
+              disabled={!!busy || !connected || !health?.github_available}
             >
               {busy ? "Reading sources…" : "Import public discussions"}
               <Glyph name="arrow" />
@@ -1352,10 +1470,10 @@ function App() {
             <section>
               <h3>1. Start with selected public PRs</h3>
               <p>
-                The local app reads discussions authored by your selected GitHub
-                account. Capture dates and missing coverage stay visible.
-                Snapshot imports are user-supplied evidence, not authenticated
-                GitHub records.
+                The local app reads discussions on public PRs authored by your
+                selected GitHub account. Capture dates and missing coverage stay
+                visible. Snapshot imports are user-supplied evidence, not
+                authenticated GitHub records.
               </p>
             </section>
             <section>
@@ -1517,7 +1635,8 @@ function Evidence({
             </ul>
           )}
           <p className="small-copy">
-            Model interpretation. Read the surrounding conversation before
+            Unverified interpretation — an author’s report is not proof the
+            request was fulfilled. Read the surrounding conversation before
             acting.
           </p>
         </section>
@@ -1580,7 +1699,7 @@ function Evidence({
               onDraft(event.target.value);
               setSaved("");
             }}
-            placeholder="What did you conclude after reading the evidence?"
+            placeholder="What will you inspect or reply to next? Keep your reasoning here."
           />
         </label>
         <div className="decision-actions">

@@ -7,39 +7,121 @@ import type {
   Snapshot,
 } from "./types";
 let sessionToken = "";
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const response = await fetch(path, {
-    ...init,
-    headers: {
-      "X-ReviewRadar-Token": sessionToken,
-      ...(init.body ? { "Content-Type": "application/json" } : {}),
-      ...init.headers,
-    },
-  });
+let refreshPending: Promise<void> | null = null;
+
+const connectionMessage =
+  "The local ReviewRadar server is not responding. Your open evidence and typed notes remain in this tab. Run .venv/bin/python scripts/local_services.py start from the project folder, then choose Retry connection; do not reload before saving your notes.";
+
+export class LocalConnectionError extends Error {
+  constructor(message = connectionMessage) {
+    super(message);
+    this.name = "LocalConnectionError";
+  }
+}
+
+async function localFetch(path: string, init: RequestInit = {}) {
+  try {
+    return await fetch(path, init);
+  } catch {
+    throw new LocalConnectionError();
+  }
+}
+
+async function refreshSession() {
+  if (!refreshPending) {
+    refreshPending = (async () => {
+      const response = await localFetch("/runtime-config", {
+        cache: "no-store",
+        signal: AbortSignal.timeout(5000),
+      });
+      if (!response.ok)
+        throw new LocalConnectionError(
+          "The local server could not open a session. Start ReviewRadar, then choose Retry connection. Your open evidence and typed notes remain in this tab.",
+        );
+      let data: unknown;
+      try {
+        data = await response.json();
+      } catch {
+        throw new LocalConnectionError(
+          "The local application configuration is invalid. Restart ReviewRadar and retry the connection.",
+        );
+      }
+      if (
+        !data ||
+        typeof data !== "object" ||
+        !("api_token" in data) ||
+        typeof data.api_token !== "string" ||
+        !data.api_token
+      )
+        throw new LocalConnectionError(
+          "The local application configuration is invalid. Restart ReviewRadar and retry the connection.",
+        );
+      sessionToken = data.api_token;
+    })().finally(() => {
+      refreshPending = null;
+    });
+  }
+  return refreshPending;
+}
+
+async function responseFor(
+  path: string,
+  init: RequestInit = {},
+): Promise<Response> {
+  async function send() {
+    return localFetch(path, {
+      ...init,
+      headers: {
+        "X-ReviewRadar-Token": sessionToken,
+        ...(init.body ? { "Content-Type": "application/json" } : {}),
+        ...init.headers,
+      },
+    });
+  }
+  const usedToken = sessionToken;
+  let response = await send();
+  // A 401 rejects the request before execution. Renew only this session and
+  // retry once; network errors and other failures may follow an executed write.
+  if (response.status === 401) {
+    if (usedToken === sessionToken) await refreshSession();
+    response = await send();
+    if (response.status === 401)
+      throw new LocalConnectionError(
+        "Your local session could not be renewed. Choose Retry connection. Your open evidence and typed notes remain in this tab.",
+      );
+  }
   if (!response.ok) {
     let message = `Request failed (${response.status}).`;
     try {
       const data = await response.json();
       message = typeof data.detail === "string" ? data.detail : message;
     } catch {
-      /* Safe generic error. */
+      /* Preserve the status when the server has no JSON error body. */
     }
     throw new Error(message);
   }
-  return response.json();
+  return response;
+}
+
+async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+  return (await responseFor(path, init)).json();
 }
 export const api = {
   async connect(): Promise<Health> {
-    const config = await fetch("/runtime-config", { cache: "no-store" });
-    if (!config.ok)
-      throw new Error(
-        "The local backend could not be reached. Start ReviewRadar using the documented local command.",
+    await refreshSession();
+    return api.health();
+  },
+  async health(): Promise<Health> {
+    try {
+      return await request<Health>("/api/health", {
+        signal: AbortSignal.timeout(5000),
+      });
+    } catch (cause) {
+      if (cause instanceof LocalConnectionError) throw cause;
+      throw new LocalConnectionError(
+        "The local workspace is not ready. Start ReviewRadar, then choose Retry connection. Your open evidence and typed notes remain in this tab.",
       );
-    const data = await config.json();
-    if (typeof data.api_token !== "string")
-      throw new Error("The local application configuration is invalid.");
-    sessionToken = data.api_token;
-    return request<Health>("/api/health");
+    }
   },
   sample: () => request<Sample | Snapshot>("/api/sample"),
   history: () => request<SavedAnalysis[]>("/api/analyses"),
@@ -77,14 +159,9 @@ export const api = {
       { method: "PUT", body: JSON.stringify({ state, note }) },
     ),
   async export(id: string): Promise<Blob> {
-    const response = await fetch(
+    const response = await responseFor(
       `/api/analyses/${encodeURIComponent(id)}/export`,
-      { headers: { "X-ReviewRadar-Token": sessionToken } },
     );
-    if (!response.ok)
-      throw new Error(
-        "The export could not be created. Retry after checking the local backend.",
-      );
     return response.blob();
   },
 };

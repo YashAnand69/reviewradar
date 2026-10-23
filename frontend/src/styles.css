@@ -247,6 +247,21 @@ main {
   gap: 12px;
   flex-shrink: 0;
 }
+/* Once sources are loaded, give the working evidence more of the viewport. */
+.intro.has-evidence {
+  padding: 24px 0 18px;
+}
+.intro.has-evidence .eyebrow {
+  display: none;
+}
+.intro.has-evidence h1 {
+  font-size: 30px;
+  line-height: 1.25;
+}
+.intro.has-evidence .intro-copy {
+  margin-top: 8px;
+  font-size: 13px;
+}
 .small-break {
   display: none;
 }

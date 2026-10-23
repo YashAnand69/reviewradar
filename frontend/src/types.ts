@@ -87,6 +87,8 @@ export interface Health {
   status: string;
   version: string;
   model_configured: boolean;
+  model_ready?: boolean;
+  model_reason?: string | null;
   github_available: boolean;
   mode: "local";
 }

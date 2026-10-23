@@ -292,7 +292,7 @@ class LocalModel:
     def __init__(self, settings: Settings):
         self.settings = settings
 
-    def analyze(self, pr: PR) -> list[Candidate]:
+    def _credential(self) -> str:
         try:
             key = self.settings.model_key_file.read_text().strip()
         except OSError as exc:
@@ -303,6 +303,65 @@ class LocalModel:
             raise ModelFailure(
                 "The local model credential file is invalid. Check local setup."
             )
+        return key
+
+    def _runtime_context(self, inventory: dict) -> int:
+        models = inventory.get("data")
+        selected = (
+            next(
+                (
+                    item
+                    for item in models
+                    if isinstance(item, dict)
+                    and item.get("id") == self.settings.model_name
+                ),
+                None,
+            )
+            if isinstance(models, list)
+            else None
+        )
+        runtime_context = (
+            selected.get("meta", {}).get("n_ctx")
+            if selected and isinstance(selected.get("meta"), dict)
+            else None
+        )
+        if (
+            type(runtime_context) is not int
+            or runtime_context
+            <= self.settings.model_output + self.settings.model_margin
+        ):
+            raise ModelFailure(
+                "The configured model identity or runtime context could not be verified. Check the local model service."
+            )
+        return runtime_context
+
+    def readiness(self) -> dict:
+        """Probe actual authenticated service readiness without generating text."""
+        try:
+            key = self._credential()
+        except ModelFailure:
+            return {
+                "ready": False,
+                "reason": "Local model setup is incomplete. The sample, sources and chronology baseline are available without it.",
+            }
+        try:
+            with httpx.Client(
+                base_url=self.settings.model_url.rstrip("/"),
+                headers={"Authorization": f"Bearer {key}"},
+                timeout=httpx.Timeout(1.0, connect=0.5),
+                trust_env=False,
+                follow_redirects=False,
+            ) as client:
+                self._runtime_context(self._request(client, "GET", "/v1/models"))
+        except (httpx.HTTPError, ModelFailure):
+            return {
+                "ready": False,
+                "reason": "The local model is stopped, starting or unavailable. Start the local services, then retry the connection. The chronology baseline is still available.",
+            }
+        return {"ready": True, "reason": "Local Gemma is ready for analysis."}
+
+    def analyze(self, pr: PR) -> list[Candidate]:
+        key = self._credential()
         unquoted = eligible_passage_keys(pr)
         if not any(
             not c.is_bot
@@ -325,33 +384,7 @@ class LocalModel:
                 follow_redirects=False,
             ) as client:
                 inventory = self._request(client, "GET", "/v1/models")
-                models = inventory.get("data")
-                selected = (
-                    next(
-                        (
-                            item
-                            for item in models
-                            if isinstance(item, dict)
-                            and item.get("id") == self.settings.model_name
-                        ),
-                        None,
-                    )
-                    if isinstance(models, list)
-                    else None
-                )
-                runtime_context = (
-                    selected.get("meta", {}).get("n_ctx")
-                    if selected and isinstance(selected.get("meta"), dict)
-                    else None
-                )
-                if (
-                    type(runtime_context) is not int
-                    or runtime_context
-                    <= self.settings.model_output + self.settings.model_margin
-                ):
-                    raise ModelFailure(
-                        "The configured model identity or runtime context could not be verified. Check the local model service."
-                    )
+                runtime_context = self._runtime_context(inventory)
                 budget = (
                     min(runtime_context, self.settings.model_context)
                     - self.settings.model_output

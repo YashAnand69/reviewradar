@@ -27,6 +27,18 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def port_available(port: int) -> bool:
+    """Allow a stopped server's TIME_WAIT sockets, never an active listener."""
+    with socket.socket() as probe:
+        try:
+            probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            probe.bind(("127.0.0.1", port))
+            probe.listen(1)
+        except OSError:
+            return False
+    return True
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -51,13 +63,10 @@ def main() -> int:
         )
     if not 1024 <= args.port <= 65535:
         parser.error("Port must be between 1024 and 65535.")
-    with socket.socket() as probe:
-        try:
-            probe.bind(("127.0.0.1", args.port))
-        except OSError:
-            parser.error(
-                "The model port is occupied. Choose another port; no process was stopped."
-            )
+    if not port_available(args.port):
+        parser.error(
+            "The model port is occupied. Choose another port; no process was stopped."
+        )
     print("Verifying the model artifact…", flush=True)
     if sha256_file(model) != manifest["model_sha256"]:
         parser.error(

@@ -14,7 +14,7 @@ from starlette.staticfiles import StaticFiles
 from . import __version__
 from .analysis import export_markdown, run_analysis, validate_bound_analysis
 from .config import MAX_BODY_BYTES, Settings
-from .model import ModelFailure
+from .model import LocalModel, ModelFailure
 from .schemas import (
     Analysis,
     AnalysisRequest,
@@ -161,10 +161,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/api/health")
     def health():
+        model = LocalModel(settings).readiness()
         return {
             "status": "ok",
             "version": __version__,
             "model_configured": settings.model_configured,
+            "model_ready": model["ready"],
+            "model_reason": model["reason"],
             "github_available": shutil.which("gh") is not None,
             "mode": "local",
         }
