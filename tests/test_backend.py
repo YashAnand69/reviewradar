@@ -16,7 +16,14 @@ from reviewradar.analysis import (
 )
 from reviewradar.app import create_app
 from reviewradar.config import MAX_BODY_BYTES, Settings
-from reviewradar.model import Candidate, LocalModel, ModelFailure, Oversize
+from reviewradar.model import (
+    Candidate,
+    LocalModel,
+    ModelFailure,
+    Oversize,
+    ResponseLinks,
+    constrained_schema,
+)
 from reviewradar.schemas import normalize_snapshot
 from reviewradar.store import Store
 
@@ -403,7 +410,14 @@ def test_sample_endpoint_binds_and_caches_saved_analysis(raw, settings):
 
 
 def mock_model(
-    monkeypatch, settings, *, tokens=50, context=16384, finish="stop", model_id=None
+    monkeypatch,
+    settings,
+    *,
+    tokens=50,
+    context=16384,
+    finish="stop",
+    model_id=None,
+    completion_payload=None,
 ):
     settings.model_key_file.write_text("test-key-not-a-real-secret")
     original_client = httpx.Client
@@ -428,6 +442,8 @@ def mock_model(
         if request.url.path == "/tokenize":
             return httpx.Response(200, json={"tokens": [1] * tokens})
         if request.url.path == "/v1/chat/completions":
+            if completion_payload is not None:
+                return httpx.Response(200, json=completion_payload)
             if (
                 json.loads(request.content)["response_format"]["json_schema"]["name"]
                 == "ResponseLinks"
@@ -544,3 +560,122 @@ def test_export_warns_when_request_was_edited_after_a_possible_response(raw, set
     assert "request edited after the possible response" in export_markdown(
         analysis, snapshot, []
     )
+
+
+def test_quoted_author_context_is_not_a_response_but_unquoted_reply_is(raw):
+    raw["prs"][0]["comments"][1]["body"] = (
+        "> Please add a regression test.\n\nAdded the regression test."
+    )
+    pr = normalize_snapshot(raw).prs[0]
+    request = candidate(
+        response_id=None, response_quote=None, interpretation="follow_up"
+    )
+    schema = constrained_schema(ResponseLinks, pr, [request])
+    allowed = schema["properties"]["links"]["properties"]["request_0"]["properties"][
+        "response_passage"
+    ]["enum"]
+    assert "2/p0" not in allowed
+    assert "2/p1" in allowed
+    assert None in allowed
+    with pytest.raises(ModelFailure):
+        validate_candidates(
+            [candidate(response_quote="> Please add a regression test.")], pr
+        )
+    assert (
+        validate_candidates(
+            [candidate(response_quote="Added the regression test.")], pr
+        )[0].response
+        is not None
+    )
+
+
+@pytest.mark.parametrize("role", ["request", "response"])
+@pytest.mark.parametrize(
+    "body, selected",
+    [
+        ("> Please add the test.", "Please add the test."),
+        ("> Context first. Please add the test.", "Please add the test."),
+        ("> " + "context " * 100 + "Please add the test.", "Please add the test."),
+    ],
+)
+def test_quote_substrings_cannot_lose_original_blockquote_ownership(
+    raw, role, body, selected
+):
+    fields = {f"{role}_quote": selected}
+    raw["prs"][0]["comments"][0 if role == "request" else 1]["body"] = body
+    with pytest.raises(ModelFailure):
+        validate_candidates([candidate(**fields)], normalize_snapshot(raw).prs[0])
+
+
+def test_repeated_unquoted_author_prose_remains_valid_response(raw):
+    raw["prs"][0]["comments"][1]["body"] = "> Added the test.\n\nAdded the test."
+    cards = validate_candidates(
+        [candidate(response_quote="Added the test.")], normalize_snapshot(raw).prs[0]
+    )
+    assert cards[0].interpretation == "possibly_responded"
+
+
+@pytest.mark.parametrize("role", ["request", "response"])
+@pytest.mark.parametrize(
+    "quoted",
+    [
+        "> Context first. Please add a test.",
+        "> " + "long context " * 100 + "Please add a test.",
+    ],
+)
+def test_schema_excludes_all_passages_owned_by_quoted_lines(raw, role, quoted):
+    from reviewradar.model import ModelOutput, source_passages
+
+    index = 0 if role == "request" else 1
+    source_id = str(index + 1)
+    raw["prs"][0]["comments"][index]["body"] = quoted + "\n\nOriginal unquoted prose."
+    pr = normalize_snapshot(raw).prs[0]
+    if role == "request":
+        schema = constrained_schema(ModelOutput, pr)
+        allowed = schema["$defs"]["SpanCandidate"]["properties"]["request_passage"][
+            "enum"
+        ]
+    else:
+        schema = constrained_schema(ResponseLinks, pr, [candidate()])
+        allowed = schema["properties"]["links"]["properties"]["request_0"][
+            "properties"
+        ]["response_passage"]["enum"]
+    quoted_count = len(source_passages(quoted))
+    assert all(f"{source_id}/p{i}" not in allowed for i in range(quoted_count))
+    assert f"{source_id}/p{quoted_count}" in allowed
+
+
+def test_referential_followup_does_not_attach_across_quote_boundary():
+    from reviewradar.model import source_passages
+
+    assert source_passages("> Previous reported issue.\nCould you look at this?") == [
+        "> Previous reported issue.",
+        "Could you look at this?",
+    ]
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {},
+        {"choices": None},
+        {"choices": {}},
+        {"choices": []},
+        {"choices": [None]},
+        {"choices": ["bad"]},
+        {"choices": [{"finish_reason": "stop", "message": None}]},
+        {"choices": [{"finish_reason": "stop", "message": []}]},
+    ],
+)
+def test_malformed_model_envelopes_record_failed_coverage(
+    raw, settings, monkeypatch, payload
+):
+    mock_model(monkeypatch, settings, completion_payload=payload)
+    snapshot = normalize_snapshot(raw)
+    result = run_analysis(snapshot, "model", settings)
+    assert not result.complete
+    assert result.coverage[0].status == "failed"
+    assert result.coverage[0].comments_processed == 0
+    assert result.cards == []
+    assert result.warnings
+    assert snapshot.prs[0].comments[0].body == raw["prs"][0]["comments"][0]["body"]

@@ -56,3 +56,11 @@ The browser tool reports **local browser use disabled in Work settings**. The us
 A full template-aligned local DEV draft exists at docs/DEV-SUBMISSION-DRAFT.md with code/demo/evaluation links and truthful AI/human-role disclosure. It is **not published** and no external DEV draft was saved. Final browser verification and action-time Week 3 eligibility/rights/rules confirmation are still needed before the single contest entry is published. Earlier challenge agreements do not substitute for that confirmation. Deadline: 26 October 2026 at 12:29 p.m. IST.
 
 Planning/audit is complete; the local full-stack/public preview release is working and tested within the described limits. The contest-submission stage is incomplete.
+
+## Follow-up issue audit and fixes — 23 October, evening
+
+See `15-FOLLOW-UP-AUDIT.md` for reproduced findings and exact browser limits. Two agents reviewed and repaired the backend/interface; a third independently reviewed the settled diff. Fixed quoted-context request/reply eligibility, unknown pagination completeness, malformed external-data failures, replay export edit-history/rejected-card warnings, mixed-timezone timeline ordering, mobile fallback focus and asynchronous history-dialog return focus. The model protocol is now v10; the public historical sample correctly remains its saved v9 result.
+
+Parent verification: **98 backend tests + 34 subtests, 33 local frontend tests + 3 replay tests**, Ruff F/E9, TypeScript, production build and diff whitespace checks passed. A restarted app performed fresh public intake and real v10 inference (one pair, 4.281 seconds), persistence/reopen, source-bound retrieval and export. No GitHub discussions or upstream code were changed. Existing dependency deprecation warning remains documented.
+
+Browser access temporarily worked: sample, desktop/320px evidence, local note/reopen, fresh GitHub import and Gemma result, saved-history keyboard behavior and the public historical replay were inspected. Two focus defects were reproduced. Access then became disabled again, so the corrected build has **not** received a rendered retest. No full keyboard-only, screen-reader or reduced-motion completion is claimed. No human trial has occurred and no Week 3 DEV post has been published.

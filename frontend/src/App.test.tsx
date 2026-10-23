@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   act,
   cleanup,
+  fireEvent,
   render,
   screen,
   waitFor,
@@ -207,5 +208,70 @@ describe("evidence workbench integration (DOM simulation, not a visual browser a
     expect(
       screen.getByText("The request was edited after this reply"),
     ).toBeTruthy();
+  });
+  it("orders source entries by their actual instants across timezone offsets", async () => {
+    const changed = structuredClone(packet);
+    const [request, response] = changed.snapshot.prs[0].comments;
+    request.created_at = request.updated_at = "2026-10-23T09:30:00+05:30";
+    response.created_at = response.updated_at = "2026-10-23T05:00:00Z";
+    vi.mocked(api.sample).mockResolvedValueOnce(changed as never);
+    const user = await openSample();
+    await user.click(screen.getByRole("button", { name: /^Sources / }));
+    const sourcePr = screen
+      .getByRole("link", { name: /fossasia\/eventyay#6104/ })
+      .closest("section")!;
+    expect(
+      Array.from(sourcePr.querySelectorAll("time"), (time) =>
+        time.getAttribute("datetime"),
+      ),
+    ).toEqual([request.created_at, response.created_at]);
+  });
+  it("keeps mobile focus on the next evidence when the reviewed card is filtered out", async () => {
+    vi.mocked(window.matchMedia).mockReturnValue({
+      matches: true,
+    } as MediaQueryList);
+    const user = await openSample();
+    await user.click(
+      screen.getByRole("checkbox", { name: /Include reviewed locally/ }),
+    );
+    const requestList = screen.getByRole("region", {
+      name: "Review request list",
+    });
+    await user.click(within(requestList).getAllByRole("button")[0]);
+    const oldHeading = within(
+      screen.getByRole("region", { name: "Selected evidence" }),
+    ).getByRole("heading", { level: 2 });
+    expect(document.activeElement).toBe(oldHeading);
+    await user.click(
+      screen.getByRole("button", { name: /Mark reviewed locally/ }),
+    );
+    await waitFor(() => {
+      const nextHeading = within(
+        screen.getByRole("region", { name: "Selected evidence" }),
+      ).getByRole("heading", { level: 2 });
+      expect(nextHeading).not.toBe(oldHeading);
+      expect(document.activeElement).toBe(nextHeading);
+    });
+  });
+  it("returns focus to Saved analyses after dismissing its asynchronously loaded dialog", async () => {
+    const user = await openSample();
+    let finishLoading: (value: []) => void = () => {};
+    vi.mocked(api.history).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finishLoading = resolve;
+        }),
+    );
+    const opener = screen.getByRole("button", { name: /Saved analyses/ });
+    await user.click(opener);
+    const dialog = screen.getByRole("dialog");
+    expect(opener.hasAttribute("disabled")).toBe(true);
+    await act(async () => finishLoading([]));
+    const close = within(dialog).getByRole("button", { name: /Close dialog/ });
+    await waitFor(() => expect(close.hasAttribute("disabled")).toBe(false));
+    close.focus();
+    fireEvent(dialog, new Event("cancel", { cancelable: true }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    expect(document.activeElement).toBe(opener);
   });
 });

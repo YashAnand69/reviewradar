@@ -37,4 +37,8 @@ On the tested Apple Silicon Mac with 24 GiB RAM, the final v9 development PRs to
 
 `run.py` verifies frozen source and label hashes before running. Full downloaded discussion histories and raw predictions remain local in ignored outputs to avoid redistributing long automated guides and unnecessary discussion text. Public manifests retain source URLs, IDs and hashes. A fresh GitHub fetch may have different states, edits and timestamps; it is a new snapshot and cannot be presented as the identical frozen run. These release artifacts support an inspectable pilot, not a universally reproducible benchmark claim.
 
-No genuine participant trial, manual-reading timing, screen-reader evaluation or measured time-saving percentage has been obtained. Browser visual/keyboard/mobile verification is currently blocked by disabled browser access in this Work session. Those limits must stay in the release report until actual checks occur.
+No genuine participant trial, manual-reading timing, screen-reader evaluation or measured time-saving percentage has been obtained. An initial rendered/browser-flow audit occurred during temporary browser access and exposed focus issues now fixed with DOM regression tests. Access became disabled again before the corrected build could be visually retested. See `docs/15-FOLLOW-UP-AUDIT.md`; no completed final accessibility audit is claimed.
+
+## Follow-up engineering change
+
+Protocol v10 tightens eligibility for request and response text taken from explicitly marked Markdown blockquote lines, including sentence/length splits, and improves controlled external-data failure handling. The v8/v9 evaluation observations above remain version-specific historical results. A fresh v10 API smoke run completed public GitHub intake, one model evidence pair, persistence/reopen and export in 4.281 seconds for the model stage on the named machine. This is integration evidence, not a new held-out benchmark or a measured human saving.

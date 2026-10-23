@@ -33,10 +33,10 @@
 
 ## Unverified or blocked
 
-**Browser verification:** the browser tool explicitly returned “Local browser use is disabled in Work settings.” The user has been asked to enable it. No screenshots, visual inspection, keyboard-only completion, mobile overflow, reduced-motion or screen-reader checks are falsely marked passed. DOM simulation exercises state behavior but cannot establish rendered appearance or accessibility.
+**Browser verification update:** access became available for the follow-up audit. The parent inspected desktop/320px layouts, completed a fresh GitHub-import-to-Gemma browser flow and reproduced two focus defects. Access was disabled again before the corrected build could be rendered. Final-build visual, keyboard-only completion, reduced-motion and screen-reader checks remain unverified; see [the follow-up audit](15-FOLLOW-UP-AUDIT.md). DOM simulation cannot establish rendered accessibility.
 
 **Genuine user evidence:** no participant trial has occurred. The shareable guide exists; there is no testimonial, independently measured utility or human time-saving claim.
 
-**Final review:** agent delegation stopped at an account usage limit. Parent review continued, but this is not independent approval of all post-audit integration edits. A final rendered pass and another review remain useful release gates.
+**Final review update:** two agents independently audited the backend/frontend, implemented confirmed repairs under separate ownership and a third reviewed the final diff. The parent reproduced the combined automated checks and actual v10 API inference. This bounded review found no further concrete blocker in the changed code; it is not a guarantee of defect-free software or a replacement for the remaining rendered checks.
 
 **Submission:** no Week 3 DEV entry has been published. Final publication requires the concrete entry, verified links and the user's action-time confirmation of Week 3 eligibility, rights and contest rules. Prior Week 1/2 agreements are not reused. The cutoff is 26 October 2026 at 12:29 p.m. IST.

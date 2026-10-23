@@ -162,17 +162,25 @@ function Modal({
   children,
   onClose,
   busy = false,
+  returnFocusTo,
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
   busy?: boolean;
+  returnFocusTo?: HTMLElement | null;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
+    const opener =
+      returnFocusTo ??
+      (document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null);
     ref.current?.showModal();
     return () => {
       ref.current?.close();
+      if (opener?.isConnected) opener.focus();
     };
   }, []);
   return (
@@ -229,6 +237,7 @@ function App() {
   const [showImport, setShowImport] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const historyOpener = useRef<HTMLButtonElement>(null);
   const [history, setHistory] = useState<SavedAnalysis[]>([]);
   const [owner, setOwner] = useState("");
   const [urlText, setUrlText] = useState("");
@@ -356,14 +365,9 @@ function App() {
     );
     return () => window.clearInterval(timer);
   }, [busy]);
-  useEffect(() => {
-    if (mobileDetail && window.matchMedia("(max-width: 800px)").matches)
-      selectedHeading.current?.focus();
-  }, [mobileDetail, selected]);
-
   const cards =
     analysis && snapshot
-      ? analysis.cards.filter((c) => verifiedCard(snapshot, c))
+      ? analysis.cards.filter((c) => verifiedCard(snapshot, c, analysis.mode))
       : [];
   const rejectedCount = analysis ? analysis.cards.length - cards.length : 0;
   const filtered = visibleCards(cards, decisions, {
@@ -374,6 +378,14 @@ function App() {
   });
   const selectedCard =
     filtered.find((c) => c.id === selected) ?? filtered[0] ?? null;
+  useEffect(() => {
+    if (
+      view === "review" &&
+      mobileDetail &&
+      window.matchMedia("(max-width: 800px)").matches
+    )
+      selectedHeading.current?.focus();
+  }, [mobileDetail, selectedCard?.id, view]);
   const reviewedCount = cards.filter(
     (c) => decisions[c.id]?.state === "reviewed",
   ).length;
@@ -637,6 +649,7 @@ function App() {
                   Import your PRs
                 </button>
                 <button
+                  ref={historyOpener}
                   className="text-button"
                   disabled={!connected || !!busy}
                   onClick={() => void openHistory()}
@@ -952,8 +965,9 @@ function App() {
                     </p>
                   </div>
                   <span>
-                    {cards.length} {isBaseline ? "comments" : "cards"} ·{" "}
-                    {reviewedCount} reviewed locally
+                    {cards.length} {isBaseline ? "comment" : "card"}
+                    {cards.length !== 1 && "s"} · {reviewedCount} reviewed
+                    locally
                   </span>
                 </section>
                 <div
@@ -1142,7 +1156,9 @@ function App() {
                         <span className="document-icon">
                           <Glyph name="source" />
                         </span>
-                        <h2>Select evidence to inspect</h2>
+                        <h2 ref={selectedHeading} tabIndex={-1}>
+                          Select evidence to inspect
+                        </h2>
                         <p>
                           {cards.length
                             ? "Choose a card to read its request and possible response side by side."
@@ -1286,6 +1302,7 @@ function App() {
           title="Return to an earlier reading."
           onClose={() => setShowHistory(false)}
           busy={!!busy}
+          returnFocusTo={historyOpener.current}
         >
           <p className="modal-copy">
             Each analysis stays bound to its original snapshot. Loading it does
@@ -1670,7 +1687,7 @@ function SourceTimeline({ pr }: { pr: PullRequest }) {
       {[...pr.comments]
         .sort(
           (a, b) =>
-            a.created_at.localeCompare(b.created_at) ||
+            Date.parse(a.created_at) - Date.parse(b.created_at) ||
             a.id.localeCompare(b.id),
         )
         .map((comment) => (

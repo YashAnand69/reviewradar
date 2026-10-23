@@ -162,6 +162,55 @@ describe("bound evidence rendering", () => {
   });
   it("does not label a response without evidence as possibly responded", () =>
     expect(verifiedCard(snapshot, { ...card, response: null })).toBe(false));
+  it("rejects requests and replies selected only from explicit blockquote source lines", () => {
+    for (const index of [0, 1]) {
+      const changed = structuredClone(snapshot);
+      changed.prs[0].comments[index].body =
+        `> Earlier context. ${changed.prs[0].comments[index].body}`;
+      expect(verifiedCard(changed, card)).toBe(false);
+    }
+  });
+  it("retains original prose after quoted context, including repeated words", () => {
+    const changed = structuredClone(snapshot);
+    for (const comment of changed.prs[0].comments)
+      comment.body = `> ${comment.body}\n\n${comment.body}`;
+    expect(verifiedCard(changed, card)).toBe(true);
+  });
+  it("rejects an evidence span that mixes quoted and original source lines", () => {
+    const changed = structuredClone(snapshot);
+    const quote = "> Previous request.\nPlease add an empty-input test.";
+    changed.prs[0].comments[0].body = quote;
+    expect(
+      verifiedCard(changed, {
+        ...card,
+        request: { ...card.request, quote },
+      }),
+    ).toBe(false);
+  });
+  it("retains quoted context in the explicitly non-semantic baseline reading list", () => {
+    const changed = structuredClone(snapshot);
+    const quote = "> Previous request.\nPlease add an empty-input test.";
+    changed.prs[0].comments[0].body = quote;
+    const baselineCard: Card = {
+      ...card,
+      request: { ...card.request, quote },
+      response: null,
+      interpretation: "unclear",
+    };
+    expect(verifiedCard(changed, baselineCard, "baseline")).toBe(true);
+    expect(
+      exportReview(
+        changed,
+        {
+          ...analysis,
+          mode: "baseline",
+          model: null,
+          cards: [baselineCard],
+        },
+        {},
+      ),
+    ).toContain("Comment to inspect");
+  });
 });
 describe("attention filters and coverage", () => {
   it("keeps possible responses and reviewed cards visible by default", () => {
@@ -242,6 +291,38 @@ describe("safe import and export", () => {
     );
     expect(output).toContain("Comment to inspect");
     expect(output).not.toContain("— Possible response found");
+  });
+  it("preserves source timestamps and cautions when a request changed after its reply", () => {
+    const changed = structuredClone(snapshot);
+    changed.prs[0].comments[0].updated_at = "2026-10-22T10:01:00Z";
+    const output = exportReview(changed, analysis, {}).replaceAll("\\-", "-");
+    expect(output).toContain("Request created: 2026-10-21T10:00:00Z");
+    expect(output).toContain("Request last updated: 2026-10-22T10:01:00Z");
+    expect(output).toContain("Response created: 2026-10-22T10:00:00Z");
+    expect(output).toContain("Response last updated: 2026-10-22T10:00:00Z");
+    expect(output).toContain(
+      "Source caution: request edited after the possible response; original wording at reply time is unknown.",
+    );
+    expect(exportReview(snapshot, analysis, {})).not.toContain(
+      "Source caution:",
+    );
+  });
+  it("warns when an unbound replay card is rejected rather than silently exporting an empty view", () => {
+    const output = exportReview(
+      snapshot,
+      {
+        ...analysis,
+        cards: [
+          { ...card, request: { ...card.request, quote: "Invented ask" } },
+        ],
+      },
+      {},
+    );
+    expect(output).toContain(
+      "WARNING: 1 card was rejected because source evidence could not be verified. Inspect Sources; this view is incomplete.",
+    );
+    expect(output).not.toContain("Invented ask");
+    expect(output).not.toContain("## org/repo");
   });
   it("escapes note markup and retains source/completeness metadata", () => {
     const note = "## Forged section\n[click](javascript:alert(1)) <script>";

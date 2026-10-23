@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from typing import Any, Callable
 
 from .config import MAX_PRS, MAX_COMMENTS, MAX_COMMENT_CHARS
+from .schemas import Comment
 
 MAX_BODY_CHARS = MAX_COMMENT_CHARS
 MAX_SECONDS = 60.0
@@ -26,6 +27,22 @@ COMMENT_FIELDS = "id databaseId url body createdAt updatedAt " + ACTOR
 REVIEW_FIELDS = "id databaseId url body submittedAt updatedAt state " + ACTOR
 INLINE_FIELDS = COMMENT_FIELDS
 PAGE_INFO = "pageInfo { hasNextPage endCursor }"
+
+
+def _connection(value: Any) -> dict[str, Any]:
+    """Unknown continuation is incomplete coverage, never an empty last page."""
+    if not isinstance(value, dict) or not isinstance(value.get("nodes"), list):
+        raise ValueError("GitHub returned a malformed paginated connection.")
+    info = value.get("pageInfo")
+    if not isinstance(info, dict) or type(info.get("hasNextPage")) is not bool:
+        raise ValueError(
+            "GitHub returned invalid pagination metadata; coverage is incomplete."
+        )
+    if info["hasNextPage"] and (
+        not isinstance(info.get("endCursor"), str) or not info["endCursor"]
+    ):
+        raise ValueError("GitHub returned a repeated or missing page cursor.")
+    return value
 
 
 def _run_gh(args: list[str], timeout: float) -> dict[str, Any]:
@@ -94,7 +111,11 @@ def fetch_github_snapshot(
                 continue
             args.extend(["-F" if isinstance(value, int) else "-f", f"{key}={value}"])
         payload = transport(args, remaining)
-        if payload.get("errors") or not isinstance(payload.get("data"), dict):
+        if (
+            not isinstance(payload, dict)
+            or payload.get("errors")
+            or not isinstance(payload.get("data"), dict)
+        ):
             raise ValueError("GitHub reported a query failure; coverage is incomplete.")
         return payload["data"]
 
@@ -107,10 +128,12 @@ def fetch_github_snapshot(
         if not isinstance(repository, dict) or repository.get("isPrivate") is not False:
             raise ValueError("Only accessible public repositories are supported.")
         pr = repository.get("pullRequest")
+        author = pr.get("author") if isinstance(pr, dict) else None
         if (
             not isinstance(pr, dict)
-            or not pr.get("author")
-            or pr["author"].get("login", "").casefold() != owner.casefold()
+            or not isinstance(author, dict)
+            or not isinstance(author.get("login"), str)
+            or author["login"].casefold() != owner.casefold()
         ):
             raise ValueError(
                 "Every selected PR must be authored by the supplied GitHub handle."
@@ -119,6 +142,17 @@ def fetch_github_snapshot(
             raise ValueError(
                 "GitHub returned a different PR URL; use its canonical public URL."
             )
+        if (
+            not isinstance(pr.get("title"), str)
+            or not isinstance(pr.get("state"), str)
+            or pr.get("state") not in {"OPEN", "CLOSED", "MERGED"}
+            or type(pr.get("merged")) is not bool
+            or (
+                pr.get("headRefOid") is not None
+                and not isinstance(pr["headRefOid"], str)
+            )
+        ):
+            raise ValueError("GitHub returned malformed pull request metadata.")
         verified.append((pr, variables))
 
     prs = []
@@ -136,6 +170,9 @@ def fetch_github_snapshot(
             node: dict[str, Any], kind: str, thread: dict[str, Any] | None = None
         ) -> None:
             nonlocal capped
+            if not isinstance(node, dict):
+                warnings.append(f"A {kind} source was malformed and was omitted.")
+                return
             prefix = {"comment": "comment", "review": "review", "inline": "inline"}[
                 kind
             ]
@@ -176,7 +213,17 @@ def fetch_github_snapshot(
                 )
                 return
             actor = node.get("author") or {}
+            if not isinstance(actor, dict):
+                warnings.append(
+                    f"{source_id} had malformed author metadata and was omitted."
+                )
+                return
             actor_name = actor.get("login") or "[deleted]"
+            if not isinstance(actor_name, str):
+                warnings.append(
+                    f"{source_id} had malformed author metadata and was omitted."
+                )
+                return
             if actor_name == "[deleted]":
                 warnings.append(f"{source_id} has a deleted or unavailable author.")
             created = (
@@ -186,7 +233,7 @@ def fetch_github_snapshot(
             if not created or not updated:
                 warnings.append(f"{source_id} lacked a timestamp and was omitted.")
                 return
-            comments[source_id] = {
+            source = {
                 "id": source_id,
                 "url": url,
                 "author": actor_name,
@@ -201,6 +248,12 @@ def fetch_github_snapshot(
                 "thread_resolved": thread.get("isResolved") if thread else None,
                 "thread_outdated": thread.get("isOutdated") if thread else None,
             }
+            try:
+                comments[source_id] = Comment.model_validate(source).model_dump()
+            except ValueError:
+                warnings.append(
+                    f"{source_id} had invalid source metadata and was omitted."
+                )
 
         def page_connection(field: str, fields: str):
             cursor = None
@@ -208,16 +261,10 @@ def fetch_github_snapshot(
             for _ in range(MAX_PAGES):
                 document = f"query($owner:String!,$repo:String!,$number:Int!,$cursor:String){{repository(owner:$owner,name:$repo){{pullRequest(number:$number){{{field}(first:100,after:$cursor){{nodes{{{fields}}} {PAGE_INFO}}}}}}}}}"
                 data = query(document, {**variables, "cursor": cursor})
-                connection = data["repository"]["pullRequest"][field]
-                if not isinstance(connection.get("nodes"), list) or not isinstance(
-                    connection.get("pageInfo"), dict
-                ):
-                    raise ValueError(
-                        "GitHub returned a malformed paginated connection."
-                    )
+                connection = _connection(data["repository"]["pullRequest"][field])
                 yield connection["nodes"]
                 info = connection["pageInfo"]
-                if not info.get("hasNextPage"):
+                if not info["hasNextPage"]:
                     return
                 cursor = info.get("endCursor")
                 if not cursor or cursor in cursors:
@@ -248,13 +295,22 @@ def fetch_github_snapshot(
         try:
             for threads in page_connection("reviewThreads", thread_fields):
                 for thread in threads:
-                    connection = thread["comments"]
+                    if (
+                        not isinstance(thread, dict)
+                        or not isinstance(thread.get("id"), str)
+                        or type(thread.get("isResolved")) is not bool
+                        or type(thread.get("isOutdated")) is not bool
+                    ):
+                        raise ValueError(
+                            "GitHub returned malformed inline thread metadata."
+                        )
+                    connection = _connection(thread["comments"])
                     nested_cursors: set[str] = set()
                     for _ in range(MAX_PAGES):
                         for node in connection["nodes"]:
                             add(node, "inline", thread)
                         info = connection["pageInfo"]
-                        if not info.get("hasNextPage") or capped:
+                        if not info["hasNextPage"] or capped:
                             break
                         cursor = info.get("endCursor")
                         if not cursor or cursor in nested_cursors:
@@ -263,9 +319,11 @@ def fetch_github_snapshot(
                             )
                         nested_cursors.add(cursor)
                         document = f"query($thread:ID!,$cursor:String){{node(id:$thread){{... on PullRequestReviewThread{{comments(first:100,after:$cursor){{nodes{{{INLINE_FIELDS}}} {PAGE_INFO}}}}}}}}}"
-                        connection = query(
-                            document, {"thread": thread["id"], "cursor": cursor}
-                        )["node"]["comments"]
+                        connection = _connection(
+                            query(document, {"thread": thread["id"], "cursor": cursor})[
+                                "node"
+                            ]["comments"]
+                        )
                     else:
                         raise ValueError(
                             "The nested thread pagination safety limit was reached."

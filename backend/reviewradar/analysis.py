@@ -12,7 +12,7 @@ from .model import (
     ModelFailure,
     Oversize,
     PROMPT_VERSION,
-    quoted_only,
+    eligible_source_quote,
 )
 from .schemas import (
     Analysis,
@@ -46,11 +46,7 @@ def validate_candidates(candidates: list[Candidate], pr: PR) -> list[Card]:
             raise ModelFailure(
                 "Model evidence included an ineligible request source. This PR remains incomplete."
             )
-        if (
-            not candidate.request_quote.strip()
-            or candidate.request_quote not in request.body
-            or quoted_only(candidate.request_quote)
-        ):
+        if not eligible_source_quote(request.body, candidate.request_quote):
             raise ModelFailure(
                 "Model request quote did not match its original source. This PR remains incomplete."
             )
@@ -70,13 +66,11 @@ def validate_candidates(candidates: list[Candidate], pr: PR) -> list[Card]:
                 raise ModelFailure(
                     "Model response was not a strictly later author comment in this PR. This PR remains incomplete."
                 )
-            if (
-                not candidate.response_quote
-                or not candidate.response_quote.strip()
-                or candidate.response_quote not in response.body
+            if not candidate.response_quote or not eligible_source_quote(
+                response.body, candidate.response_quote
             ):
                 raise ModelFailure(
-                    "Model response quote did not match its original source. This PR remains incomplete."
+                    "Model response quote did not match eligible original author evidence. This PR remains incomplete."
                 )
             if candidate.interpretation == "follow_up":
                 raise ModelFailure(

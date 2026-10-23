@@ -31,13 +31,13 @@ The public preview returns the saved v9 analysis with ID `cd37e8a309fb4561b537e2
 
 - [ ] Rendered desktop and 320px mobile inspection, including long source bodies and no page overflow.
 - [ ] Keyboard-only completion, visible focus, dialog return focus, reduced motion and meaningful error announcements.
-- [ ] Review the actual public preview without privileged account access in a browser.
-- [ ] Obtain a final independent pass where available. Prior agents hit an account usage limit; the parent completed later integration fixes.
+- [x] Existing public historical preview rendered in a separate tab without a privileged GitHub page/API session. Corrected-build rendered retest remains pending.
+- [x] Independent follow-up backend/frontend audit and third-agent final-diff review completed; confirmed findings received regression fixes. See `15-FOLLOW-UP-AUDIT.md`.
 - [ ] Final claim check of `DEV-SUBMISSION-DRAFT.md` against the release artifact and latest rules. Any new human-feedback statement needs actual retained evidence.
 - [ ] User confirms Week 3 eligibility, rights and acceptance of Week 3/general contest rules immediately before publishing.
 - [ ] Publish one DEV entry with required tags; choose the accurate AI-assistance/editor label, list Best Use of Gemma, and verify the resulting public article and links.
 
-Browser checks are blocked because the tool reports local browser use disabled in Work settings. A user request to enable access has been made. Do not work around that setting with a different browser-control method.
+Initial browser checks became available and are recorded in `15-FOLLOW-UP-AUDIT.md`. They exposed focus defects now fixed in code and DOM regression tests. Browser access then became disabled again before the corrected build could be rendered. Final-build visual, keyboard, long-source and reduced-motion checks remain pending; do not work around the setting with a different browser-control method.
 
 ## Optional evidence that must not be fabricated
 

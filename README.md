@@ -8,7 +8,7 @@ A new Hacktoberfest Week 3 project, begun **23 October 2026**. ReviewRadar reads
 
 ## Project status
 
-The complete local workflow is implemented and has passed API, persistence, adversarial and DOM integration checks. **This is a preview release, not a completed contest submission.** Visual/keyboard/mobile inspection is still pending because browser use is disabled in this Work session; genuine contributor validation has not occurred. See the execution ledger for exact results and limits.
+The complete local workflow is implemented and has passed API, persistence, adversarial and DOM integration checks. **This is a preview release, not a completed contest submission.** An initial rendered desktop/mobile pass and a real import-to-model browser flow exposed issues now covered by regression fixes. Browser access was disabled again before the corrected build could be visually retested; final keyboard/accessibility verification and genuine contributor validation remain incomplete. See the [follow-up audit](docs/15-FOLLOW-UP-AUDIT.md) for exact results and limits.
 
 ## Planning package
 

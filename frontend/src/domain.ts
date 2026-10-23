@@ -56,7 +56,36 @@ export function validSourceUrl(url: string, pr: PullRequest): boolean {
     return false;
   }
 }
-export function verifiedCard(snapshot: Snapshot, card: Card): boolean {
+function hasOriginalSourceText(body: string, quote: string): boolean {
+  // Check the source line, since a selected sentence can omit its leading >.
+  // This guards explicit blockquotes, not every form of quoted Markdown.
+  let start = body.indexOf(quote);
+  while (start !== -1) {
+    const end = start + quote.length;
+    let cursor = start;
+    let hasText = false;
+    let quoted = false;
+    while (cursor < end) {
+      const lineStart = body.lastIndexOf("\n", cursor - 1) + 1;
+      const nextLine = body.indexOf("\n", cursor);
+      const lineEnd = nextLine === -1 ? body.length : nextLine;
+      if (body.slice(cursor, Math.min(end, lineEnd)).trim()) {
+        hasText = true;
+        if (body.slice(lineStart, lineEnd).trimStart().startsWith(">"))
+          quoted = true;
+      }
+      cursor = lineEnd + 1;
+    }
+    if (hasText && !quoted) return true;
+    start = body.indexOf(quote, start + 1);
+  }
+  return false;
+}
+export function verifiedCard(
+  snapshot: Snapshot,
+  card: Card,
+  mode: Analysis["mode"] = "model",
+): boolean {
   const { pr, request, response } = sourceFor(snapshot, card);
   if (
     !pr ||
@@ -65,7 +94,9 @@ export function verifiedCard(snapshot: Snapshot, card: Card): boolean {
     request.author.toLowerCase() === pr.author.toLowerCase() ||
     !card.request.quote.trim() ||
     !Number.isFinite(Date.parse(request.created_at)) ||
-    !request.body.includes(card.request.quote) ||
+    !(mode === "baseline"
+      ? request.body.includes(card.request.quote)
+      : hasOriginalSourceText(request.body, card.request.quote)) ||
     !validSourceUrl(request.url, pr)
   )
     return false;
@@ -73,7 +104,7 @@ export function verifiedCard(snapshot: Snapshot, card: Card): boolean {
     card.response &&
     (!response ||
       !card.response.quote ||
-      !response.body.includes(card.response.quote) ||
+      !hasOriginalSourceText(response.body, card.response.quote) ||
       !validSourceUrl(response.url, pr) ||
       response.is_bot ||
       response.author.toLowerCase() !== pr.author.toLowerCase() ||
@@ -152,6 +183,9 @@ export function exportReview(
   analysis: Analysis,
   dispositions: Record<string, Disposition>,
 ): string {
+  const rejectedCount = analysis.cards.filter(
+    (card) => !verifiedCard(snapshot, card, analysis.mode),
+  ).length;
   const lines = [
     "# ReviewRadar — local review sheet",
     "",
@@ -165,21 +199,36 @@ export function exportReview(
     ...analysisWarnings(snapshot, analysis).map(
       (w) => `WARNING: ${plainMarkdown(w)}`,
     ),
+    ...(rejectedCount
+      ? [
+          `WARNING: ${rejectedCount} card${rejectedCount === 1 ? " was" : "s were"} rejected because source evidence could not be verified. Inspect Sources; this view is incomplete.`,
+        ]
+      : []),
     "",
   ];
   for (const card of analysis.cards) {
     const { pr, request, response } = sourceFor(snapshot, card);
-    if (!pr || !request || !verifiedCard(snapshot, card)) continue;
+    if (!pr || !request || !verifiedCard(snapshot, card, analysis.mode))
+      continue;
     lines.push(
       `## ${plainMarkdown(pr.id)} — ${analysis.mode === "baseline" ? "Comment to inspect" : labels[card.interpretation]}`,
       `Request: ${plainMarkdown(card.request.quote)}`,
       `Source: ${request.url}`,
+      `Request created: ${plainMarkdown(request.created_at)}`,
+      `Request last updated: ${plainMarkdown(request.updated_at)}`,
     );
-    if (card.response && response)
+    if (card.response && response) {
+      if (Date.parse(request.updated_at) > Date.parse(response.created_at))
+        lines.push(
+          "Source caution: request edited after the possible response; original wording at reply time is unknown.",
+        );
       lines.push(
         `Possible response: ${plainMarkdown(card.response.quote)}`,
         `Response source: ${response.url}`,
+        `Response created: ${plainMarkdown(response.created_at)}`,
+        `Response last updated: ${plainMarkdown(response.updated_at)}`,
       );
+    }
     lines.push(
       `Uncertainty: ${plainMarkdown(card.uncertainty.join("; ") || "Inspect source context.")}`,
       `Local decision: ${dispositions[card.id]?.state ?? "open"}`,

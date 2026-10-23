@@ -270,6 +270,91 @@ class IntakeTests(unittest.TestCase):
             self.assertNotIn("shell", kwargs)
             self.assertEqual(kwargs["timeout"], 2.0)
 
+    def test_unknown_pagination_never_claims_complete_coverage(self):
+        for info in [
+            {},
+            {"hasNextPage": None},
+            {"hasNextPage": "false"},
+            {"hasNextPage": 0},
+        ]:
+            for nested in [False, True]:
+                with self.subTest(info=info, nested=nested):
+                    t = Transport()
+                    malformed = {
+                        "nodes": [node(1, kind="inline" if nested else "comment")],
+                        "pageInfo": info,
+                    }
+                    if nested:
+                        t.threads = [
+                            connection(
+                                [
+                                    {
+                                        "id": "T",
+                                        "isResolved": False,
+                                        "isOutdated": False,
+                                        "comments": malformed,
+                                    }
+                                ]
+                            )
+                        ]
+                    else:
+                        t.comments = [malformed]
+                    s = fetch_github_snapshot([URL], OWNER, runner=t)
+                    self.assertFalse(s["complete"])
+                    self.assertTrue(
+                        any("pagination" in w for w in s["prs"][0]["warnings"])
+                    )
+
+    def test_malformed_nodes_are_omitted_but_valid_sources_survive(self):
+        for malformed in [
+            None,
+            [],
+            "bad node",
+            {**node(1), "author": ["bad"]},
+            {**node(1), "author": {"login": 9}},
+            {**node(1), "createdAt": "not a date"},
+        ]:
+            with self.subTest(malformed=malformed):
+                t = Transport()
+                t.comments = [connection([malformed, node(2)])]
+                s = fetch_github_snapshot([URL], OWNER, runner=t)
+                self.assertFalse(s["complete"])
+                self.assertEqual(
+                    [c["id"] for c in s["prs"][0]["comments"]], ["comment:2"]
+                )
+                self.assertTrue(s["prs"][0]["warnings"])
+
+    def test_malformed_connections_and_threads_preserve_partial_intake(self):
+        for malformed in [
+            None,
+            [],
+            {"nodes": None, "pageInfo": {"hasNextPage": False}},
+        ]:
+            with self.subTest(connection=malformed):
+                t = Transport()
+                t.comments = [malformed]
+                t.reviews = [connection([node(2, kind="review")])]
+                s = fetch_github_snapshot([URL], OWNER, runner=t)
+                self.assertFalse(s["complete"])
+                self.assertEqual(
+                    [c["id"] for c in s["prs"][0]["comments"]], ["review:2"]
+                )
+        t = Transport()
+        t.comments = [connection([node(1)])]
+        t.threads = [connection([None])]
+        s = fetch_github_snapshot([URL], OWNER, runner=t)
+        self.assertFalse(s["complete"])
+        self.assertEqual([c["id"] for c in s["prs"][0]["comments"]], ["comment:1"])
+
+    def test_malformed_metadata_is_rejected_before_bodies(self):
+        for fields in [{"author": ["bad"]}, {"title": None}, {"state": []}]:
+            with self.subTest(fields=fields):
+                t = Transport()
+                t.meta.update(fields)
+                with self.assertRaises(ValueError):
+                    fetch_github_snapshot([URL], OWNER, runner=t)
+                self.assertEqual(len(t.calls), 1)
+
 
 if __name__ == "__main__":
     unittest.main()
