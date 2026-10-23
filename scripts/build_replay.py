@@ -17,14 +17,25 @@ def main():
     env = dict(os.environ)
     env["VITE_REPLAY"] = "1"
     if args.node:
-        env["PATH"] = str(args.node.expanduser().resolve().parent) + os.pathsep + env.get("PATH", "")
+        env["PATH"] = (
+            str(args.node.expanduser().resolve().parent)
+            + os.pathsep
+            + env.get("PATH", "")
+        )
     npm = shutil.which("npm", path=env["PATH"])
     if not npm:
         raise SystemExit("npm is required. Run the documented setup first.")
     destination = ROOT / ".runtime/replay-dist"
-    subprocess.run([npm, "run", "build", "--", "--outDir", str(destination)], cwd=ROOT / "frontend", env=env, check=True)
+    subprocess.run(
+        [npm, "run", "build", "--", "--outDir", str(destination), "--emptyOutDir"],
+        cwd=ROOT / "frontend",
+        env=env,
+        check=True,
+    )
     (destination / ".nojekyll").touch()
-    print(f"Historical replay built at {destination}. No model server or credentials are included.")
+    print(
+        f"Historical replay built at {destination}. No model server or credentials are included."
+    )
 
 
 if __name__ == "__main__":

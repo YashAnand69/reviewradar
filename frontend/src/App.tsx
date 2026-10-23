@@ -1458,6 +1458,15 @@ function Evidence({
             : "A possible response is a lead to inspect. It is not a verified fix."}
         </p>
       </header>
+      {response &&
+        Date.parse(request.updated_at) > Date.parse(response.created_at) && (
+          <Note kind="warning" title="The request was edited after this reply">
+            <p>
+              The original wording at reply time is unknown. Compare the current
+              source carefully before interpreting this pair.
+            </p>
+          </Note>
+        )}
       <div className="paired-evidence">
         <EvidenceQuote
           title={baseline ? "Comment to inspect" : "Original request"}
@@ -1628,6 +1637,9 @@ function EvidenceQuote({
               <small>
                 {displayDate(source.created_at)} · {source.kind}
               </small>
+              {source.updated_at !== source.created_at && (
+                <small>Edited {displayDate(source.updated_at)}</small>
+              )}
             </div>
           </div>
           <blockquote>{quote}</blockquote>
@@ -1679,6 +1691,12 @@ function SourceTimeline({ pr }: { pr: PullRequest }) {
                 {displayDate(comment.created_at)}
               </time>
             </div>
+            {comment.updated_at !== comment.created_at && (
+              <p className="small-copy">
+                Edited {displayDate(comment.updated_at)}; earlier wording is not
+                retained in this snapshot.
+              </p>
+            )}
             {comment.review_state && (
               <p className="small-copy">
                 Review submitted:{" "}

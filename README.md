@@ -2,6 +2,8 @@
 
 Find the request. Read the response. Decide what needs another look.
 
+[Public historical preview](https://yashanand69.github.io/reviewradar/) · [Source](https://github.com/YashAnand69/reviewradar) · [Release checklist](docs/14-RELEASE-AND-SUBMISSION-CHECKLIST.md)
+
 A new Hacktoberfest Week 3 project, begun **23 October 2026**. ReviewRadar reads selected public PR discussions and uses a local Gemma model to place individual human-reviewer requests beside possible later author responses. Exact evidence stays attached to its original source. It does **not** verify code fixes, resolve threads or write to GitHub.
 
 ## Project status

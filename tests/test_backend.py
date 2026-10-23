@@ -530,3 +530,17 @@ def test_model_rejects_truncated_output_or_wrong_server(
     mock_model(monkeypatch, settings, **kwargs)
     with pytest.raises(ModelFailure):
         LocalModel(settings).analyze(normalize_snapshot(raw).prs[0])
+
+
+def test_export_warns_when_request_was_edited_after_a_possible_response(raw, settings):
+    raw["prs"][0]["comments"][0]["updated_at"] = "2026-10-23T10:02:00Z"
+    snapshot = normalize_snapshot(raw)
+
+    class FixedModel:
+        def analyze(self, _pr):
+            return [candidate()]
+
+    analysis = run_analysis(snapshot, "model", settings, model=FixedModel())
+    assert "request edited after the possible response" in export_markdown(
+        analysis, snapshot, []
+    )

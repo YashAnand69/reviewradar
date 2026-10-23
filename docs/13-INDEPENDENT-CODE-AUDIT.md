@@ -4,13 +4,13 @@
 
 ## Verified checks
 
-- Backend regression/adversarial suite: 72 tests and 14 parametrized subtests passed on Python 3.12.13. Includes public/owner boundaries, pagination, source hashes, model context/finish validation, same-PR and strictly-later evidence, local session security, persistence, reversible dispositions and incomplete exports.
-- Frontend domain and DOM workflow tests cover bound evidence, unsafe URLs, filters, failed saves, notes retained through Source navigation, import errors inside the active dialog and local reviewed/reopen. A later-save race across analyses received a dedicated regression check.
+- Backend regression/adversarial suite: 73 tests and 14 parametrized subtests passed on Python 3.12.13. Includes public/owner boundaries, pagination, source hashes, model context/finish validation, same-PR and strictly-later evidence, local session security, persistence, reversible dispositions and incomplete exports.
+- Frontend domain and DOM workflow tests cover bound evidence, unsafe URLs, filters, failed saves, notes retained through Source navigation, import errors inside the active dialog and local reviewed/reopen. A later-save race across analyses received a dedicated regression check. The local adapter has 24 passing tests and the replay adapter has three separately executed tests. Request edit timestamps now remain visible, with a caution if the request was edited after the selected reply.
 - TypeScript and the Vite production build passed on Node 24.19.0 before the final race test; the final rerun is recorded in the execution ledger.
 - Initial frontend dependency audit found four reported vulnerable packages. Vite and Vitest were updated to patched versions; the subsequent npm audit reported zero known vulnerabilities at the time of the check. This is not a security guarantee.
 - Ruff F/E9 checks passed. Source was formatted for review. Model weights and runtime binary/source-archive checksums matched the manifest. Source credential-pattern and unexpected-large-file scan passed before the implementation checkpoint.
 - Actual localhost API integration exercised fresh public GitHub import, real inference, source-bound saved sample, local save/reopen, export, saved analysis retrieval and independent decisions for new analyses. It made no GitHub write.
-- The documented setup installed the locked Python dependencies, installed the frontend lock and built the interface with a supported Node version. A clean isolated source setup remains a separate release check until recorded.
+- The documented setup installed the locked Python dependencies, installed the frontend lock and built the interface with a supported Node version. A clean isolated source archive (9ef27f7) then installed and started successfully on a distinct port, loaded the real saved sample and ran the baseline without model configuration; the temporary check server was stopped.
 
 ## Material findings and actions
 
@@ -29,6 +29,7 @@
 | Import failure was announced behind an active modal | Show the actionable error inside the import dialog |
 | Unsaved note disappeared when opening Sources | Per-analysis/card draft retention within the active app session |
 | A slow save could apply an old decision to a new analysis with the same card ID | Guard UI updates with the initiating analysis identity; backend was already correctly keyed |
+| Current request wording may have been edited after a reply | Show edited timestamps, display a source-history caution, and retain that caveat in export; original wording is not invented |
 
 ## Unverified or blocked
 

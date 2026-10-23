@@ -196,4 +196,16 @@ describe("evidence workbench integration (DOM simulation, not a visual browser a
     );
     expect(screen.getByText("Not yet reviewed locally")).toBeTruthy();
   });
+  it("warns when the current request wording was edited after a possible reply", async () => {
+    const changed = structuredClone(packet);
+    const first = changed.analysis.cards[0];
+    const source = changed.snapshot.prs.find((pr) => pr.id === first.pr_id)!;
+    source.comments.find((c) => c.id === first.request.comment_id)!.updated_at =
+      "2026-10-22T12:00:00Z";
+    vi.mocked(api.sample).mockResolvedValueOnce(changed as never);
+    await openSample();
+    expect(
+      screen.getByText("The request was edited after this reply"),
+    ).toBeTruthy();
+  });
 });

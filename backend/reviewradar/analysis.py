@@ -6,7 +6,14 @@ import time
 import uuid
 
 from .config import Settings
-from .model import Candidate, LocalModel, ModelFailure, Oversize, PROMPT_VERSION, quoted_only
+from .model import (
+    Candidate,
+    LocalModel,
+    ModelFailure,
+    Oversize,
+    PROMPT_VERSION,
+    quoted_only,
+)
 from .schemas import (
     Analysis,
     Card,
@@ -334,6 +341,10 @@ def export_markdown(analysis: Analysis, snapshot: Snapshot, dispositions: list) 
         )
         if card.response:
             response = comments[card.response.comment_id]
+            if timestamp(request.updated_at) > timestamp(response.created_at):
+                lines.append(
+                    "Source caution: request edited after the possible response; original wording at reply time is unknown."
+                )
             lines.extend(
                 [
                     f"[Possible later response]({response.url})",
