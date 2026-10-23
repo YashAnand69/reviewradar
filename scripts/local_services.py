@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Run ReviewRadar's two local services independently of the chat process.
+"""Manage ReviewRadar's two project-scoped macOS login-session services.
 
-macOS only. Jobs live in this project's ignored .runtime directory and the
-current GUI login session: nothing is installed in ~/Library/LaunchAgents.
-They survive the terminal/chat closing, restart after a crash, and end at logout.
+Jobs live in this project's ignored .runtime directory; nothing is installed in
+~/Library/LaunchAgents. Loaded jobs restart after a crash, but macOS can remove
+jobs attributed to ChatGPT when that app quits. Start from your own Terminal;
+survival after ChatGPT quits remains unverified. Jobs end at logout or reboot.
 No download, credential copying, process takeover, or login startup is performed.
 """
 
@@ -308,7 +309,7 @@ class LocalServices:
     def status(self) -> dict:
         result = {
             "url": "http://127.0.0.1:8893/",
-            "lifetime": "current macOS login session",
+            "lifetime": "login-session jobs; survival after ChatGPT quits is unverified",
             "services": {},
         }
         for service in PORTS:
@@ -328,7 +329,7 @@ class LocalServices:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("start", "status", "stop"))
+    parser.add_argument("action", choices=("start", "status", "stop", "check"))
     parser.add_argument("--runtime", type=Path)
     parser.add_argument("--model", type=Path)
     parser.add_argument(
@@ -346,7 +347,15 @@ def main() -> int:
         parser.error("Timeout must be between 5 and 600 seconds.")
     services = LocalServices()
     try:
-        if args.action == "start":
+        if args.action == "check":
+            configuration = services.configuration(args.runtime, args.model)
+            services.validate(configuration)
+            result = {
+                "configuration": "valid paths and executable prerequisites",
+                "services_changed": False,
+                "note": "Artifact checksums are verified during model startup, not by this preflight.",
+            }
+        elif args.action == "start":
             result = services.start(
                 services.configuration(args.runtime, args.model), args.timeout
             )

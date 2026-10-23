@@ -44,7 +44,7 @@ That installation is a real tradeoff: the pinned model artifact is about **2.84 
 
 ## Code
 
-{% github YashAnand69/reviewradar %}
+[Source code and setup: YashAnand69/reviewradar](https://github.com/YashAnand69/reviewradar)
 
 The repository includes the application, model manifest, audited planning documents, tests, evaluation/error report and a short contributor trial guide. Application code is MIT licensed. Model/runtime dependencies and attributed third-party discussion text have their own rights and notices; the software license does not relicense other people's comments.
 
@@ -62,7 +62,7 @@ This prevents invented quotations and mechanically impossible source references.
 
 A saved example makes the limit concrete: one model rationale says the reported screenshots fulfill the request. The source supports only that the author reported adding them. I retained that historical output and placed an explicit unverified-interpretation warning beside it, rather than silently rewriting a successful-looking demonstration.
 
-The interface follows that same principle: evidence first, explanation second. It has reversible local decisions, notes, source filters, source JSON and Markdown export. Transitions are restrained, and reduced-motion rules are included. Rendered accessibility and mobile checks must be completed before the final entry is published; automated DOM tests alone cannot establish those properties.
+The interface follows that same principle: evidence first, explanation second. It has reversible local decisions, notes, source filters, source JSON and Markdown export. The corrected compact workbench was checked in the browser at desktop size and at 320 px, with no page-level horizontal overflow observed in those views. Closing saved history with Escape returned focus to its trigger. These are bounded checks, not a full screen-reader or reduced-motion evaluation; including reduced-motion rules in the stylesheet does not establish that evaluation.
 
 ## What the Checks Actually Showed
 
@@ -70,7 +70,9 @@ The engineering pilot used four PRs and seven pre-labelled requests, with whole 
 
 The frozen v8 holdout found the three labelled requests and also emitted one quoted repetition as an extra request. That failure led to a quoted-text selection restriction. The next run is reported as a regression, not a fresh holdout; it still emits an additional agreement/observation as a possible ask. I kept that limitation in the [evaluation report](https://github.com/YashAnand69/reviewradar/blob/main/evaluation/REPORT.md).
 
-A later usability failure was in the delivery, not the model: the browser remained open after the local services stopped. The generic error gave no useful recovery path. The Mac launcher now uses project-specific services that run for the current login session and restart after a crash. They are not an always-on hosted service or a login-startup installation. The interface distinguishes an offline server from an unavailable model, keeps typed notes in the open tab during reconnection, and renews an expired session only after a rejected request. Unsaved notes do not survive closing that tab. No potentially completed write is automatically replayed after a network error.
+A later usability failure was in the delivery, not the model: the browser remained open after the local services stopped. The generic error gave no useful recovery path. The interface now distinguishes an offline server from an unavailable model and keeps typed notes in the open tab during reconnection. A real browser check stopped the services, observed the failed save with its draft retained, then reconnected and saved successfully. Expired sessions renew only after a rejected request; no potentially completed write is automatically replayed after a network error. Unsaved notes do not survive closing or reloading the tab.
+
+The first lifecycle fix was incomplete too. Although the Mac jobs had PID 1 as their process parent, macOS still attributed jobs launched from ChatGPT to that app and removed them when it quit. `Start ReviewRadar.command` now asks the user to launch through Finder/Terminal and restarts only this project's owned jobs instead of reusing those jobs. That may interrupt an in-flight import or analysis, so saved database records and unsaved tab-only notes are explained separately. Launchd restarts crashes only while the jobs remain loaded. Survival after quitting ChatGPT through this new launch path still requires verification; I am not presenting a successful startup as proof. This is a local application, not an always-on hosted service or a login-startup installation.
 
 The recorded checks include backend/adversarial tests, frontend state/workflow tests, type/build checks, an actual GitHub-import-to-inference API run and clean-source installation. The public preview is saved evidence, not a way to disguise unavailable inference. I have not obtained a genuine participant trial or measured a human time-saving percentage, so I make neither claim.
 

@@ -76,3 +76,9 @@ Final checks: **130 Python tests + 34 subtests; 48 local frontend tests + 3 repl
 Practical improvements include a concise sample walkthrough, a next-action note prompt, clearer unverified-interpretation framing, and a smaller header after sources load so working evidence receives more space. The submission draft explains the actual contributor task, baseline versus semantic extraction, setup cost, recovery failure/fix, and human input truthfully. `17-DEMO-AND-TRIAL.md` provides a real-app recording script and consent-aware volunteer invitation; no outreach, trial or recording has been claimed.
 
 The parent completed keyboard-driven real import and model analysis while browser access worked. Access became disabled again before the final compact-header/mobile/recovery render checks; an enable-access question is pending. The final DEV post is still unpublished and Week 3 eligibility/rights/rules confirmation remains required at publication.
+
+## 24 October — recovered browser and lifecycle audit
+
+The corrected compact desktop/mobile UI, actual service-stop/draft/reconnect/save flow, history Escape focus, mobile reviewed-filter fallback, fresh public import/local inference, downloaded Markdown and current public replay were observed. Details and bounded evidence are in `18-FINAL-BROWSER-AND-LIFECYCLE-AUDIT.md`. macOS Dock removal disproved the earlier ChatGPT-quit survival claim; user-run Start/Stop launchers now avoid reusing prior job attribution, with real quit survival still unverified. No external trial or Week 3 publication is claimed.
+
+Final launcher preflight integration: 136 Python tests and 34 subtests passed; 26 lifecycle tests, Ruff F/E9, Bash syntax, actual read-only configuration check and whitespace check passed. No frontend changed. DEV draft 7322997 was saved unpublished with required tags, truthful AI disclosure, demo/source and Overall/Gemma categories; final Week 3 agreement is still required.

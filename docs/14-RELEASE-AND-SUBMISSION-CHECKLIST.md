@@ -31,15 +31,15 @@ The public preview returns the saved v9 analysis with ID `cd37e8a309fb4561b537e2
 
 ## Required before calling the entry submission-ready
 
-- [ ] Rendered desktop and 320px mobile inspection, including long source bodies and no page overflow.
+- [x] Rendered desktop and 320px inspection, expanded evidence and full Sources; no page overflow in inspected views. See `18-FINAL-BROWSER-AND-LIFECYCLE-AUDIT.md`.
 - [ ] Keyboard-only completion, visible focus, dialog return focus, reduced motion and meaningful error announcements.
-- [x] Existing public historical preview rendered in a separate tab without a privileged GitHub page/API session. Corrected-build rendered retest remains pending.
+- [x] Existing public historical preview rendered in a separate tab without a privileged GitHub page/API session. Corrected replay retested at desktop and 320px.
 - [x] Independent follow-up backend/frontend audit and third-agent final-diff review completed; confirmed findings received regression fixes. See `15-FOLLOW-UP-AUDIT.md`.
-- [ ] Final claim check of `DEV-SUBMISSION-DRAFT.md` against the release artifact and latest rules. Any new human-feedback statement needs actual retained evidence.
+- [x] Final draft claims checked against the inspected release and Week 3/general rules on 24 October. No fabricated human-feedback or measured-savings statement is present. The saved DEV draft remains unpublished.
 - [ ] User confirms Week 3 eligibility, rights and acceptance of Week 3/general contest rules immediately before publishing.
 - [ ] Publish one DEV entry with required tags; choose the accurate AI-assistance/editor label, list Best Use of Gemma, and verify the resulting public article and links.
 
-Initial browser checks became available and are recorded in `15-FOLLOW-UP-AUDIT.md`. They exposed focus defects now fixed in code and DOM regression tests. Browser access then became disabled again before the corrected build could be rendered. Final-build visual, keyboard, long-source and reduced-motion checks remain pending; do not work around the setting with a different browser-control method.
+Initial browser checks became available and are recorded in `15-FOLLOW-UP-AUDIT.md`. They exposed focus defects now fixed in code and DOM regression tests. Browser access then became disabled again before the corrected build could be rendered. Browser access later recovered. Corrected-build visual, mobile fallback focus, history Escape/return focus, actual service recovery, fresh import/model result and download were checked. Full screen-reader and actual reduced-motion preference testing remain unverified. User-launched service survival remains outstanding. See the final browser audit.
 
 ## Optional evidence that must not be fabricated
 
@@ -53,4 +53,4 @@ No participant trial has happened. The draft therefore makes no human savings pe
 
 Official cutoff: **26 October 2026 at 12:29 p.m. IST** (25 October at 11:59 p.m. PDT). Recheck the [Week 3 page](https://dev.to/challenges/hacktoberfest-week3-2026-10-19), [Week 3 rules](https://dev.to/page/hacktoberfest-week3-2026-10-19-contest-rules) and [general rules](https://dev.to/page/official-hackathon-rules) at publication. Writing is the most heavily weighted criterion; no numeric weights or winning probability are invented here.
 
-The existing Week 1/2 posts and agreements do not authorize acceptance of a new Week 3 entry agreement. No Week 3 post has been published or external DEV draft saved in this session. The complete Markdown draft is local and reviewable. Once access and final verification are available, update the same intended entry rather than creating duplicate submissions.
+The existing Week 1/2 posts and agreements do not authorize acceptance of a new Week 3 entry agreement. No Week 3 post has been published. DEV draft 7322997 is saved and reviewable, with required tags and truthful AI disclosure. Its preview token is not retained in source. The Markdown also remains local. Once access and final verification are available, update the same intended entry rather than creating duplicate submissions.

@@ -8,7 +8,7 @@ A new Hacktoberfest Week 3 project, begun **23 October 2026**. ReviewRadar reads
 
 ## Project status
 
-The complete local workflow is implemented and has passed API, persistence, adversarial and DOM integration checks. **This is a preview release, not a completed contest submission.** An initial rendered desktop/mobile pass and a real import-to-model browser flow exposed issues now covered by regression fixes. Browser access was disabled again before the corrected build could be visually retested; final keyboard/accessibility verification and genuine contributor validation remain incomplete. See the [follow-up audit](docs/15-FOLLOW-UP-AUDIT.md) for exact results and limits.
+The complete local workflow is implemented and has passed API, persistence, adversarial and DOM integration checks. **This is a preview release, not a completed contest submission.** The corrected compact workbench has now received a rendered desktop and 320 px check with no observed page-level horizontal overflow. A real service interruption reproduced a failed note save, retained the typed draft, and recovered through Retry connection to a successful save; saved-history Escape/return focus was also checked. These bounded observations are not a complete screen-reader or reduced-motion audit, and no genuine contributor trial has occurred. A separate macOS lifecycle issue remains: jobs launched from ChatGPT were removed when ChatGPT quit. The new user-run launcher addresses how jobs are started, but survival after quitting ChatGPT has not yet been verified. See [reliability and practical use](docs/16-RELIABILITY-AND-PRACTICAL-USE.md) for current evidence and the [earlier follow-up audit](docs/15-FOLLOW-UP-AUDIT.md) for the preceding findings.
 
 ## Planning package
 
@@ -63,14 +63,16 @@ Leave that model process running in a separate terminal. The launcher verifies t
 
 ## Keep the app running on this Mac
 
-The foreground commands above stop when their terminal/process stops. An open browser tab cannot keep either service alive. For a durable **macOS login-session** service, after setup and with the pinned artifacts available:
+The foreground commands above stop when their terminal/process stops. An open browser tab cannot keep either service alive. After setup and with the pinned artifacts available, configure the **macOS login-session** services from your own Terminal:
 
 ```sh
 .venv/bin/python scripts/local_services.py start --runtime /absolute/path/to/llama-server --model /absolute/path/to/gemma-4-E2B-it-Q4_0.gguf
 .venv/bin/python scripts/local_services.py status
 ```
 
-The paths are saved privately under the ignored `.runtime/services/` directory. Later starts need only `.venv/bin/python scripts/local_services.py start`. Stop both owned services with `.venv/bin/python scripts/local_services.py stop`. These project-specific loopback jobs survive the chat/terminal closing and restart crashes. They end at logout/reboot; no login-startup item is installed. Start again after signing in. Other applications and occupied unmanaged ports are never taken over.
+The paths are saved privately under the ignored `.runtime/services/` directory. For later starts, **double-click `Start ReviewRadar.command` in Finder**, which opens the launcher in Terminal. It first stops and then restarts only this project's owned jobs instead of reusing jobs previously attributed to ChatGPT. This interrupts an in-flight import or analysis; wait for work to finish first. Persisted snapshots, analyses and saved notes remain in the local database. Unsaved notes remain only in their open browser tab; save them before closing or reloading it.
+
+Use `Stop ReviewRadar.command` to stop this project's services, or run `.venv/bin/python scripts/local_services.py stop` from the project folder. While loaded, the jobs use launchd's crash-restart mechanism. **Do not assume they survive quitting ChatGPT:** macOS logs showed that jobs launched from ChatGPT were attributed to that app and removed on its quit, even though their process parent was PID 1. Starting through Finder/your own Terminal is the intended correction, but a full ChatGPT-quit survival check remains outstanding. No login-startup item is installed; start again after logout/reboot. Other applications and occupied unmanaged ports are never taken over.
 
 The page checks the actual model identity/context before advertising readiness. A missing model leaves source reading and the explicit chronology baseline usable. If the app restarts, expired browser sessions refresh once after an authentication rejection. Network failures do not automatically repeat model runs or writes; unsaved notes remain in the open tab while you reconnect. Do not reload before saving a note. See [reliability and practical use](docs/16-RELIABILITY-AND-PRACTICAL-USE.md).
 

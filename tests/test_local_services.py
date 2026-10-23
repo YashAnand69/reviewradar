@@ -287,3 +287,109 @@ def test_start_readiness_fails_promptly_if_registered_job_disappears(
 def test_validation_rejects_missing_frontend_before_start(manager, tmp_path):
     with pytest.raises(services.ServiceError, match="Python environment is missing"):
         services.LocalServices.validate(manager, config(tmp_path))
+
+
+@pytest.mark.parametrize("explicit", [False, True])
+def test_cli_check_validates_without_service_operations(
+    manager, tmp_path, monkeypatch, capsys, explicit
+):
+    configuration = config(tmp_path)
+    manager.write_configuration(configuration)
+    before = {path.name: path.read_bytes() for path in manager.directory.iterdir()}
+    validated = []
+    monkeypatch.setattr(manager, "validate", lambda value: validated.append(value))
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError(
+            "Preflight must not inspect, start, stop or write services"
+        )
+
+    for name in (
+        "launchctl",
+        "start",
+        "stop",
+        "status",
+        "inspect",
+        "write_configuration",
+    ):
+        monkeypatch.setattr(manager, name, forbidden)
+    monkeypatch.setattr(services, "LocalServices", lambda: manager)
+    monkeypatch.setattr(services.sys, "platform", "darwin")
+    arguments = ["local_services.py", "check"]
+    if explicit:
+        arguments += [
+            "--runtime",
+            configuration["runtime"],
+            "--model",
+            configuration["model"],
+        ]
+    monkeypatch.setattr(services.sys, "argv", arguments)
+    assert services.main() == 0
+    assert validated == [configuration]
+    report = json.loads(capsys.readouterr().out)
+    assert report["services_changed"] is False
+    assert "not by this preflight" in report["note"]
+    assert {
+        path.name: path.read_bytes() for path in manager.directory.iterdir()
+    } == before
+
+
+@pytest.mark.parametrize(
+    "saved", [None, "{invalid json", '{"runtime": "/only-runtime"}']
+)
+def test_cli_check_reports_missing_or_malformed_config_without_mutation(
+    manager, monkeypatch, capsys, saved
+):
+    if saved is not None:
+        manager.directory.mkdir(parents=True)
+        manager.config_file.write_text(saved)
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("Invalid preflight must not change services")
+
+    for name in (
+        "launchctl",
+        "start",
+        "stop",
+        "status",
+        "inspect",
+        "write_configuration",
+    ):
+        monkeypatch.setattr(manager, name, forbidden)
+    monkeypatch.setattr(services, "LocalServices", lambda: manager)
+    monkeypatch.setattr(services.sys, "platform", "darwin")
+    monkeypatch.setattr(services.sys, "argv", ["local_services.py", "check"])
+    assert services.main() == 1
+    assert "ReviewRadar services:" in capsys.readouterr().err
+    if saved is None:
+        assert not manager.directory.exists()
+    else:
+        assert manager.config_file.read_text() == saved
+
+
+def test_cli_check_reports_invalid_artifact_before_service_operations(
+    manager, tmp_path, monkeypatch, capsys
+):
+    manager.write_configuration(config(tmp_path))
+
+    def invalid_artifact(value):
+        raise services.ServiceError("Model is missing")
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("Preflight must not change services")
+
+    monkeypatch.setattr(manager, "validate", invalid_artifact)
+    for name in (
+        "launchctl",
+        "start",
+        "stop",
+        "status",
+        "inspect",
+        "write_configuration",
+    ):
+        monkeypatch.setattr(manager, name, forbidden)
+    monkeypatch.setattr(services, "LocalServices", lambda: manager)
+    monkeypatch.setattr(services.sys, "platform", "darwin")
+    monkeypatch.setattr(services.sys, "argv", ["local_services.py", "check"])
+    assert services.main() == 1
+    assert "Model is missing" in capsys.readouterr().err
