@@ -1,0 +1,14 @@
+.DS_Store
+node_modules/
+frontend/dist/
+.venv/
+.runtime/
+.data/
+.model/
+outputs/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+.env.*
+!.env.example
