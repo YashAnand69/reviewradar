@@ -27,3 +27,6 @@ JSON errors {detail:string}. Bounds defined centrally. All app writes require ex
 
 ## Deliberate deferrals
 Snooze, automatic background refresh, private repositories, GitHub writes, per-diff code verification, cross-PR duplicate detection and context chunking are excluded from first release. Integration must use this contract or update it before parallel implementation. No one claims above API exists yet.
+
+## Implemented model protocol upgrade
+23 October: two bounded calls separate human request extraction from later-author response matching. The model selects constrained exact passage keys; server reconstructs quotes. Per-request response enums allow only strictly later author passages or null. Both stages independently verify context budgets. Public API Card schema remains unchanged. This prevents invented quote text or mechanically impossible source selections, not semantic mistakes. See evaluation and execution ledger for failed development iterations and final evidence.

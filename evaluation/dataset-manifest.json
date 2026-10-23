@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-23T08:06:29.638832+00:00",
+  "source": "read-only GitHub GraphQL via canonical github.py intake",
+  "fetched_at": "2026-10-23T08:02:44.527280Z",
+  "scope": "human_review",
+  "public_sample": {
+    "path": "fixtures/public/historical-sample.json",
+    "snapshot_id": "e840af628890b073128f5af9dc715a934994aa89c655b0bfc2a3f139080728bb",
+    "complete": false,
+    "requests": 3,
+    "sources": 6,
+    "description": "Exact full bodies of selected short reviewer requests and author replies; other context deliberately omitted and flagged."
+  },
+  "development_prs": [
+    "fossasia/eventyay#6104",
+    "fossasia/visdom#1872"
+  ],
+  "holdout_prs": [
+    "fossasia/visdom#1864",
+    "fossasia/voxbento#718"
+  ],
+  "split_policy": "Whole PRs; Eventyay first proof was already inspected before labels and is development-only. Visdom1872 declared development. No model output on holdout PRs inspected during annotation. Do not tune after examining held-out predictions and call the result untouched.",
+  "counts": {
+    "distinct_prs": 4,
+    "development_requests": 4,
+    "holdout_requests": 3,
+    "complete_fetched_sources": 53
+  },
+  "raw_snapshots": [
+    {
+      "pr_id": "fossasia/eventyay#6104",
+      "url": "https://github.com/fossasia/eventyay/pull/6104",
+      "state_at_fetch": "MERGED",
+      "head_sha_at_fetch": "a299077b92bb7556a9db5823522cb5419b1829e4",
+      "local_ignored_path": "outputs/fossasia-eventyay-6104-snapshot.json",
+      "snapshot_id": "6cb0121d0a27c33aaadb29df330a09ca8a8550410955d6f8e8837f6055dbc844",
+      "sha256": "acc5bc18ae9254b4d557edb1a1f09a056c1a6f74a0203f24acb9e5e908a8552c",
+      "complete": true,
+      "sources": 9
+    },
+    {
+      "pr_id": "fossasia/visdom#1864",
+      "url": "https://github.com/fossasia/visdom/pull/1864",
+      "state_at_fetch": "CLOSED",
+      "head_sha_at_fetch": "3b6a12d621a2a4425cc73b06b3f63613754d7afe",
+      "local_ignored_path": "outputs/fossasia-visdom-1864-snapshot.json",
+      "snapshot_id": "f91ee5c7215214efa1149fc19645b2e9fe126af14549d365ea811d58a609397a",
+      "sha256": "3cc650a30f2fc941e6bbe51b7feb3a1edb9f38680a8b667d541eb4a7b42a7fe3",
+      "complete": true,
+      "sources": 10
+    },
+    {
+      "pr_id": "fossasia/visdom#1872",
+      "url": "https://github.com/fossasia/visdom/pull/1872",
+      "state_at_fetch": "OPEN",
+      "head_sha_at_fetch": "490a7f140cae171e8e19543b13a17078c7cb6d29",
+      "local_ignored_path": "outputs/fossasia-visdom-1872-snapshot.json",
+      "snapshot_id": "0876be78e143097719cc7a4a6ca9a8d019b204a507dcec47b73fed324c80e962",
+      "sha256": "4f19f84260077ffa8fb232ec4ec22cfec881bc6af5669f20085bab972f3f6c90",
+      "complete": true,
+      "sources": 16
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "url": "https://github.com/fossasia/voxbento/pull/718",
+      "state_at_fetch": "CLOSED",
+      "head_sha_at_fetch": "7a678e2ec681d07b80cf78b0d5d2ccdce5c173a3",
+      "local_ignored_path": "outputs/fossasia-voxbento-718-snapshot.json",
+      "snapshot_id": "b6dd84082b464397fe10e50f057547a20068de1c9bd7b0e41d157a64ce832b18",
+      "sha256": "aeaeb72e9575cea9c28857275a125814a5db8d96931a41a88d06f3423c246bbd",
+      "complete": true,
+      "sources": 18
+    }
+  ],
+  "rights": "Original software license does not relicense third-party comments. Minimal public excerpts are attributed; full source snapshots remain local ignored outputs. See fixtures/public/PROVENANCE.md.",
+  "label_files": [
+    {
+      "path": "evaluation/labels-development.json",
+      "sha256": "82cf63ff0f51e38e1c91d63a658671b1d5e55e248e4325b8425148c48546998b",
+      "expected_requests": 4
+    },
+    {
+      "path": "evaluation/labels-holdout.json",
+      "sha256": "514309f3f9fe15ab37af78987dcb1c0a428f3df24103e06548be203ed8b6476d",
+      "expected_requests": 3
+    }
+  ]
+}

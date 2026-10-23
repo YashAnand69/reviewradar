@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "split": "holdout",
+  "scope": "human_review",
+  "label_kind": "engineering annotations, not participant trial or independent customer ground truth",
+  "labelled_at": "2026-10-23T08:06:29.638605+00:00",
+  "snapshot_fetched_at": "2026-10-23T08:02:44.527280Z",
+  "prs": [
+    "fossasia/visdom#1864",
+    "fossasia/voxbento#718"
+  ],
+  "expected_requests": [
+    {
+      "request": {
+        "comment_id": "review:5331006755",
+        "quote": "can you clarify whether Python 3.14 is an intended supported environment for Visdom"
+      },
+      "response": {
+        "comment_id": "comment:5863247486",
+        "quote": "This PR fixes the Python 3.14 *development pre-commit hook* reported in #1862; it does not add Visdom runtime support for 3.14."
+      },
+      "category": "question",
+      "expected_interpretation": "possibly_responded",
+      "annotation_note": "",
+      "pr_id": "fossasia/visdom#1864"
+    },
+    {
+      "request": {
+        "comment_id": "comment:5866941458",
+        "quote": "keep the existing Black version and explicitly run the pre-commit hook with an interpreter version that the project currently validates"
+      },
+      "response": {
+        "comment_id": "comment:5874121517",
+        "quote": "I revised the branch along the interpreter-pinning route you suggested."
+      },
+      "category": "suggestion",
+      "expected_interpretation": "possibly_responded",
+      "annotation_note": "Question phrased as an alternative; preserve optionality. The later closure is not a request to reopen or a proof the implementation was accepted.",
+      "pr_id": "fossasia/visdom#1864"
+    },
+    {
+      "request": {
+        "comment_id": "comment:6050622447",
+        "quote": "I explicitly requested to author the patch for it as part of our coordinated disclosure"
+      },
+      "response": {
+        "comment_id": "comment:6052222483",
+        "quote": "I’m closing this PR to leave the patch with you."
+      },
+      "category": "unclear",
+      "expected_interpretation": "possibly_responded",
+      "annotation_note": "Indirect coordination request to respect reporter ownership, not a code-change obligation. Closed PR is historical only; no reminder to reopen.",
+      "pr_id": "fossasia/voxbento#718"
+    }
+  ],
+  "non_request_sources": [
+    {
+      "pr_id": "fossasia/visdom#1864",
+      "comment_id": "comment:5853091688",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/visdom#1864",
+      "comment_id": "comment:5853094185",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/visdom#1864",
+      "comment_id": "review:5329015843",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/visdom#1864",
+      "comment_id": "review:5329782037",
+      "reason": "empty review state only"
+    },
+    {
+      "pr_id": "fossasia/visdom#1864",
+      "comment_id": "comment:5863247486",
+      "reason": "author response/update is not reviewer request"
+    },
+    {
+      "pr_id": "fossasia/visdom#1864",
+      "comment_id": "comment:5873488430",
+      "reason": "context/approval/closure or repeated agreement, not a distinct newly requested action",
+      "requires_semantic_review": true
+    },
+    {
+      "pr_id": "fossasia/visdom#1864",
+      "comment_id": "comment:5874121517",
+      "reason": "author response/update is not reviewer request"
+    },
+    {
+      "pr_id": "fossasia/visdom#1864",
+      "comment_id": "comment:5912447063",
+      "reason": "context/approval/closure or repeated agreement, not a distinct newly requested action",
+      "requires_semantic_review": true
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "comment:6044773935",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "comment:6044774296",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "comment:6044774846",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "review:5447011987",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "inline:4210852494",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "review:5447024836",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "inline:4211034608",
+      "reason": "author response/update is not reviewer request"
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "review:5447242617",
+      "reason": "author response/update is not reviewer request"
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "inline:4211054685",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "review:5447265493",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "inline:4211102621",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "review:5447320935",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "inline:4211119161",
+      "reason": "author response/update is not reviewer request"
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "review:5447340090",
+      "reason": "author response/update is not reviewer request"
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "inline:4211124495",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "review:5447346220",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/voxbento#718",
+      "comment_id": "comment:6052222483",
+      "reason": "author response/update is not reviewer request"
+    }
+  ],
+  "limitations": [
+    "Small single-author portfolio with related projects; not representative of arbitrary repositories.",
+    "Request boundaries and optionality can have legitimate alternate annotations. Compare semantic coverage, not exact wording alone.",
+    "A response is conversational evidence, not proof of a correct code fix.",
+    "All actual metadata uses the fetch date; no invented historical cutoff."
+  ]
+}

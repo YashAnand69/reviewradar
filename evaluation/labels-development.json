@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "split": "development",
+  "scope": "human_review",
+  "label_kind": "engineering annotations, not participant trial or independent customer ground truth",
+  "labelled_at": "2026-10-23T08:06:29.638134+00:00",
+  "snapshot_fetched_at": "2026-10-23T08:02:44.527280Z",
+  "prs": [
+    "fossasia/eventyay#6104",
+    "fossasia/visdom#1872"
+  ],
+  "expected_requests": [
+    {
+      "request": {
+        "comment_id": "review:5396298833",
+        "quote": "as part of the pr raising process we expect a video or attached screenshots on the pr"
+      },
+      "response": {
+        "comment_id": "comment:5965628217",
+        "quote": "Added local Talk preview screenshots to the description"
+      },
+      "category": "change",
+      "expected_interpretation": "possibly_responded",
+      "annotation_note": "Author reports screenshots; this is not independent proof of the screenshot content or code correctness.",
+      "pr_id": "fossasia/eventyay#6104"
+    },
+    {
+      "request": {
+        "comment_id": "review:5331043111",
+        "quote": "Please update the PR description according to the PR template otherwise the PR will be marked as blocked."
+      },
+      "response": {
+        "comment_id": "comment:5863247331",
+        "quote": "I’ve updated the description to use every section and checklist item"
+      },
+      "category": "change",
+      "expected_interpretation": "possibly_responded",
+      "annotation_note": "",
+      "pr_id": "fossasia/visdom#1872"
+    },
+    {
+      "request": {
+        "comment_id": "review:5336051374",
+        "quote": "@YashAnand69 I think preserving the input dtype causes integer bool image batches to crash in Image.fromArray"
+      },
+      "response": {
+        "comment_id": "comment:5874038042",
+        "quote": "I reproduced the Pillow crash with bool, int16, and int32 batches."
+      },
+      "category": "change",
+      "expected_interpretation": "possibly_responded",
+      "annotation_note": "A bug report implies a request to inspect; no direct imperative is required.",
+      "pr_id": "fossasia/visdom#1872"
+    },
+    {
+      "request": {
+        "comment_id": "review:5349785561",
+        "quote": "@YashAnand69 One issue I noticed opts.normalize=True is ignored for uint8 batches. Could you take a look at this?"
+      },
+      "response": {
+        "comment_id": "comment:5891608254",
+        "quote": "I reproduced the uint8 `opts.normalize=True` regression, then restored the existing float-grid path when normalization is requested."
+      },
+      "category": "change",
+      "expected_interpretation": "possibly_responded",
+      "annotation_note": "",
+      "pr_id": "fossasia/visdom#1872"
+    }
+  ],
+  "non_request_sources": [
+    {
+      "pr_id": "fossasia/eventyay#6104",
+      "comment_id": "comment:5951039233",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/eventyay#6104",
+      "comment_id": "comment:5951043929",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/eventyay#6104",
+      "comment_id": "comment:5951044183",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/eventyay#6104",
+      "comment_id": "review:5391104855",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/eventyay#6104",
+      "comment_id": "comment:5965628217",
+      "reason": "author response/update is not reviewer request"
+    },
+    {
+      "pr_id": "fossasia/eventyay#6104",
+      "comment_id": "comment:5978625108",
+      "reason": "author response/update is not reviewer request"
+    },
+    {
+      "pr_id": "fossasia/eventyay#6104",
+      "comment_id": "review:5409815405",
+      "reason": "context/approval/closure or repeated agreement, not a distinct newly requested action",
+      "requires_semantic_review": true
+    },
+    {
+      "pr_id": "fossasia/eventyay#6104",
+      "comment_id": "review:5411957233",
+      "reason": "empty review state only"
+    },
+    {
+      "pr_id": "fossasia/visdom#1872",
+      "comment_id": "comment:5853392774",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/visdom#1872",
+      "comment_id": "comment:5853394737",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/visdom#1872",
+      "comment_id": "review:5329133329",
+      "reason": "automated source excluded from human-review queue"
+    },
+    {
+      "pr_id": "fossasia/visdom#1872",
+      "comment_id": "comment:5863247331",
+      "reason": "author response/update is not reviewer request"
+    },
+    {
+      "pr_id": "fossasia/visdom#1872",
+      "comment_id": "comment:5874038042",
+      "reason": "author response/update is not reviewer request"
+    },
+    {
+      "pr_id": "fossasia/visdom#1872",
+      "comment_id": "comment:5891608254",
+      "reason": "author response/update is not reviewer request"
+    },
+    {
+      "pr_id": "fossasia/visdom#1872",
+      "comment_id": "review:5364184502",
+      "reason": "empty review state only"
+    },
+    {
+      "pr_id": "fossasia/visdom#1872",
+      "comment_id": "review:5364626140",
+      "reason": "empty review state only"
+    },
+    {
+      "pr_id": "fossasia/visdom#1872",
+      "comment_id": "review:5366890790",
+      "reason": "empty review state only"
+    },
+    {
+      "pr_id": "fossasia/visdom#1872",
+      "comment_id": "comment:5978712332",
+      "reason": "author response/update is not reviewer request"
+    },
+    {
+      "pr_id": "fossasia/visdom#1872",
+      "comment_id": "comment:5999219189",
+      "reason": "author response/update is not reviewer request"
+    },
+    {
+      "pr_id": "fossasia/visdom#1872",
+      "comment_id": "comment:6074466437",
+      "reason": "author response/update is not reviewer request"
+    },
+    {
+      "pr_id": "fossasia/visdom#1872",
+      "comment_id": "comment:6233692782",
+      "reason": "automated source excluded from human-review queue"
+    }
+  ],
+  "limitations": [
+    "Small single-author portfolio with related projects; not representative of arbitrary repositories.",
+    "Request boundaries and optionality can have legitimate alternate annotations. Compare semantic coverage, not exact wording alone.",
+    "A response is conversational evidence, not proof of a correct code fix.",
+    "All actual metadata uses the fetch date; no invented historical cutoff."
+  ]
+}

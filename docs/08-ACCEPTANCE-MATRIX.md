@@ -43,22 +43,22 @@ Severity: **Blocker** prevents publishing the affected claim/path; **Required** 
 
 ## PRD traceability
 
-Matrix IDs use the unique `A` prefix; PRD requirement IDs remain separate. The following maps requirements to acceptance evidence, without claiming passage.
+Matrix IDs use the unique `A` prefix; PRD requirement IDs use `PRD01`–`PRD12` and remain separate. The following maps requirements to acceptance evidence, without claiming passage.
 
 | PRD requirement | Matrix IDs |
 | --- | --- |
-| PRD P01: first-run sample | A03, A18, A30 |
-| PRD P02: validated import | A04, A05, A06, A26 |
-| PRD P03: persistent incompleteness | A05, A11, A20 |
-| PRD P04: valid bound evidence | A07, A09, A10 |
-| PRD P05: distinct requests and non-requests | A12, A13, A14, A15 |
-| PRD P06: no automatic completion | A10, A19, A21 |
-| PRD P07: source context and chronology | A05, A12, A19 |
-| PRD P08: persistent reversible decisions | A08, A21, A28 |
-| PRD P09: honest export | A08, A11, A21 |
-| PRD P10: keyboard/mobile/reduced motion | A22, A23 |
-| PRD P11: recoverable model errors | A02, A11, A20 |
-| PRD P12: truthful public versus local | A03, A28, A30, A31 |
+| PRD01: first-run sample | A03, A18, A30 |
+| PRD02: validated import | A04, A05, A06, A26 |
+| PRD03: persistent incompleteness | A05, A11, A20 |
+| PRD04: valid bound evidence | A07, A09, A10 |
+| PRD05: distinct requests and non-requests | A12, A13, A14, A15 |
+| PRD06: no automatic completion | A10, A19, A21 |
+| PRD07: source context and chronology | A05, A12, A19 |
+| PRD08: persistent reversible decisions | A08, A21, A28 |
+| PRD09: honest export | A08, A11, A21 |
+| PRD10: keyboard/mobile/reduced motion | A22, A23 |
+| PRD11: recoverable model errors | A02, A11, A20 |
+| PRD12: truthful public versus local | A03, A28, A30, A31 |
 
 If PRD IDs change, update this map in the same integration change. Automated-source preservation is a source-view requirement, not a promise that the v1 model/baseline extracts bot requests.
 
