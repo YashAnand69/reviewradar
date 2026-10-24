@@ -30,3 +30,7 @@ These observations do not certify every keyboard path, full screen-reader intera
 After the preflight change, the complete Python suite passed: **136 tests and 34 subtests**, including 26 lifecycle checks. Ruff F/E9, shell syntax and whitespace checks passed. The real read-only preflight reported valid prerequisite paths and services_changed false. No launcher restart was executed through Finder/Terminal. Previously passed 48 local frontend and three replay tests remain applicable because no frontend code changed in this follow-up. The existing Starlette/httpx deprecation warning remains.
 
 DEV draft **7322997** was saved and visibly marked Unpublished Post, with devchallenge/hf26challenge/opensource/ai tags and Fully Autonomous article disclosure. It lists Overall and Best Use of Gemma. No Week 3 agreement was accepted and Publish was not clicked. The preview token is not stored in the repository.
+
+## Publication follow-up
+
+The separate user agreement was subsequently received and existing article 7322997 was published on 24 October, 09:29:13 UTC: https://dev.to/yashanand69/reviewradar-the-request-a-possible-reply-and-a-calmer-review-session-486. The browser showed Posted on 24 Oct and the Week 3 banner; the Unpublished Post notice was absent. Required tags, human-role/AI disclosure, Overall/Gemma categories and demo/source links were retained. Publication proof is stored under ignored outputs/week3-publication-proof.jpg. This supersedes only the earlier pending-publication status; technical and user-validation limits remain.

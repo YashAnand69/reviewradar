@@ -1,6 +1,7 @@
 ---
 title: "ReviewRadar: the request, a possible reply, and a calmer review session"
-published: false
+published: true
+canonical_url: https://dev.to/yashanand69/reviewradar-the-request-a-possible-reply-and-a-calmer-review-session-486
 tags: devchallenge, hf26challenge, opensource, ai
 ---
 
@@ -102,6 +103,4 @@ The intended payoff is a calmer way to resume a review session. Whether that sav
 
 ---
 
-**AI assistance disclosure:** AI agents contributed substantially to the code and article. Select the corresponding DEV AI-assistance label before publication. No independent participant trial or human savings claim is asserted.
-
-<!-- PUBLICATION GATE: This local draft is not published. Complete the rendered audit, recheck its factual claims, and obtain the user's Week 3 eligibility/rights/rules confirmation. Remove procedural publication-gate text only after the stated checks actually occur. Do not silently change an unverified check into a claim. -->
+**AI assistance disclosure:** AI agents contributed substantially to the code and article. No independent participant trial or human savings claim is asserted.
