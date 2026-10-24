@@ -1,0 +1,7 @@
+{
+  "frozen_at": "2026-10-24T19:31:26.280617+00:00",
+  "prompt_version": "human-review-passages-v15",
+  "model_implementation_sha256": "ccdbe2f2a967de55ef264ea1521b705488d95433fd0a112f85dd163373f5eae8",
+  "prompt_sha256": "ca6e0aab9e16fab39aa57accf9547f50276cec10d3d0423cedbacb6fda0a03f7",
+  "scope": "One bounded final verification experiment: retain only a subset of extracted source-bound requests, with full reviewer context, before response matching. Motivated by v14 duplicate/non-request cost on exposed broader discussions. New v15 case contents/identities/labels have not been disclosed to developer/root before this freeze. All prior pools now development regression only."
+}

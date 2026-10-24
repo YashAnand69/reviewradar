@@ -1,3 +1,29 @@
+# Current release: source inspection and retained model failures — 25 October 2026
+
+**ReviewRadar is a source-linked reading aid, not an exhaustive task list.** The shipped inference path remains v13. Both v14 and v15 are archived experiments, not promoted defaults. No further semantic tuning is part of this release.
+
+| Evidence | Actual result |
+|---|---|
+| [v14, exposed cases containing the original three misses](v14-development/REPORT.md) | All eight labelled actions covered, previously five. Two duplicates and one insufficient reply remain. |
+| [v14, separately frozen six-PR set](v14-unseen/REPORT.md) | All six labelled actions covered; two duplicate cards; four relevant reply cards and one correct null. Assistant annotations, not independent human truth. |
+| [v14, broader exposed eight-PR set](v14-development/BROAD-REGRESSION.md) | 17 of 18 actions fully expressed, one fragmented. 31 cards include four duplicates and eight non-request/context extras; two primary replies wrong/insufficient. |
+| [v15, broader development](v15-development/BROAD-REGRESSION.md) | Verification removes one image-URL card only; other errors remain, with extra processing. |
+| [v15, separate first-attempt set](v15-unseen/REPORT.md) | Three of eight actions covered, five missed and one false request. Rejected. |
+| [Restored v14 on that now-exposed set](v14-development/RETURN-REGRESSION.md) | Three of eight actions covered, five missed, two false cards. No claim that rollback solves these sources. |
+
+The per-comment change recovers specific known omissions but can increase noise and still miss other requests. The new **Reviewer comments without a request card** panel exposes structurally unrepresented captured reviewer sources. It includes approvals/context, does not classify them as tasks, and cannot detect a missed ask inside a source that already has a card. Source reading and human decisions remain necessary.
+
+The archived v14/v15 candidates added a 12-comment cap, 40-request cap and shared cooperative timeout; those candidate-specific controls are not claimed for v13. The shipped path retains its own source and token-budget validation. Invalid/oversize/failing input stays visibly incomplete. The old v9/v13 replay examples retain their original outputs and versions; their mistakes are not rewritten after a new model run. No genuine participant trial or measured human savings is claimed.
+
+
+## Final live check: failed request-card smoke
+
+After explicitly restoring v13 byte-for-byte (SHA-256 `24caf2b5b4713df24641ebf6c6b66b846e28893bf5aa5900ad66580530bcba47`) and restarting the app, an actual fresh Eventyay #6104 import produced analysis `87965310184944f4b82cf89c675e5401` at `2026-10-24T19:45:08.515464Z`, with prompt version `human-review-passages-v13` and **zero request cards**. Its retained sources include the review requesting screenshots/video. The smoke assertion requiring a card failed. The preceding v14 live attempt also returned zero cards. These results are not substituted with the earlier successful v13 run or excluded because the API returned structurally valid output.
+
+Raw analyses and snapshots are retained privately under ignored `outputs/upgrade/`. This is a current integration/semantic failure, not a fresh benchmark score. The source-inspection panel gives access to unrepresented comments; it does not make the model complete or turn this check into a pass.
+
+---
+
 # Current evaluation — 24 October 2026
 
 **Experimental reading aid: model cards are not a complete list of outstanding work.** Mechanical source checks do not establish conversational relevance or code correctness.
@@ -10,7 +36,7 @@
 | [v12 rejected experiment](v12-development/REPORT.md) | Nine full, one partial, eight missed. Fewer cards concealed substantial recall loss; rejected. |
 | [v13 frozen final, six further PRs](v13-final/REPORT.md) | Eight labels: five covered, three missed; five cards include one duplicate; one insufficient generic-test reply. Two bot-invocation cases correctly produced zero cards. |
 
-Labels are assistant engineering annotations, not independent human truth. Fixed-order whole-PR selection, frozen hashes and first attempts are retained. Sets differ in difficulty: no combined accuracy or percentage improvement is inferred. No prompt tuning followed v13's final test. Its narrow acknowledgement guard and local eligibility enforcement are bounded safeguards, not general intent classification.
+Labels are assistant engineering annotations, not independent human truth. Fixed-order whole-PR selection, frozen hashes and first attempts are retained. Sets differ in difficulty: no combined accuracy or percentage improvement is inferred. The frozen v13 implementation was preserved; later v14/v15 experiments are reported separately and rejected as release defaults. Its narrow acknowledgement guard and local eligibility enforcement are bounded safeguards, not general intent classification.
 
 The mixed replay preserves a separate actual v13 run on a human-only Visdom #1919 excerpt, visibly incomplete, with its missed branch-update ask and poor response retained. It is an exposed demonstration. Original v9 sample unchanged. No genuine trial or measured human savings. See [execution](../docs/19-UPGRADE-EXECUTION.md).
 

@@ -84,6 +84,36 @@ async function openSample() {
 }
 
 describe("evidence workbench integration (DOM simulation, not a visual browser audit)", () => {
+  it("shows captured reviewer sources omitted from a model's zero-card result without inventing tasks", async () => {
+    const changed = structuredClone(packet);
+    const source = changed.snapshot.prs[0].comments.find((comment) =>
+      !comment.is_bot && comment.author.toLowerCase() !== changed.snapshot.prs[0].author.toLowerCase() && comment.body.trim(),
+    )!;
+    const exactBody = source.body;
+    changed.analysis.cards = [];
+    vi.mocked(api.sample).mockResolvedValueOnce(changed as never);
+    const user = userEvent.setup();
+    render(<App />);
+    const explore = await screen.findByRole("button", { name: /Explore the historical sample/ });
+    await waitFor(() => expect(explore.hasAttribute("disabled")).toBe(false));
+    await user.click(explore);
+    const summary = await screen.findByText(/Reviewer comments without a request card/);
+    const panel = summary.closest("details")!;
+    expect(panel.open).toBe(false);
+    await user.click(summary);
+    expect(panel.open).toBe(true);
+    expect(within(panel).getByText(exactBody, { selector: "pre" }).textContent).toBe(exactBody);
+    expect(within(panel).getByText(/These may be approvals or context/)).toBeTruthy();
+    expect(within(panel).getByText(/A comment with a card can still contain missed asks/)).toBeTruthy();
+    expect(within(panel).getAllByRole("link", { name: /Original source on GitHub/ }).some((link) => link.getAttribute("href") === source.url)).toBe(true);
+    expect(screen.queryByText(/All caught up/i)).toBeNull();
+    expect(api.analyse).not.toHaveBeenCalled();
+    expect(api.save).not.toHaveBeenCalled();
+    const baseline = { ...changed.analysis, id: "baseline-source-reading", mode: "baseline", model: null };
+    vi.mocked(api.analyse).mockResolvedValueOnce(baseline as never);
+    await user.click(screen.getByRole("button", { name: /Chronology baseline/ }));
+    await waitFor(() => expect(screen.queryByText(/Reviewer comments without a request card/)).toBeNull());
+  });
   it("opens a fixed mixed example and restores the original example's unsaved decision on return", async () => {
     const user = await openSample();
     await user.type(screen.getByRole("textbox", { name: /Note/ }), "Original example draft");

@@ -10,8 +10,10 @@ import {
   labels,
   normalizeDispositions,
   parseUrls,
+  reviewerCommentsWithoutCards,
   sourceFor,
   validSourceUrl,
+  unrepresentedReviewerCaution,
   verifiedCard,
   visibleCards,
 } from "./domain";
@@ -1392,6 +1394,12 @@ function App() {
                     automated excluded
                   </span>
                 </div>
+                {!isBaseline && (
+                  <ReviewerCommentsWithoutCards
+                    snapshot={snapshot}
+                    analysis={analysis}
+                  />
+                )}
               </>
             )}
             {REPLAY && analysis && (
@@ -1925,10 +1933,47 @@ function EvidenceQuote({
     </section>
   );
 }
-function SourceTimeline({ pr }: { pr: PullRequest }) {
+function ReviewerCommentsWithoutCards({
+  snapshot,
+  analysis,
+}: {
+  snapshot: Snapshot;
+  analysis: Analysis;
+}) {
+  const groups = reviewerCommentsWithoutCards(snapshot, analysis);
+  const count = groups.reduce((total, group) => total + group.comments.length, 0);
+  return (
+    <details className="conversation-context">
+      <summary>
+        Reviewer comments without a request card <span>{count} source comments</span>
+      </summary>
+      <p>{unrepresentedReviewerCaution}</p>
+      {groups.map(({ pr, comments }) => (
+        <section key={pr.id} aria-label={`${pr.id} reviewer comments without cards`}>
+          <h3>{pr.id}</h3>
+          <SourceTimeline pr={pr} comments={comments} />
+        </section>
+      ))}
+      {!count && (
+        <p>
+          Every non-empty human reviewer comment in this snapshot has at least
+          one request card. That does not mean every ask was identified.
+        </p>
+      )}
+    </details>
+  );
+}
+
+function SourceTimeline({
+  pr,
+  comments = pr.comments,
+}: {
+  pr: PullRequest;
+  comments?: SourceComment[];
+}) {
   return (
     <ol className="source-timeline">
-      {[...pr.comments]
+      {[...comments]
         .sort(
           (a, b) =>
             Date.parse(a.created_at) - Date.parse(b.created_at) ||

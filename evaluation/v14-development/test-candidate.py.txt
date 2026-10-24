@@ -1,0 +1,438 @@
+"""Focused extraction boundaries; synthetic cases, not semantic accuracy evidence."""
+
+import json
+
+import httpx
+import pytest
+
+from reviewradar.config import Settings
+from reviewradar.model import (
+    LocalModel,
+    MAX_FOCUSED_COMMENTS,
+    ModelFailure,
+    ModelOutput,
+    Oversize,
+    ResponseLinks,
+    bind_passages,
+    constrained_schema,
+    messages_for,
+)
+from reviewradar.schemas import PR
+
+
+def example(review_bodies=None):
+    review_bodies = review_bodies or [
+        "Please complete the delivery checklist.",
+        "Please retain validation when the option is disabled.",
+    ]
+    comments = []
+    for index, body in enumerate(review_bodies):
+        comments.append(
+            dict(
+                id=f"r{index}",
+                url=f"https://github.com/example/repo/pull/1#issuecomment-{index + 1}",
+                author="reviewer",
+                is_bot=False,
+                kind="comment",
+                body=body,
+                created_at=f"2026-10-23T09:00:{index:02}Z",
+                updated_at=f"2026-10-23T09:00:{index:02}Z",
+            )
+        )
+    comments.append(
+        dict(
+            id="a",
+            url="https://github.com/example/repo/pull/1#issuecomment-99",
+            author="author",
+            is_bot=False,
+            kind="comment",
+            body="Completed the checklist. Retained validation for disabled options.",
+            created_at="2026-10-23T10:00:00Z",
+            updated_at="2026-10-23T10:00:00Z",
+        )
+    )
+    return PR.model_validate(
+        dict(
+            id="example/repo#1",
+            url="https://github.com/example/repo/pull/1",
+            title="Synthetic focused extraction fixture",
+            author="author",
+            state="OPEN",
+            fetched_at="2026-10-23T11:00:00Z",
+            complete=True,
+            warnings=[],
+            comments=comments,
+        )
+    )
+
+
+def output(*keys):
+    return ModelOutput.model_validate(
+        {
+            "cards": [
+                {
+                    "request_passage": key,
+                    "category": "change",
+                    "rationale": "Synthetic ask.",
+                    "uncertainty": ["Not verified"],
+                }
+                for key in keys
+            ]
+        }
+    )
+
+
+def configured(monkeypatch, tmp_path):
+    settings = Settings(root=tmp_path)
+    model = LocalModel(settings)
+    monkeypatch.setattr(model, "_credential", lambda: "synthetic-test-key")
+    monkeypatch.setattr(
+        model,
+        "_request",
+        lambda *_args, **_kwargs: {
+            "data": [{"id": settings.model_name, "meta": {"n_ctx": 16384}}],
+        },
+    )
+    return model
+
+
+def test_focus_keeps_full_reviewer_context_but_only_its_own_source_keys():
+    pr = example()
+    prior = bind_passages(output("r0/p0"), pr, "r0")
+    messages = messages_for(pr, "r1", prior)
+    data = json.loads(messages[1]["content"])
+    assert [comment["id"] for comment in data["reviewer_comments"]] == ["r0", "r1"]
+    assert data["focus_comment_id"] == "r1"
+    assert data["selectable_request_passages"] == ["r1/p0"]
+    assert data["previously_selected_requests"] == [
+        {
+            "source_comment_id": "r0",
+            "quote": pr.comments[0].body,
+        }
+    ]
+    assert messages[0]["role"] == "system" and messages[1]["role"] == "user"
+    schema = constrained_schema(ModelOutput, pr, focus_comment_id="r1")
+    allowed = schema["$defs"]["SpanCandidate"]["properties"]["request_passage"]["enum"]
+    assert allowed == ["r1/p0"]
+    with pytest.raises(ModelFailure, match="ineligible reviewer passage"):
+        bind_passages(output("r0/p0"), pr, "r1")
+
+
+def test_each_comment_is_visited_in_order_before_response_matching(
+    monkeypatch, tmp_path
+):
+    model = configured(monkeypatch, tmp_path)
+    calls = []
+
+    def generate(
+        _client,
+        messages,
+        schema,
+        _budget,
+        _pr,
+        requests=None,
+        focus_comment_id=None,
+        deadline=None,
+    ):
+        calls.append((schema, focus_comment_id, json.loads(messages[1]["content"])))
+        assert deadline is not None
+        if schema is ModelOutput:
+            return output(f"{focus_comment_id}/p0")
+        return ResponseLinks.model_validate(
+            {
+                "links": {
+                    f"request_{i}": {
+                        "response_passage": None,
+                        "rationale": "Not paired.",
+                        "uncertainty": [],
+                    }
+                    for i, _ in enumerate(requests)
+                }
+            }
+        )
+
+    monkeypatch.setattr(model, "_generate", generate)
+    result = model.analyze(example())
+    assert [(schema, focus) for schema, focus, _ in calls] == [
+        (ModelOutput, "r0"),
+        (ModelOutput, "r1"),
+        (ResponseLinks, None),
+    ]
+    assert [card.request_id for card in result] == ["r0", "r1"]
+    assert calls[0][2]["previously_selected_requests"] == []
+    assert len(calls[1][2]["previously_selected_requests"]) == 1
+
+
+def test_identical_text_in_distinct_contexts_is_not_silently_deduplicated(
+    monkeypatch, tmp_path
+):
+    model = configured(monkeypatch, tmp_path)
+
+    def generate(
+        _client,
+        _messages,
+        schema,
+        _budget,
+        _pr,
+        requests=None,
+        focus_comment_id=None,
+        deadline=None,
+    ):
+        if schema is ModelOutput:
+            return output(f"{focus_comment_id}/p0")
+        return ResponseLinks.model_validate(
+            {
+                "links": {
+                    f"request_{i}": {
+                        "response_passage": None,
+                        "rationale": "Read context.",
+                        "uncertainty": [],
+                    }
+                    for i, _ in enumerate(requests)
+                }
+            }
+        )
+
+    monkeypatch.setattr(model, "_generate", generate)
+    result = model.analyze(example(["Please add a test.", "Please add a test."]))
+    assert [card.request_id for card in result] == ["r0", "r1"]
+
+
+def test_later_focus_failure_does_not_return_earlier_partial_cards(
+    monkeypatch, tmp_path
+):
+    model = configured(monkeypatch, tmp_path)
+
+    def generate(
+        _client,
+        _messages,
+        _schema,
+        _budget,
+        _pr,
+        requests=None,
+        focus_comment_id=None,
+        deadline=None,
+    ):
+        if focus_comment_id == "r0":
+            return output("r0/p0")
+        raise Oversize("Synthetic later prompt exceeds its token budget.")
+
+    monkeypatch.setattr(model, "_generate", generate)
+    with pytest.raises(Oversize, match="later prompt"):
+        model.analyze(example())
+
+
+def test_focus_count_cap_rejects_without_dropping_comments_or_starting_generation(
+    monkeypatch, tmp_path
+):
+    model = configured(monkeypatch, tmp_path)
+    monkeypatch.setattr(
+        model, "_generate", lambda *_args, **_kwargs: pytest.fail("Must not generate")
+    )
+    with pytest.raises(Oversize, match="No comments were dropped"):
+        model.analyze(
+            example(["Please inspect this change."] * (MAX_FOCUSED_COMMENTS + 1))
+        )
+
+
+def test_total_request_cap_fails_before_response_matching(monkeypatch, tmp_path):
+    model = configured(monkeypatch, tmp_path)
+    pr = example(
+        [
+            " ".join(f"Please check case {i}." for i in range(40)),
+            "Please update the checklist.",
+        ]
+    )
+
+    def generate(
+        _client,
+        _messages,
+        schema,
+        _budget,
+        _pr,
+        requests=None,
+        focus_comment_id=None,
+        deadline=None,
+    ):
+        assert schema is ModelOutput
+        return (
+            output(*(f"r0/p{i}" for i in range(40)))
+            if focus_comment_id == "r0"
+            else output("r1/p0")
+        )
+
+    monkeypatch.setattr(model, "_generate", generate)
+    with pytest.raises(Oversize, match="No partial request list was saved"):
+        model.analyze(pr)
+
+
+def test_whole_pr_deadline_reduces_each_runtime_request_timeout(monkeypatch, tmp_path):
+    model = configured(monkeypatch, tmp_path)
+    clock = [10.0]
+    monkeypatch.setattr("reviewradar.model.time.monotonic", lambda: clock[0])
+    observed = []
+
+    def post(client, path, _payload, *, deadline=None):
+        observed.append((path, client.timeout.read))
+        clock[0] += 1.0
+        if path == "/apply-template":
+            return {"prompt": "Synthetic template"}
+        if path == "/tokenize":
+            return {"tokens": [1]}
+        return {
+            "choices": [
+                {"finish_reason": "stop", "message": {"content": '{"cards":[]}'}}
+            ]
+        }
+
+    monkeypatch.setattr(model, "_post", post)
+    with httpx.Client() as client:
+        model._generate(
+            client,
+            messages_for(example(), "r0"),
+            ModelOutput,
+            100,
+            example(),
+            focus_comment_id="r0",
+            deadline=20.0,
+        )
+    assert observed == [
+        ("/apply-template", 10.0),
+        ("/tokenize", 9.0),
+        ("/v1/chat/completions", 8.0),
+    ]
+
+
+def test_deadline_expiry_cannot_turn_into_a_successful_empty_queue(
+    monkeypatch, tmp_path
+):
+    model = configured(monkeypatch, tmp_path)
+    clock = [10.0]
+    monkeypatch.setattr("reviewradar.model.time.monotonic", lambda: clock[0])
+    calls = []
+
+    def post(_client, path, _payload, *, deadline=None):
+        calls.append(path)
+        clock[0] = 21.0
+        return {"prompt": "Template arrived too late"}
+
+    monkeypatch.setattr(model, "_post", post)
+    with (
+        httpx.Client() as client,
+        pytest.raises(ModelFailure, match="whole-PR analysis time budget"),
+    ):
+        model._generate(
+            client,
+            messages_for(example(), "r0"),
+            ModelOutput,
+            100,
+            example(),
+            focus_comment_id="r0",
+            deadline=20.0,
+        )
+    assert calls == ["/apply-template"]
+
+
+def test_focused_calls_share_one_pr_deadline_not_one_timeout_each(
+    monkeypatch, tmp_path
+):
+    model = configured(monkeypatch, tmp_path)
+    clock = [10.0]
+    monkeypatch.setattr("reviewradar.model.time.monotonic", lambda: clock[0])
+    calls = []
+
+    def post(_client, path, payload, *, deadline=None):
+        calls.append(path)
+        clock[0] += 25.0
+        if path == "/apply-template":
+            return {"prompt": "Complete focused template"}
+        if path == "/tokenize":
+            return {"tokens": [1]}
+        focus = json.loads(payload["messages"][1]["content"])["focus_comment_id"]
+        return {
+            "choices": [
+                {
+                    "finish_reason": "stop",
+                    "message": {"content": output(f"{focus}/p0").model_dump_json()},
+                }
+            ]
+        }
+
+    monkeypatch.setattr(model, "_post", post)
+    with pytest.raises(ModelFailure, match="whole-PR analysis time budget"):
+        model.analyze(example())
+    assert calls == [
+        "/apply-template",
+        "/tokenize",
+        "/v1/chat/completions",
+        "/apply-template",
+    ]
+
+
+def test_focused_generation_still_checks_actual_tokenized_input_before_inference(
+    monkeypatch, tmp_path
+):
+    model = configured(monkeypatch, tmp_path)
+    calls = []
+
+    def post(_client, path, _payload, *, deadline=None):
+        calls.append(path)
+        return (
+            {"prompt": "Full context"}
+            if path == "/apply-template"
+            else {"tokens": [1] * 101}
+        )
+
+    monkeypatch.setattr(model, "_post", post)
+    with httpx.Client() as client, pytest.raises(Oversize, match="not truncated"):
+        model._generate(
+            client,
+            messages_for(example(), "r0"),
+            ModelOutput,
+            100,
+            example(),
+            focus_comment_id="r0",
+        )
+    assert calls == ["/apply-template", "/tokenize"]
+
+
+def test_trickling_runtime_body_cannot_outlive_the_shared_deadline(monkeypatch):
+    clock = [10.0]
+    monkeypatch.setattr("reviewradar.model.time.monotonic", lambda: clock[0])
+    yielded = []
+    closed = []
+
+    class TricklingBody(httpx.SyncByteStream):
+        def __iter__(self):
+            for part in [b'{"data":', b"[]", b"}"]:
+                clock[0] += 2.0
+                yielded.append(part)
+                yield part
+
+        def close(self):
+            closed.append(True)
+
+    transport = httpx.MockTransport(
+        lambda _request: httpx.Response(200, stream=TricklingBody())
+    )
+    with httpx.Client(transport=transport) as client:
+        with pytest.raises(ModelFailure, match="whole-PR analysis time budget"):
+            LocalModel._request(
+                client, "GET", "http://127.0.0.1/v1/models", deadline=13.0
+            )
+    assert yielded == [b'{"data":', b"[]"]
+    assert closed == [True]
+
+
+def test_expired_deadline_prevents_opening_a_runtime_request(monkeypatch):
+    monkeypatch.setattr("reviewradar.model.time.monotonic", lambda: 20.0)
+    transport = httpx.MockTransport(
+        lambda _request: pytest.fail(
+            "An expired analysis must not open another request"
+        )
+    )
+    with httpx.Client(transport=transport) as client:
+        with pytest.raises(ModelFailure, match="whole-PR analysis time budget"):
+            LocalModel._post(
+                client, "http://127.0.0.1/apply-template", {}, deadline=19.0
+            )

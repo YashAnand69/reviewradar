@@ -62,3 +62,18 @@ Source `81b4020f830e21d06ec5c5c9b2a3e7c99b7cf597`; public replay `a5fa3a73bcaddd
 Mixed JSON, original JSON, screenshot, export and built assets deployed; public mixed JSON/export/image/index returned200 and exact build bytes. Public browser opened mixed example with dates/incomplete warnings and no model controls; 320px rendered detail had documentwidth305 within viewport320, then override reset. Existing DEV article7322997 updated with human role, truthful AI disclosure, new examples, exported artifact and unfavourable final evaluation. Public banner/tags/categories retained; embedded image loaded800px. No duplicate entry.
 
 No genuine trial or completed long recording. User-start then ChatGPT-quit check still outstanding. Semantic misses remain documented in final v13 evaluation; no perfect-model or winning claim.
+
+## 25 October follow-up
+
+- [x] Source-inspection panel reviewed; zero-card and omitted-source behavior covered by regression tests.
+- [x] Trial guide published; existing recruitment issue updated without duplicate invitations.
+- [x] Candidate failures retained; v14/v15 not promoted; shipped v13 restored exactly.
+- [x] 165 Python tests + 34 subtests; 66 local frontend + six replay tests; type/build and Ruff passed locally.
+- [x] Saved-sample/baseline HTTP persistence/reopen/export smoke passed separately.
+- [ ] Live model request-card smoke: **failed**, confirmed v13 returned zero cards on a fresh Eventyay #6104 import. Not certified reliable.
+- [ ] Actual independent contributor trial: zero responses at latest check.
+- [ ] One authorized DEV invitation and revised article update: prepared, browser access disabled, not posted.
+- [ ] User-started Terminal → ChatGPT quit → independent browser lifecycle check: pending. Agent-started foreground readiness/cleanup is verified separately.
+- [ ] Current rendered-browser audit of trial and source panel: pending browser access.
+
+[Full current record](20-REMAINING-GAPS.md). These open items do not become complete through passing automated tests or publication.

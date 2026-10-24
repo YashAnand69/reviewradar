@@ -56,6 +56,30 @@ export function evidenceSummary(card: Card): string {
     ? "A reviewer passage is paired with a later author passage. Compare both in context; their relationship has not been verified."
     : "A reviewer passage is shown without a matched author reply. Read the full conversation before deciding what needs attention.";
 }
+export const unrepresentedReviewerCaution =
+  "These may be approvals or context, or requests the model missed. A comment with a card can still contain missed asks. Inspect captured sources; not complete review coverage.";
+
+export function reviewerCommentsWithoutCards(
+  snapshot: Snapshot,
+  analysis: Analysis,
+): { pr: PullRequest; comments: SourceComment[] }[] {
+  if (analysis.mode !== "model") return [];
+  return snapshot.prs.flatMap((pr) => {
+    const represented = new Set(
+      analysis.cards
+        .filter((card) => card.pr_id === pr.id)
+        .map((card) => card.request.comment_id),
+    );
+    const comments = pr.comments.filter(
+      (comment) =>
+        !comment.is_bot &&
+        comment.author.toLowerCase() !== pr.author.toLowerCase() &&
+        !!comment.body.trim() &&
+        !represented.has(comment.id),
+    );
+    return comments.length ? [{ pr, comments }] : [];
+  });
+}
 export function displayDate(value: string): string {
   const date = new Date(value);
   return Number.isNaN(date.getTime())

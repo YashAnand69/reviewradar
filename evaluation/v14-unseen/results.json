@@ -1,0 +1,184 @@
+{
+  "scored_at": "2026-10-24T19:26:04.225369+00:00",
+  "kind": "first-attempt reserved assistant-labelled engineering evaluation",
+  "labels_sha256": "e9a16610d00b063ec0111f5f2248cfcb78c66e4d88eb61d6526e1cef1c52a268",
+  "protocol_sha256": "4104ebe77aa0907968959314110b9e1bc77746c3e7b675068637883d667ad839",
+  "freeze_manifest_sha256": "fbac397c932e3362c35dd6b5e25e8e37a1ded27520c5a5a126e6782b5eac5158",
+  "candidate_file_sha256": "bd9e8088be8b8b86e7b7e4d97863292dbc8f28454e918e06465751bb9758b704",
+  "model_implementation_sha256": "5f4eae1bdf0cc265d2ee16e71e3369c39f9f178cc31e7ac6457656ea7d05d2b1",
+  "run_manifest_sha256": "ebb070a2536b4d7ef8b094b1c83cefd2af3e0b961f55e8d29741aab1aad6ea7b",
+  "run_complete": true,
+  "totals": {
+    "labelled_asks": 6,
+    "full": 6,
+    "partial": 0,
+    "missed": 0,
+    "cards": 7,
+    "matched_ask_cards": 5,
+    "duplicate_extras": 2,
+    "unrelated_nonrequest_extras": 0,
+    "relevant_response_cards": 4,
+    "insufficient_response_cards": 0,
+    "correct_absent_response_cards": 1
+  },
+  "mechanical_validation": {
+    "cases_rechecked": 6,
+    "cards_rechecked": 7,
+    "snapshot_file_hashes": "pass",
+    "bound_analysis": "pass"
+  },
+  "timing_seconds": {
+    "median": 2.4585,
+    "minimum": 0.207,
+    "maximum": 5.72,
+    "total": 14.3
+  },
+  "cases": [
+    {
+      "pr_id": "fossasia/visdom#1917",
+      "labelled_asks": 2,
+      "full": 2,
+      "partial": 0,
+      "missed": 0,
+      "cards": 3,
+      "matched_ask_cards": 2,
+      "duplicate_extras": 1,
+      "unrelated_nonrequest_extras": 0,
+      "relevant_response_cards": 2,
+      "insufficient_response_cards": 0,
+      "correct_absent_response_cards": 0,
+      "card_checks": [
+        {
+          "index": 0,
+          "covers": [
+            "undirected-edge-labels"
+          ],
+          "response": "specific_relevant"
+        },
+        {
+          "index": 1,
+          "covers": [
+            "duplicate-edge-regression"
+          ],
+          "response": "specific_relevant"
+        },
+        {
+          "index": 2,
+          "duplicate_of_index": 1,
+          "reason": "Explanation of affected duplicate-edge labels is the reason for the same requested regression."
+        }
+      ]
+    },
+    {
+      "pr_id": "fossasia/visdom#1933",
+      "labelled_asks": 2,
+      "full": 2,
+      "partial": 0,
+      "missed": 0,
+      "cards": 1,
+      "matched_ask_cards": 1,
+      "duplicate_extras": 0,
+      "unrelated_nonrequest_extras": 0,
+      "relevant_response_cards": 1,
+      "insufficient_response_cards": 0,
+      "correct_absent_response_cards": 0,
+      "card_checks": [
+        {
+          "index": 0,
+          "covers": [
+            "embedding-dense-labels",
+            "reuse-lasso-mapping"
+          ],
+          "response": "specific_relevant_for_both"
+        }
+      ]
+    },
+    {
+      "pr_id": "fossasia/visdom#1911",
+      "labelled_asks": 1,
+      "full": 1,
+      "partial": 0,
+      "missed": 0,
+      "cards": 1,
+      "matched_ask_cards": 1,
+      "duplicate_extras": 0,
+      "unrelated_nonrequest_extras": 0,
+      "relevant_response_cards": 1,
+      "insufficient_response_cards": 0,
+      "correct_absent_response_cards": 0,
+      "card_checks": [
+        {
+          "index": 0,
+          "covers": [
+            "column-vector-legend"
+          ],
+          "response": "specific_relevant"
+        }
+      ]
+    },
+    {
+      "pr_id": "fossasia/pslab-app#3654",
+      "labelled_asks": 0,
+      "full": 0,
+      "partial": 0,
+      "missed": 0,
+      "cards": 0,
+      "matched_ask_cards": 0,
+      "duplicate_extras": 0,
+      "unrelated_nonrequest_extras": 0,
+      "relevant_response_cards": 0,
+      "insufficient_response_cards": 0,
+      "correct_absent_response_cards": 0,
+      "card_checks": []
+    },
+    {
+      "pr_id": "openfoodfacts/openfoodfacts-explorer#2061",
+      "labelled_asks": 1,
+      "full": 1,
+      "partial": 0,
+      "missed": 0,
+      "cards": 2,
+      "matched_ask_cards": 1,
+      "duplicate_extras": 1,
+      "unrelated_nonrequest_extras": 0,
+      "relevant_response_cards": 0,
+      "insufficient_response_cards": 0,
+      "correct_absent_response_cards": 1,
+      "card_checks": [
+        {
+          "index": 0,
+          "covers": [
+            "modal-choice"
+          ],
+          "response": "correct_none_visible"
+        },
+        {
+          "index": 1,
+          "duplicate_of_index": 0,
+          "reason": "Inline alternative belongs to the same design-choice question under the frozen grouping policy."
+        }
+      ]
+    },
+    {
+      "pr_id": "holoviz/panel#8851",
+      "labelled_asks": 0,
+      "full": 0,
+      "partial": 0,
+      "missed": 0,
+      "cards": 0,
+      "matched_ask_cards": 0,
+      "duplicate_extras": 0,
+      "unrelated_nonrequest_extras": 0,
+      "relevant_response_cards": 0,
+      "insufficient_response_cards": 0,
+      "correct_absent_response_cards": 0,
+      "card_checks": []
+    }
+  ],
+  "limitations": [
+    "One author; convenience sample; half of cases are Visdom.",
+    "Assistant-created labels and independent agent scoring are not independent human adjudication or a participant trial.",
+    "Small first-attempt result does not prove general recall, fix correctness, time saved or winning probability.",
+    "Two legitimate alternate groupings exist; frozen labels govern primary counts and counter-readings are retained in the report."
+  ]
+}

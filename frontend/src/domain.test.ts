@@ -5,6 +5,8 @@ import {
   exportReview,
   normalizeDispositions,
   parseUrls,
+  reviewerCommentsWithoutCards,
+  unrepresentedReviewerCaution,
   validSourceUrl,
   verifiedCard,
   visibleCards,
@@ -215,6 +217,27 @@ describe("bound evidence rendering", () => {
   });
 });
 describe("attention filters and coverage", () => {
+  it("counts unrepresented reviewer source comments, including context but excluding bots, author and empty text", () => {
+    const changed = structuredClone(snapshot);
+    const original = changed.prs[0].comments[0];
+    changed.prs[0].comments.push(
+      { ...original, id: "approval", body: "Looks good to me." },
+      { ...original, id: "missed", body: "Please update the checklist." },
+      { ...original, id: "bot", body: "Check this output.", is_bot: true },
+      { ...original, id: "author", body: "Author update", author: "contributor" },
+      { ...original, id: "empty", body: "  \n" },
+    );
+    const before = structuredClone(changed);
+    expect(reviewerCommentsWithoutCards(changed, analysis).flatMap((group) => group.comments.map((comment) => comment.id))).toEqual(["approval", "missed"]);
+    expect(changed).toEqual(before);
+    expect(reviewerCommentsWithoutCards(changed, { ...analysis, mode: "baseline" })).toEqual([]);
+  });
+  it("warns that one card cannot establish that all asks inside its comment were found", () => {
+    expect(snapshot.prs[0].comments[0].body).toContain("Also clarify the limit.");
+    expect(reviewerCommentsWithoutCards(snapshot, analysis)).toEqual([]);
+    expect(unrepresentedReviewerCaution).toContain("A comment with a card can still contain missed asks.");
+    expect(reviewerCommentsWithoutCards(snapshot, { ...analysis, cards: [] })[0].comments).toHaveLength(1);
+  });
   it("keeps possible responses and reviewed cards visible by default", () => {
     const dispositions: Record<string, Disposition> = {
       [card.id]: {

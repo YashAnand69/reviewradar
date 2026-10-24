@@ -1,0 +1,7 @@
+{
+  "frozen_at": "2026-10-24T19:16:57.091767+00:00",
+  "prompt_version": "human-review-passages-v14",
+  "model_implementation_sha256": "5f4eae1bdf0cc265d2ee16e71e3369c39f9f178cc31e7ac6457656ea7d05d2b1",
+  "prompt_sha256": "174b6945d0f01c7e63228b8ff3c1c926ad7ad6843ef90097e13935ea89817301",
+  "scope": "Focused per-reviewer-comment extraction with full reviewer context, local focus-key validation, max12 review comments/max40 requests and shared cooperative whole-PR deadline. All earlier v13 evaluation cases exposed; regression only. Additional v14 reserved case identities, source bodies, labels and outputs not read by developer/root before freeze."
+}

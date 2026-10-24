@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "label_kind": "assistant-created engineering annotations; no independent human adjudication",
+  "labelled_at": "2026-10-24T19:33:11.914535+00:00",
+  "scope": "human_review",
+  "expected_requests": [
+    {
+      "id": "test-only-followup",
+      "pr_id": "fossasia/scrum_helper#904",
+      "request_sources": [
+        "comment:6118261319"
+      ],
+      "intent": "Optional follow-up: preserve the unit tests in a separate test-only PR, rather than duplicate already merged production behavior.",
+      "acceptable_response_ids": [],
+      "expected_response": "none_visible",
+      "optional": true,
+      "note": "Conditional invitation is specific to this PR test suite, not a broad invitation to contribute anywhere. No obligation to reopen this closed production PR is inferred."
+    },
+    {
+      "id": "respect-coordinated-patch",
+      "pr_id": "fossasia/voxbento#717",
+      "request_sources": [
+        "comment:6050628561"
+      ],
+      "intent": "Respect the reporter\u2019s already coordinated ownership of this patch and let their implementation proceed.",
+      "acceptable_response_ids": [
+        "comment:6052221761"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "optional": false,
+      "note": "Implicit coordination objection addressed to this PR author, not a literal imperative. Counter-reading: a report of prior coordination without an explicit new request; retain this ambiguity. The author\u2019s later closing/apology directly addresses it."
+    },
+    {
+      "id": "check-reporter-intent",
+      "pr_id": "fossasia/voxbento#716",
+      "request_sources": [
+        "comment:6050609881"
+      ],
+      "intent": "Check whether an issue reporter intends to author the fix before taking future issues.",
+      "acceptable_response_ids": [
+        "comment:6052221006"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "optional": false,
+      "note": "Specific procedural ask directed at the author. Future phrasing does not make it a mere broad invitation to contribute."
+    },
+    {
+      "id": "future-screencast-6220",
+      "pr_id": "fossasia/eventyay#6220",
+      "request_sources": [
+        "comment:6034680165"
+      ],
+      "intent": "Include a screencast in future PRs.",
+      "acceptable_response_ids": [],
+      "expected_response": "none_visible",
+      "optional": false
+    },
+    {
+      "id": "address-ai-reviews-6220",
+      "pr_id": "fossasia/eventyay#6220",
+      "request_sources": [
+        "comment:6034680165"
+      ],
+      "intent": "Address the automated review findings in future PRs.",
+      "acceptable_response_ids": [],
+      "expected_response": "none_visible",
+      "optional": false
+    },
+    {
+      "id": "green-ci-6220",
+      "pr_id": "fossasia/eventyay#6220",
+      "request_sources": [
+        "comment:6034680165"
+      ],
+      "intent": "Ensure CI is passing for future PRs.",
+      "acceptable_response_ids": [],
+      "expected_response": "none_visible",
+      "optional": false
+    },
+    {
+      "id": "future-screencast-6219",
+      "pr_id": "fossasia/eventyay#6219",
+      "request_sources": [
+        "comment:6034640134"
+      ],
+      "intent": "Provide a screencast going forward.",
+      "acceptable_response_ids": [],
+      "expected_response": "none_visible",
+      "optional": false
+    },
+    {
+      "id": "green-ci-6219",
+      "pr_id": "fossasia/eventyay#6219",
+      "request_sources": [
+        "comment:6034640134"
+      ],
+      "intent": "Ensure CI is passing going forward.",
+      "acceptable_response_ids": [],
+      "expected_response": "none_visible",
+      "optional": false
+    }
+  ],
+  "no_request_cases": {
+    "holoviz/panel#8810": [
+      {
+        "id": "comment:6123149749",
+        "reason": "Thanks without a requested author action."
+      }
+    ]
+  },
+  "ambiguity_policy": "Specific future contribution-process requests are actionable procedural asks; generic invitations to future testing/contributions with no concrete applicable action are not. Closed PR state does not erase historical guidance or mean a PR should be reopened. The Voxbento coordinated-ownership objection is implicit; preserve its alternative non-request reading. The Scrum Helper conditional test-only suggestion is optional but concrete. Screencast, automated-review follow-through and CI checks are independent requested actions even if one compound card can explicitly represent several. Source-ID overlap alone does not cover all actions. Existing replies before a later request cannot count as responses to that request.",
+  "limitations": [
+    "Six convenience-sampled PRs from one author; four FOSSASIA repository families and one Panel case, not representative independent feedback.",
+    "Eight assistant-labelled actions, including an implicit coordination objection and specific procedural guidance on closed PRs; labels are not independent human adjudication.",
+    "Six actions have no visible later author response. This does not prove noncompliance in later PRs or make closed PRs current obligations.",
+    "The whole original search80 and every previous capture identity were excluded before fetching these discussion bodies. No model prediction for this pool was inspected before candidate/label freezes.",
+    "These public OSS discussions may have been seen during prior contribution work; unseen means not used in ReviewRadar model development, not historically unknown to the account owner."
+  ]
+}

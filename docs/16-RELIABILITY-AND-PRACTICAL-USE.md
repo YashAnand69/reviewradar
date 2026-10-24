@@ -1,3 +1,26 @@
+# Current startup and analysis reliability — 25 October 2026
+
+The new **foreground** startup path avoids submitting the app/model to launchd. Double-click Start ReviewRadar.command in Finder. It preflights, stops exact owned legacy jobs and starts a supervisor in a dedicated Terminal. Keep that Terminal open; Ctrl+C cleans up only that invocation's process groups. Closing the window ends availability. There is no automatic restart or login startup. Legacy launchd `start` is retained for compatibility, not claimed to solve chat-app attribution.
+
+Thirty-nine lifecycle tests passed, including a real disposable wrapper/descendant cleanup test that preserves an unrelated listener. This proves specific cleanup boundaries. It does not prove a user independently launched Terminal and then quit ChatGPT. Native Terminal control is blocked by this chat's computer-control tool; that actual user step is pending. An actual agent-started foreground session reached app/model readiness, stopped its owned child groups on SIGINT, preserved all saved snapshots/analyses/decisions and restored the previous legacy session. That check is recorded privately in outputs/upgrade/foreground-actual.json. It is not an independently user-started quit test.
+
+For the final check:
+
+1. Save your notes; wait for imports/model runs to finish. Double-click Start ReviewRadar.command in Finder and leave its Terminal open.
+2. From a second independently opened Terminal in this project, run `.venv/bin/python scripts/probe_local.py --seconds 120` if you want a private availability record.
+3. Quit the chat app, then use Safari/Chrome to load `http://127.0.0.1:8893/`, inspect Sources and save/reopen a temporary note. Record actual quit/start/end times and any failure. Reopen the chat app and report the result.
+4. Use Ctrl+C in the supervisor Terminal to stop. Test that this stops only ReviewRadar; do not close unrelated applications. The probe records health only, so its output is not alone proof that a quit occurred.
+
+The v14 focused-comment and v15 verification implementations remain archived experiments, not the default. Their local boundary tests did not establish semantic reliability: both retained misses and noise across separate case sets. The retained v13 inference path also returned zero cards in the final fresh Eventyay #6104 API check. The live smoke's request-card assertion therefore failed; the earlier passing smoke is historical evidence, not this release's outcome. See [all results](../evaluation/REPORT.md).
+
+A collapsed source-inspection panel exposes captured human reviewer comments without a request card, including the zero-card case. It is a reading safeguard, not a model fix: comments may be approvals or context, and a source with one card can still contain a missed ask.
+
+The trial page prepares feedback locally, defaults to no quotation permission, and never uploads responses automatically. The participant chooses whether to download/copy/share in the existing GitHub issue. Synthetic form tests and agent demonstrations do not count as genuine feedback. Recruitment and actual participant completion remain separate.
+
+---
+
+## Historical reliability observations (earlier releases)
+
 # Reliability and practical use — 24 October 2026
 
 ## Why the page said “action did not finish”
@@ -34,7 +57,7 @@ ReviewRadar now emphasizes a short real task, explicit setup/recovery, source-bo
 
 ## Evidence and limits
 
-The execution ledger records test, service restart and real-inference outcomes after integration. Browser access has been intermittent; it recovered for the bounded final-build checks below. These observations do not establish full screen-reader behavior, reduced-motion rendering, every keyboard path or every possible source-body layout. No genuine external contributor trial, testimonial, independent human ground truth or measured human savings is claimed. The local DEV draft remains unpublished pending its separate publication gates.
+The execution ledger records test, service restart and real-inference outcomes after integration. Browser access has been intermittent; it recovered for the bounded final-build checks below. These observations do not establish full screen-reader behavior, reduced-motion rendering, every keyboard path or every possible source-body layout. No genuine external contributor trial, testimonial, independent human ground truth or measured human savings is claimed. At that earlier checkpoint the DEV draft was unpublished; the same entry was subsequently published on 24 October.
 
 ## Final retained engineering evidence
 

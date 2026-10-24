@@ -11,6 +11,7 @@ import time
 
 from reviewradar.analysis import run_analysis, validate_bound_analysis
 from reviewradar.config import Settings
+from reviewradar import model as model_module
 from reviewradar.model import LINK_PROMPT, PROMPT_VERSION, SYSTEM_PROMPT
 from reviewradar.schemas import normalize_snapshot
 
@@ -63,7 +64,12 @@ def main():
         labels_sha256=manifest["labels_sha256"],
         candidate=candidate,
         prompt_sha256=hashlib.sha256(
-            (SYSTEM_PROMPT + LINK_PROMPT).encode()
+            (
+                SYSTEM_PROMPT
+                + getattr(model_module, "FOCUS_PROMPT", "")
+                + getattr(model_module, "VERIFY_PROMPT", "")
+                + LINK_PROMPT
+            ).encode()
         ).hexdigest(),
         model_sha256=sha(Path(config["model"])),
         runtime_sha256=sha(Path(config["runtime"])),

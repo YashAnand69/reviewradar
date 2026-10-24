@@ -51,3 +51,16 @@ Local tests: 59 passed, six replay-mode tests separately passed; local/replay bu
 - Latest feedback request check: open, zero comments. Local app+model healthy. Outstanding: semantic reliability, genuine external trial, complete recording and user-started quit survival. The interactive demo is delivered; none of these outstanding items is falsely marked complete.
 
 Final factual record written 2026-10-24T17:28:15.240124+00:00. Publication proof retained privately in outputs/upgrade/dev-updated-proof.jpg.
+
+## Follow-up — 25 October: remaining gaps
+
+- Added a collapsed model-only panel for captured reviewer comments without a request card, with exact source context and explicit coverage limits. It also works when the model emits zero cards. It neither classifies those comments nor changes GitHub.
+- Archived frozen v14/v15 implementations, annotations and unfavourable case-level results. Neither experiment is promoted. The shipped inference implementation remains byte-identical v13, SHA-256 `24caf2b5b4713df24641ebf6c6b66b846e28893bf5aa5900ad66580530bcba47`.
+- Final actual fresh Eventyay #6104 smoke failed its request-card assertion: confirmed v13 returned zero cards, as did the preceding v14 attempt. Retained raw snapshots and analyses are private ignored outputs. This failure remains unresolved; passing structural tests do not establish semantic reliability.
+- Separate saved-sample/baseline HTTP smoke passed loading, persistence/reopen, independent local decisions and export. It is not a replacement for the failed model check.
+- Final local verification: 165 Python tests and 34 subtests; 66 local frontend tests and six replay tests; TypeScript/build and Ruff. The existing Starlette/httpx warning remains disclosed. Independent review found no panel or frozen-artifact-integrity blocker.
+- The self-guided trial is published, and the single existing GitHub invitation links it. Latest check: zero comments, no genuine participant trial. One authorized DEV invitation is prepared but not posted while browser control is disabled. The local revised article is not claimed externally updated.
+- Thirty-nine lifecycle tests include real disposable process-tree cleanup. Actual agent-started app/model foreground readiness, owned-child shutdown and unchanged saved data were verified. A separately user-started Terminal session surviving a ChatGPT quit remains unverified; native Terminal control is rejected by the computer-control tool.
+- Public trial assets were already verified at Pages `3d7f10c1d22bda8536b802a880f8674cc730bf72`; deployment of the source-inspection panel is recorded separately after release. No current rendered-browser check is claimed while browser control is disabled.
+
+See [remaining-gap record](20-REMAINING-GAPS.md) and [all evaluation results](../evaluation/REPORT.md). Quality, actual feedback and judging outcome remain distinct.

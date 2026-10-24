@@ -63,15 +63,17 @@ The interface now puts a neutral description above a collapsed **Unverified mode
 
 The [evaluation report](https://github.com/YashAnand69/reviewradar/blob/main/evaluation/REPORT.md) retains the original pilot, fresh v10 cases, v11 experiments, a rejected v12 experiment and the frozen v13 final test. These are assistant-labelled engineering studies, not independent customer ground truth or random samples.
 
-In the [final six-PR evaluation](https://github.com/YashAnand69/reviewradar/blob/main/evaluation/v13-final/REPORT.md), eight asks were labelled before inference. Five were covered and three missed. Five output cards included one duplicate; one matched card selected insufficient generic test-pass evidence. A compound card represented two genuine asks. Two no-ask bot-invocation cases correctly produced zero cards. No further prompt tuning followed this test.
+In the [final six-PR evaluation](https://github.com/YashAnand69/reviewradar/blob/main/evaluation/v13-final/REPORT.md), eight asks were labelled before inference. Five were covered and three missed. Five output cards included one duplicate; one matched card selected insufficient generic test-pass evidence. A compound card represented two genuine asks. Two no-ask bot-invocation cases correctly produced zero cards. The frozen v13 implementation was preserved; later v14/v15 experiments are reported separately and rejected as release defaults.
+
+A later focused-comment v14 revision recovered all eight actions on those now-exposed cases; a separate frozen set covered six of six with two duplicates. It still produced considerable noise on larger discussions and missed five of eight actions on another exposed set. Both this focused revision and an extra verification experiment remain archived rather than promoted; the app retains v13. A final fresh live Eventyay #6104 check also returned zero cards with v13, failing the request-card smoke assertion. Earlier passing runs do not override that failure. The [current reports](https://github.com/YashAnand69/reviewradar/blob/main/evaluation/REPORT.md) retain those unfavourable results too. The interface now exposes captured reviewer comments without a request card, so a user can inspect possible omissions; it does not certify complete coverage.
 
 Those denominators matter. Fewer cards can conceal missed work: v12 was rejected after substantial recall loss. Passing exact-source checks cannot establish relevance. Most final cases came from one project and one contributor's history; we do not generalize these results into a reliability percentage.
 
-The recorded engineering checks include **152 Python tests plus 34 subtests and 65 frontend tests**, alongside type checks. These protect source boundaries, migration, recovery and interface behavior; they are not model-accuracy or human-productivity evidence. SQLite migration was rehearsed against a consistent backup before upgrading stored decisions. In-flight save guards prevent duplicate submissions when navigating away and back.
+The recorded engineering checks now include the focused-model, source-inspection, local-only trial and foreground-lifecycle regressions, alongside type checks. Exact version-specific counts are retained in the release record. These protect source boundaries, migration, recovery and interface behavior; they are not model-accuracy or human-productivity evidence. SQLite migration was rehearsed against a consistent backup before upgrading stored decisions. In-flight save guards prevent duplicate submissions when navigating away and back.
 
-Bounded browser checks covered desktop and 320 px layouts, keyboard focus and a failed save followed by reconnection without losing the draft. An emulated reduced-motion preference was checked; a full screen-reader audit was not. Unsaved drafts survive navigation in the open tab, not closing or reloading it.
+Earlier released views received bounded browser checks covering desktop and 320 px layouts, keyboard focus and a failed save followed by reconnection without losing the draft. The new source-inspection panel and trial guide do not yet have a current rendered-browser pass because browser control is disabled. An emulated reduced-motion preference was checked; a full screen-reader audit was not. Unsaved drafts survive navigation in the open tab, not closing or reloading it.
 
-The Mac launcher remains another limitation: the user-started path has not yet been verified through quitting ChatGPT. This is a local application, not an always-on hosted service. Startup success is not evidence of that lifecycle test.
+The Mac launcher now keeps a dedicated foreground Terminal session. An actual agent-started check reached readiness, cleaned its owned children and preserved saved data. The user-started path has not yet been verified through quitting ChatGPT. This is a local application, not an always-on hosted service. Startup success is not evidence of that lifecycle test.
 
 ## Why Does Open Innovation Matter?
 
@@ -85,7 +87,7 @@ I supplied my actual contribution history, chose this project from the researche
 
 AI agents contributed substantially to research, design, implementation, tests and this article. I am not claiming manually written code or independent participant validation. During use, a person still reads the sources, records disagreement and decides what to do next.
 
-A [public trial request](https://github.com/YashAnand69/reviewradar/issues/1) had zero comments at the last check on 24 October. We have no genuine trial or measured time saving. The next product question is whether contributors find the prepared sheet worth its installation and correction costs.
+A [public trial request](https://github.com/YashAnand69/reviewradar/issues/1) had zero comments at the last check on 24 October. We have no genuine trial or measured time saving. A [local-only trial guide](https://yashanand69.github.io/reviewradar/trial.html) now prepares feedback without uploading answers automatically. The next product question is whether contributors find the prepared sheet worth its installation and correction costs.
 
 ## Prize Categories
 

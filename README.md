@@ -10,9 +10,9 @@ A new Hacktoberfest Week 3 project, begun **23 October 2026**. ReviewRadar reads
 
 The [Week 3 entry is published on DEV](https://dev.to/yashanand69/reviewradar-the-request-a-possible-reply-and-a-calmer-review-session-486). This remains an **experimental reading aid**, not a reliable task classifier. Current evaluation retains missed requests, duplicate suggestions and incorrect reply matches; see [evaluation](evaluation/REPORT.md).
 
-Record **Not a request** or **Reply not relevant**, independently of notes and reviewed state. These decisions never rewrite model evidence or update GitHub. Select the original saved example or a mixed-evidence example preserving a real failure. Unsaved drafts survive card/example switches and reconnection in the open tab; save before closing/reloading.
+Record **Not a request** or **Reply not relevant**, independently of notes and reviewed state. These decisions never rewrite model evidence or update GitHub. Select the original saved example or a mixed-evidence example preserving a real failure. A new panel exposes captured reviewer comments without a request card, including possible omissions; it does not certify complete coverage. Unsaved drafts survive card/example switches and reconnection in the open tab; save before closing/reloading.
 
-No genuine contributor trial has occurred. The [feedback request](https://github.com/YashAnand69/reviewradar/issues/1) is open. Jobs launched from ChatGPT were removed on quit; the user-run launcher exists, but its ChatGPT-quit survival test remains outstanding. See [upgrade execution](docs/19-UPGRADE-EXECUTION.md).
+No genuine contributor trial has occurred. The [feedback request](https://github.com/YashAnand69/reviewradar/issues/1) and [local-only trial guide](https://yashanand69.github.io/reviewradar/trial.html) are available. The new foreground launcher keeps the app/model in a dedicated Terminal; its actual ChatGPT-quit test remains outstanding. See [upgrade execution](docs/19-UPGRADE-EXECUTION.md).
 
 ## Planning package
 
@@ -67,18 +67,19 @@ Leave that model process running in a separate terminal. The launcher verifies t
 
 ## Keep the app running on this Mac
 
-The foreground commands above stop when their terminal/process stops. An open browser tab cannot keep either service alive. After setup and with the pinned artifacts available, configure the **macOS login-session** services from your own Terminal:
+After setup, open **your own Terminal** and configure the model/runtime paths once:
 
 ```sh
-.venv/bin/python scripts/local_services.py start --runtime /absolute/path/to/llama-server --model /absolute/path/to/gemma-4-E2B-it-Q4_0.gguf
-.venv/bin/python scripts/local_services.py status
+.venv/bin/python scripts/local_services.py foreground --runtime /absolute/path/to/llama-server --model /absolute/path/to/gemma-4-E2B-it-Q4_0.gguf
 ```
 
-The paths are saved privately under the ignored `.runtime/services/` directory. For later starts, **double-click `Start ReviewRadar.command` in Finder**, which opens the launcher in Terminal. It first stops and then restarts only this project's owned jobs instead of reusing jobs previously attributed to ChatGPT. This interrupts an in-flight import or analysis; wait for work to finish first. Persisted snapshots, analyses and saved notes remain in the local database. Unsaved notes remain only in their open browser tab; save them before closing or reloading it.
+For subsequent starts, **double-click `Start ReviewRadar.command` in Finder**. The launcher checks prerequisites, stops only this project's owned legacy launchd jobs, then runs a visible foreground supervisor in that Terminal. Keep the window open. **Ctrl+C stops this session's app/model children.** Do that before closing its window. There is no detached daemon, automatic restart or login-startup installation. Closing the chat app should not control an independently opened Terminal, but an actual user-start → chat-app quit → independent-browser check is still required before claiming this property verified.
 
-Use `Stop ReviewRadar.command` to stop this project's services, or run `.venv/bin/python scripts/local_services.py stop` from the project folder. While loaded, the jobs use launchd's crash-restart mechanism. **Do not assume they survive quitting ChatGPT:** macOS logs showed that jobs launched from ChatGPT were attributed to that app and removed on its quit, even though their process parent was PID 1. Starting through Finder/your own Terminal is the intended correction, but a full ChatGPT-quit survival check remains outstanding. No login-startup item is installed; start again after logout/reboot. Other applications and occupied unmanaged ports are never taken over.
+The supervisor refuses occupied unmanaged ports and never takes over a process identified by a stale PID. It cleans up its own newly created process groups on startup failure, child exit or interruption. This includes the local model's descendant. Saved SQLite records remain. Save notes before closing/reloading a browser tab; unsaved drafts exist only in that tab. Do not start/stop during an import or inference.
 
-The page checks the actual model identity/context before advertising readiness. A missing model leaves source reading and the explicit chronology baseline usable. If the app restarts, expired browser sessions refresh once after an authentication rejection. Network failures do not automatically repeat model runs or writes; unsaved notes remain in the open tab while you reconnect. Do not reload before saving a note. See [reliability and practical use](docs/16-RELIABILITY-AND-PRACTICAL-USE.md).
+`.venv/bin/python scripts/local_services.py status` distinguishes **legacy job ownership** from **endpoint health**. A healthy foreground session does not appear as a managed launchd job. `Stop ReviewRadar.command` stops only legacy jobs; use Ctrl+C in the foreground Terminal to stop the current session. Legacy `start` remains for compatibility, with its known ChatGPT-attribution limitation.
+
+For a factual lifecycle check, run `.venv/bin/python scripts/probe_local.py --seconds 120` from a second independent Terminal, quit the chat app, and check `http://127.0.0.1:8893/` in Safari/Chrome while it stays closed. Record the actual quit time and browser result. The private probe records read-only endpoint health, not secrets or source contents; health samples alone do not certify that a quit occurred. See [reliability](docs/16-RELIABILITY-AND-PRACTICAL-USE.md).
 
 ## Verify
 
@@ -97,7 +98,7 @@ The public replay is built separately with `python3.12 scripts/build_replay.py`;
 
 ## Evaluation and remaining limits
 
-The original four-PR pilot remains historical evidence. Fresh v10 testing exposed errors; v11 improved a specific response association but retained false tasks. v12 was rejected for losing genuine asks. Final v13 was frozen before six further discussions were labelled/tested: five of eight assistant-labelled asks covered, three missed, one duplicate and one poor response. These are convenience samples, not independent human ground truth or population accuracy. Source validation prevents invalid references, not semantic mistakes.
+The original four-PR pilot remains historical evidence. Fresh v10 testing exposed errors; v11 improved a specific response association but retained false tasks. v12 was rejected for losing genuine asks. The v13 test covered five of eight labelled actions. The v14 focused-comment revision recovered all eight on that exposed regression; a separate frozen six-PR test covered all six labelled actions with two duplicates. A broader set still produced 12 extra cards, and another exposed set retained five misses out of eight. Both v14 and v15 remain archived experiments and are not the shipped inference path. The retained v13 path also returned zero cards on a new live Eventyay #6104 check, failing the smoke test that expected its screenshot request. These adverse results remain in the reports. These are convenience samples, not independent human ground truth or population accuracy. Source validation prevents invalid references, not semantic mistakes.
 
 See [evaluation results](evaluation/REPORT.md) and [release audit](docs/13-INDEPENDENT-CODE-AUDIT.md). No contest win, selection probability, human-only authorship or human time savings is promised.
 

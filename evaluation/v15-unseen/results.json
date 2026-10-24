@@ -1,0 +1,176 @@
+{
+  "scored_at": "2026-10-24T19:35:52.350312+00:00",
+  "kind": "first-attempt reserved engineering evaluation; final v15 experiment",
+  "labels_sha256": "b65e69912cfd6c289df2fe5b97bcb96cc63cd6e607959490beddeae2fd302bb6",
+  "protocol_sha256": "e304fa636ae5a60102f2ef8306dfb410d44bd8faf41a49f5cbfdb7c075816566",
+  "freeze_manifest_sha256": "ea3acb43b557dcb686f4df4391ab8d10b2dccfb6638832a632040dd2d3ed86eb",
+  "candidate_file_sha256": "9be344f87082808556c6be1aece31899f2cdc011836ee5f99d2608c0fc3ddab0",
+  "model_implementation_sha256": "ccdbe2f2a967de55ef264ea1521b705488d95433fd0a112f85dd163373f5eae8",
+  "run_manifest_sha256": "c873bf00dc2480bb8078a4db2baf7f24880fab33133c4d8d6c2fbce5bbc03d48",
+  "run_complete": true,
+  "totals": {
+    "labelled_asks": 8,
+    "full": 3,
+    "partial": 0,
+    "missed": 5,
+    "cards": 3,
+    "matched_ask_cards": 2,
+    "duplicate_extras": 0,
+    "nonrequest_extras": 1,
+    "relevant_response_cards": 0,
+    "insufficient_response_cards": 0,
+    "correct_absent_response_cards": 2
+  },
+  "expected_absent_response_actions": 6,
+  "found_absent_response_actions": 3,
+  "expected_visible_response_actions": 2,
+  "found_visible_response_actions": 0,
+  "mechanical_validation": {
+    "cases_rechecked": 6,
+    "cards_rechecked": 3,
+    "snapshot_file_hashes": "pass",
+    "bound_analysis": "pass"
+  },
+  "timing_seconds": {
+    "median": 1.421,
+    "minimum": 0.001,
+    "maximum": 3.162,
+    "total": 8.825
+  },
+  "cases": [
+    {
+      "pr_id": "holoviz/panel#8810",
+      "labelled_asks": 0,
+      "full": 0,
+      "partial": 0,
+      "missed": 0,
+      "cards": 0,
+      "matched_ask_cards": 0,
+      "duplicate_extras": 0,
+      "nonrequest_extras": 0,
+      "relevant_response_cards": 0,
+      "insufficient_response_cards": 0,
+      "correct_absent_response_cards": 0,
+      "checks": []
+    },
+    {
+      "pr_id": "fossasia/scrum_helper#904",
+      "labelled_asks": 1,
+      "full": 1,
+      "partial": 0,
+      "missed": 0,
+      "cards": 1,
+      "matched_ask_cards": 1,
+      "duplicate_extras": 0,
+      "nonrequest_extras": 0,
+      "relevant_response_cards": 0,
+      "insufficient_response_cards": 0,
+      "correct_absent_response_cards": 1,
+      "checks": [
+        {
+          "index": 0,
+          "covers": [
+            "test-only-followup"
+          ],
+          "response": "correct_none_visible"
+        }
+      ]
+    },
+    {
+      "pr_id": "fossasia/voxbento#717",
+      "labelled_asks": 1,
+      "full": 0,
+      "partial": 0,
+      "missed": 1,
+      "cards": 0,
+      "matched_ask_cards": 0,
+      "duplicate_extras": 0,
+      "nonrequest_extras": 0,
+      "relevant_response_cards": 0,
+      "insufficient_response_cards": 0,
+      "correct_absent_response_cards": 0,
+      "checks": [
+        {
+          "missed": "respect-coordinated-patch",
+          "ambiguity": "Implicit coordination objection; plausible alternative non-request reading retained."
+        }
+      ]
+    },
+    {
+      "pr_id": "fossasia/voxbento#716",
+      "labelled_asks": 1,
+      "full": 0,
+      "partial": 0,
+      "missed": 1,
+      "cards": 0,
+      "matched_ask_cards": 0,
+      "duplicate_extras": 0,
+      "nonrequest_extras": 0,
+      "relevant_response_cards": 0,
+      "insufficient_response_cards": 0,
+      "correct_absent_response_cards": 0,
+      "checks": [
+        {
+          "missed": "check-reporter-intent"
+        }
+      ]
+    },
+    {
+      "pr_id": "fossasia/eventyay#6220",
+      "labelled_asks": 3,
+      "full": 0,
+      "partial": 0,
+      "missed": 3,
+      "cards": 1,
+      "matched_ask_cards": 0,
+      "duplicate_extras": 0,
+      "nonrequest_extras": 1,
+      "relevant_response_cards": 0,
+      "insufficient_response_cards": 0,
+      "correct_absent_response_cards": 0,
+      "checks": [
+        {
+          "index": 0,
+          "false_ask": "Describes why the competing PR was preferred, rather than requesting an author action."
+        },
+        {
+          "missed": [
+            "future-screencast-6220",
+            "address-ai-reviews-6220",
+            "green-ci-6220"
+          ]
+        }
+      ]
+    },
+    {
+      "pr_id": "fossasia/eventyay#6219",
+      "labelled_asks": 2,
+      "full": 2,
+      "partial": 0,
+      "missed": 0,
+      "cards": 1,
+      "matched_ask_cards": 1,
+      "duplicate_extras": 0,
+      "nonrequest_extras": 0,
+      "relevant_response_cards": 0,
+      "insufficient_response_cards": 0,
+      "correct_absent_response_cards": 1,
+      "checks": [
+        {
+          "index": 0,
+          "covers": [
+            "future-screencast-6219",
+            "green-ci-6219"
+          ],
+          "response": "correct_none_visible_for_both"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "One-author convenience sample, assistant labels, not independent human adjudication or participant trial.",
+    "One implicit coordination-objection annotation has a reasonable alternative non-request reading; excluding it leaves seven asks, three covered and four missed.",
+    "Final outputs do not preserve intermediate extraction/verifier decisions, so misses cannot all be attributed specifically to the verifier.",
+    "No further inference or tuning performed by scorer; candidate hashes refer to frozen v15 artifacts rather than any future restored file."
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "label_kind": "assistant-created engineering annotations; not independent human adjudication",
+  "labelled_at": "2026-10-24T18:07:11.206832+00:00",
+  "scope": "human_review",
+  "expected_requests": [
+    {
+      "id": "undirected-edge-labels",
+      "pr_id": "fossasia/visdom#1917",
+      "request_sources": [
+        "review:5467814332"
+      ],
+      "intent": "Investigate and correct mismatched edge labels on undirected graphs.",
+      "acceptable_response_ids": [
+        "comment:6105456385"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "optional": false
+    },
+    {
+      "id": "duplicate-edge-regression",
+      "pr_id": "fossasia/visdom#1917",
+      "request_sources": [
+        "review:5500781776"
+      ],
+      "intent": "Add regression coverage for edge-label ordering with duplicate undirected edges.",
+      "acceptable_response_ids": [
+        "comment:6160925749"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "optional": false
+    },
+    {
+      "id": "embedding-dense-labels",
+      "pr_id": "fossasia/visdom#1933",
+      "request_sources": [
+        "review:5528840720"
+      ],
+      "intent": "Normalize embedding labels to dense group indices.",
+      "acceptable_response_ids": [
+        "comment:6188946984"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "optional": false
+    },
+    {
+      "id": "reuse-lasso-mapping",
+      "pr_id": "fossasia/visdom#1933",
+      "request_sources": [
+        "review:5528840720"
+      ],
+      "intent": "Reuse the original dense-group mapping during lasso selections.",
+      "acceptable_response_ids": [
+        "comment:6188946984"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "optional": false
+    },
+    {
+      "id": "column-vector-legend",
+      "pr_id": "fossasia/visdom#1911",
+      "request_sources": [
+        "review:5467783710"
+      ],
+      "intent": "Preserve legacy column-vector behavior when row count matches legend length.",
+      "acceptable_response_ids": [
+        "comment:6105472686"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "optional": false
+    },
+    {
+      "id": "modal-choice",
+      "pr_id": "openfoodfacts/openfoodfacts-explorer#2061",
+      "request_sources": [
+        "comment:6187690157"
+      ],
+      "intent": "Explain or reconsider introducing a modal where an inline interaction was possible.",
+      "acceptable_response_ids": [],
+      "expected_response": "none_visible",
+      "optional": false
+    }
+  ],
+  "no_request_cases": {
+    "fossasia/pslab-app#3654": [
+      {
+        "id": "comment:6214675051",
+        "reason": "Maintainer describes closure in favor of another solution; no requested action."
+      },
+      {
+        "id": "comment:6214727257",
+        "reason": "Explains rejection and invites future testing/contributions generally; does not request a change to this PR."
+      }
+    ],
+    "holoviz/panel#8851": [
+      {
+        "id": "comment:6141101770",
+        "reason": "Thanks without a requested author action."
+      }
+    ]
+  },
+  "ambiguity_policy": "Dense normalization and lasso mapping are two independently inspectable requested changes in one source. One card can cover both only when its actual quote expresses both, not merely because its source ID matches. The modal question and inline suggestion are treated as one design-choice request with alternatives, not two required implementation changes. The PSLab future-work invitation could be read as an optional general testing suggestion, but is not labelled a current-PR action; report this counter-reading if emitted. Earlier author replies before a later reviewer request are not acceptable, even if their topic overlaps. A specific later author explanation can be relevant without proving correctness.",
+  "limitations": [
+    "Six PRs selected from one author\u2019s frozen search ordering. Three are Visdom; this is a convenience engineering sample, not representative independent user evidence.",
+    "Six assistant-labelled requested actions; one has no visible later author response. Labels are not independent human adjudication or proof of code fixes.",
+    "Original sources may have been seen during prior OSS work. This preparation agent has not run or inspected ReviewRadar predictions for this pool; root/model developer receives no contents before candidate freeze.",
+    "Blank review summaries are not actionable source text. Bot messages and PR-author comments are ineligible as reviewer requests; original full source histories remain ignored."
+  ]
+}
