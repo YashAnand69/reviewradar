@@ -34,3 +34,7 @@ DEV draft **7322997** was saved and visibly marked Unpublished Post, with devcha
 ## Publication follow-up
 
 The separate user agreement was subsequently received and existing article 7322997 was published on 24 October, 09:29:13 UTC: https://dev.to/yashanand69/reviewradar-the-request-a-possible-reply-and-a-calmer-review-session-486. The browser showed Posted on 24 Oct and the Week 3 banner; the Unpublished Post notice was absent. Required tags, human-role/AI disclosure, Overall/Gemma categories and demo/source links were retained. Publication proof is stored under ignored outputs/week3-publication-proof.jpg. This supersedes only the earlier pending-publication status; technical and user-validation limits remain.
+
+## Later evidence-assessment upgrade
+
+The historical observations above are retained. Upgrade release and current browser checks are in `19-UPGRADE-EXECUTION.md` and the updated release checklist. The model-specific disagreement UI, mixed example, real save-failure/reconnection check, exported assessment and emulated reduced-motion test were added after the earlier compact-build checkpoint. A bounded emulated preference check is now complete; a full screen-reader/OS-preference audit and user-started ChatGPT-quit survival test remain unverified.

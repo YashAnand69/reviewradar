@@ -63,4 +63,4 @@ Run `PYTHONPATH=backend .venv/bin/python evaluation/v10-fresh/run.py` against th
 
 The model was not tuned after these results. Product correction controls can reduce disagreement friction, but they do not improve these measured extraction or matching results. Any later semantic change needs a separately versioned development protocol; rerunning these exposed cases is regression evidence.
 
-Independent engineering review of scoring is pending until recorded by the parent. No genuine participant feedback, time savings or judging outcome is implied.
+Parent reviewed source/scoring edge cases and the separate response-ID addendum; final independent agent review rechecked count consistency on 24 October. These are engineering reviews, not independent human adjudication. No genuine participant feedback, time savings or judging outcome is implied.

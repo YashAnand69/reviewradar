@@ -42,3 +42,12 @@ Original v9 example retained; fixed allowlisted mixed example preserves a separa
 Independent review verified all nine retained mixed-example human source objects exactly match capture, all nine omitted automated entries are disclosed, model output equals its actual run, and v13 frozen hash is unchanged. Allowlisted sample routes passed validation tests. Actual browser opened both variants without inference. The mixed example saved Reply not relevant plus a next-inspection note; downloaded sheet `reviewradar-3c46c52d0010.md` was read back and contains source dates/links, uncertainty, incomplete coverage, original output and separate local assessment. A copy and genuine local screenshot are bundled for the demo. This is agent-operated demonstration evidence. Screen recording attempts were too brief/interrupted to publish as a full walkthrough; none is claimed.
 
 Local tests: 59 passed, six replay-mode tests separately passed; local/replay builds and dependency audit pass, zero npm vulnerabilities. Static source wording now says captured conversation rather than implying every GitHub entry was fetched. Final deployment/post verification follows after publication.
+
+### Deployed and existing entry updated
+
+- Source upgrade81b4020f830e21d06ec5c5c9b2a3e7c99b7cf597 pushed; Linux CI40115857224 success. Pagesa5fa3a73bcadddb6649b80a50e3708edf4b53bdf deployed, run40115889943 success. Eight files include mixed JSON, actual export and screenshot. Public response bytes match built artifacts.
+- Actual public browser loaded mixed example with correct nine human sources, capture/analysis dates and incomplete warnings. At320px detail documentwidth305≤viewport320; override reset. Replay has no live-import/model controls.
+- Existing published DEVarticle7322997 saved with revised workflow, genuine screenshot, exported artifact, human-role/AI disclosure, Overall+Gemma and honest evaluation results. Public page/banners/tags verified; embedded screenshot loaded at800px. No new entry or new legal acceptance.
+- Latest feedback request check: open, zero comments. Local app+model healthy. Outstanding: semantic reliability, genuine external trial, complete recording and user-started quit survival. The interactive demo is delivered; none of these outstanding items is falsely marked complete.
+
+Final factual record written 2026-10-24T17:28:15.240124+00:00. Publication proof retained privately in outputs/upgrade/dev-updated-proof.jpg.

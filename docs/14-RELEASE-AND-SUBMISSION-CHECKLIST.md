@@ -35,7 +35,7 @@ The public preview returns the saved v9 analysis with ID `cd37e8a309fb4561b537e2
 - [ ] Keyboard-only completion, visible focus, dialog return focus, reduced motion and meaningful error announcements.
 - [x] Existing public historical preview rendered in a separate tab without a privileged GitHub page/API session. Corrected replay retested at desktop and 320px.
 - [x] Independent follow-up backend/frontend audit and third-agent final-diff review completed; confirmed findings received regression fixes. See `15-FOLLOW-UP-AUDIT.md`.
-- [x] Final draft claims checked against the inspected release and Week 3/general rules on 24 October. No fabricated human-feedback or measured-savings statement is present. The saved DEV draft remains unpublished.
+- [x] Final draft claims checked against the inspected release and Week 3/general rules on 24 October. No fabricated human-feedback or measured-savings statement is present. The existing DEV entry is published and was updated after the upgrade.
 - [x] User confirmed Week 3 eligibility, material rights and acceptance of Week 3/general rules, including promotional reuse, in the action-time reply before publication.
 - [x] Published the existing DEV article 7322997 once, with devchallenge/hf26challenge/opensource/ai, Fully Autonomous disclosure, Overall and Best Use of Gemma. Verified posted time, public canonical URL, Week 3 banner, demo/source links and absence of the unpublished notice.
 
@@ -54,3 +54,11 @@ No participant trial has happened. The draft therefore makes no human savings pe
 Official cutoff: **26 October 2026 at 12:29 p.m. IST** (25 October at 11:59 p.m. PDT). Recheck the [Week 3 page](https://dev.to/challenges/hacktoberfest-week3-2026-10-19), [Week 3 rules](https://dev.to/page/hacktoberfest-week3-2026-10-19-contest-rules) and [general rules](https://dev.to/page/official-hackathon-rules) at publication. Writing is the most heavily weighted criterion; no numeric weights or winning probability are invented here.
 
 The separate Week 3 agreement was confirmed by the user before publication. Published article: https://dev.to/yashanand69/reviewradar-the-request-a-possible-reply-and-a-calmer-review-session-486. Source release at submission: `48f40baea2f66e12751d8a650286078f67faa15d`; public replay commit: `c671ff268f730508552db0da08c46aee51038c53`. Any subsequent changes must retain their actual dates and scope. No duplicate entry was created. The prior private preview token is not retained in source.
+
+## 24 October evidence-assessment upgrade release
+
+Source `81b4020f830e21d06ec5c5c9b2a3e7c99b7cf597`; public replay `a5fa3a73bcadddb6649b80a50e3708edf4b53bdf`. Linux [CI 40115857224](https://github.com/YashAnand69/reviewradar/actions/runs/40115857224) and [Pages 40115889943](https://github.com/YashAnand69/reviewradar/actions/runs/40115889943) succeeded. Local verification: 152 Python tests + 34 subtests, 59 local and six replay frontend tests, type/build, Ruff and zero npm audit vulnerabilities. Node24.22.1 used locally for this upgrade.
+
+Mixed JSON, original JSON, screenshot, export and built assets deployed; public mixed JSON/export/image/index returned200 and exact build bytes. Public browser opened mixed example with dates/incomplete warnings and no model controls; 320px rendered detail had documentwidth305 within viewport320, then override reset. Existing DEV article7322997 updated with human role, truthful AI disclosure, new examples, exported artifact and unfavourable final evaluation. Public banner/tags/categories retained; embedded image loaded800px. No duplicate entry.
+
+No genuine trial or completed long recording. User-start then ChatGPT-quit check still outstanding. Semantic misses remain documented in final v13 evaluation; no perfect-model or winning claim.
