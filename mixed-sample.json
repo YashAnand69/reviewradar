@@ -1,0 +1,227 @@
+{
+  "snapshot": {
+    "schema_version": 1,
+    "id": "b3fded373a5cd647bee31a54e9f6a5afc2e53b053285438fc68dbbd67e4b65d6",
+    "fetched_at": "2026-10-24T16:45:15.105129Z",
+    "source": "import",
+    "owner": "YashAnand69",
+    "prs": [
+      {
+        "id": "fossasia/visdom#1919",
+        "url": "https://github.com/fossasia/visdom/pull/1919",
+        "title": "fix: stabilize normalized quiver magnitudes",
+        "author": "YashAnand69",
+        "state": "OPEN",
+        "head_sha": "173d4cca10772293b05498787e694bf1a1d87b58",
+        "fetched_at": "2026-10-24T16:45:15.105129Z",
+        "complete": false,
+        "warnings": [
+          "Nine exact human source bodies retained from 18 captured entries; nine automated entries omitted. No selected body was rewritten."
+        ],
+        "comments": [
+          {
+            "id": "inline:4198895647",
+            "url": "https://github.com/fossasia/visdom/pull/1919#discussion_r4198895647",
+            "author": "YashAnand69",
+            "is_bot": false,
+            "kind": "inline",
+            "body": "Fixed in 8a3d024. Normal finite scales retain direct division so tiny components are preserved. For overflowing, zero/underflowing or subnormal scale quotients, normalization instead divides by the maximum magnitude before multiplying by the requested length. Magnitudes are computed at least in float64 to avoid float32 weak-scalar casts for large requested lengths. Added regression coverage for both extreme quotients, subnormal-scale precision, float32/int16 inputs and mixed-magnitude components. All eleven new cases, 65 focused tests and 2,615 available non-server tests pass; Black and pre-commit hooks pass. The three optional ML logger exclusions remain disclosed in the PR.",
+            "created_at": "2026-10-06T18:14:27Z",
+            "updated_at": "2026-10-06T18:14:27Z",
+            "review_state": null,
+            "thread_id": "PRRT_kwDOBMVUgs6pmQQr",
+            "thread_resolved": true,
+            "thread_outdated": true
+          },
+          {
+            "id": "review:5432769216",
+            "url": "https://github.com/fossasia/visdom/pull/1919#pullrequestreview-5432769216",
+            "author": "YashAnand69",
+            "is_bot": false,
+            "kind": "review",
+            "body": "",
+            "created_at": "2026-10-06T18:14:27Z",
+            "updated_at": "2026-10-06T18:14:27Z",
+            "review_state": "COMMENTED",
+            "thread_id": null,
+            "thread_resolved": null,
+            "thread_outdated": null
+          },
+          {
+            "id": "review:5460600410",
+            "url": "https://github.com/fossasia/visdom/pull/1919#pullrequestreview-5460600410",
+            "author": "Jayantparashar10",
+            "is_bot": false,
+            "kind": "review",
+            "body": "@YashAnand69 Update the branch ",
+            "created_at": "2026-10-08T17:37:09Z",
+            "updated_at": "2026-10-08T17:37:09Z",
+            "review_state": "CHANGES_REQUESTED",
+            "thread_id": null,
+            "thread_resolved": null,
+            "thread_outdated": null
+          },
+          {
+            "id": "comment:6066718273",
+            "url": "https://github.com/fossasia/visdom/pull/1919#issuecomment-6066718273",
+            "author": "YashAnand69",
+            "is_bot": false,
+            "kind": "comment",
+            "body": "Updated the branch with dev at a326b3fe in ce67e5a0e67e5bbb6b5570b25a143f5ef528541e. This includes the upstream compare-initialization fix that the old visual job was missing. The quiver fix itself is unchanged.\n\nAvailable non-server Python tests: 2,669 passed, four skipped; pinned hooks pass. Keras/Lightning dependencies are unavailable; XGBoost self-skips. New upstream CI is running, so I have not marked the visual job as passed.\n",
+            "created_at": "2026-10-08T18:45:08Z",
+            "updated_at": "2026-10-08T18:45:08Z",
+            "review_state": null,
+            "thread_id": null,
+            "thread_resolved": null,
+            "thread_outdated": null
+          },
+          {
+            "id": "review:5500719597",
+            "url": "https://github.com/fossasia/visdom/pull/1919#pullrequestreview-5500719597",
+            "author": "Manik-Khajuria-5",
+            "is_bot": false,
+            "kind": "review",
+            "body": "@YashAnand69 Could we keep a warning for cases where the normalization value is too small to represent the result? Otherwise, valid vector data can silently become (0, 0).",
+            "created_at": "2026-10-13T08:21:17Z",
+            "updated_at": "2026-10-13T08:21:17Z",
+            "review_state": "CHANGES_REQUESTED",
+            "thread_id": null,
+            "thread_resolved": null,
+            "thread_outdated": null
+          },
+          {
+            "id": "comment:6160926073",
+            "url": "https://github.com/fossasia/visdom/pull/1919#issuecomment-6160926073",
+            "author": "YashAnand69",
+            "is_bot": false,
+            "kind": "comment",
+            "body": "Fixed in 2aa88c2. Normalization now warns once when a finite nonzero input vector becomes `(0, 0)` after scaling. Original zeros, non-finite inputs and vectors that retain one component do not trigger this warning.\n\nThe new warning cases fail before the fix and pass now. All 28 quiver cases and 2,686 available non-server tests pass, including float32/float64, direct and fallback scaling, X-only/Y-only/paired vectors, and input immutability. Pinned hooks pass. Keras/Lightning integrations were excluded because dependencies are unavailable; XGBoost, two bs4/lxml cases and frontend-dependency build verification skipped. Upstream CI still needs to run on this commit.\n",
+            "created_at": "2026-10-14T04:30:45Z",
+            "updated_at": "2026-10-14T04:30:45Z",
+            "review_state": null,
+            "thread_id": null,
+            "thread_resolved": null,
+            "thread_outdated": null
+          },
+          {
+            "id": "review:5516805164",
+            "url": "https://github.com/fossasia/visdom/pull/1919#pullrequestreview-5516805164",
+            "author": "Manik-Khajuria-5",
+            "is_bot": false,
+            "kind": "review",
+            "body": "",
+            "created_at": "2026-10-14T10:54:30Z",
+            "updated_at": "2026-10-14T10:54:30Z",
+            "review_state": "APPROVED",
+            "thread_id": null,
+            "thread_resolved": null,
+            "thread_outdated": null
+          },
+          {
+            "id": "inline:4304903403",
+            "url": "https://github.com/fossasia/visdom/pull/1919#discussion_r4304903403",
+            "author": "YashAnand69",
+            "is_bot": false,
+            "kind": "inline",
+            "body": "Fixed in 173d4cc. stacklevel=3 accounts for the actual pytorch_wrap decorator and points the RuntimeWarning at the caller. The regression invokes real quiver from two different caller lines and repeats one line: default filtering now emits two warnings at those exact caller locations while suppressing the repeat. The test fails before this change; all29quiver cases, the available nonserver suite and pinned hooks pass. Optional Keras/Lightning modules remain excluded and optional skips are documented.",
+            "created_at": "2026-10-17T23:08:46Z",
+            "updated_at": "2026-10-17T23:08:46Z",
+            "review_state": null,
+            "thread_id": "PRRT_kwDOBMVUgs6sKjsW",
+            "thread_resolved": true,
+            "thread_outdated": false
+          },
+          {
+            "id": "review:5560549893",
+            "url": "https://github.com/fossasia/visdom/pull/1919#pullrequestreview-5560549893",
+            "author": "YashAnand69",
+            "is_bot": false,
+            "kind": "review",
+            "body": "",
+            "created_at": "2026-10-17T23:08:46Z",
+            "updated_at": "2026-10-17T23:08:46Z",
+            "review_state": "COMMENTED",
+            "thread_id": null,
+            "thread_resolved": null,
+            "thread_outdated": null
+          }
+        ]
+      }
+    ],
+    "complete": false,
+    "warnings": [
+      "Historical selected PR; automated sources omitted from this public demonstration. Not a complete inbox or complete source intake. Open GitHub for all context."
+    ]
+  },
+  "analysis": {
+    "id": "3c46c52d00104533af10a491427fee19",
+    "snapshot_id": "b3fded373a5cd647bee31a54e9f6a5afc2e53b053285438fc68dbbd67e4b65d6",
+    "mode": "model",
+    "scope": "human_review",
+    "model": "reviewradar-gemma4-e2b",
+    "prompt_version": "human-review-passages-v13",
+    "created_at": "2026-10-24T17:11:13.640889Z",
+    "complete": false,
+    "warnings": [
+      "Historical selected PR; automated sources omitted from this public demonstration. Not a complete inbox or complete source intake. Open GitHub for all context.",
+      "fossasia/visdom#1919: Available comments analyzed; source incomplete. Omitted discussion may change the interpretation."
+    ],
+    "cards": [
+      {
+        "id": "3749028856c770c2fcb8cf06",
+        "pr_id": "fossasia/visdom#1919",
+        "request": {
+          "comment_id": "review:5500719597",
+          "quote": "@YashAnand69 Could we keep a warning for cases where the normalization value is too small to represent the result?"
+        },
+        "response": {
+          "comment_id": "inline:4304903403",
+          "quote": "The test fails before this change; all29quiver cases, the available nonserver suite and pinned hooks pass."
+        },
+        "category": "suggestion",
+        "interpretation": "possibly_responded",
+        "rationale": "The request asks to keep a warning for cases where the normalization value is too small to represent the result, which implies handling cases where the result might be zero or near-zero due to small normalization values. The response passage 'inline:4304903403/p3' reports that the tests pass after the fix, which addresses the underlying issue that caused the warning/failure.",
+        "uncertainty": [],
+        "github": {
+          "review_state": "CHANGES_REQUESTED",
+          "thread_resolved": null,
+          "thread_outdated": null
+        }
+      }
+    ],
+    "coverage": [
+      {
+        "pr_id": "fossasia/visdom#1919",
+        "status": "analyzed",
+        "comments_total": 9,
+        "comments_processed": 9,
+        "comments_excluded_bots": 0,
+        "reason": "Available comments analyzed; source incomplete. Omitted discussion may change the interpretation."
+      }
+    ],
+    "stats": {
+      "comments_total": 9,
+      "comments_processed": 9,
+      "comments_excluded_bots": 0,
+      "elapsed_seconds": 3.444
+    }
+  },
+  "manifest": {
+    "mode": "historical replay \u2014 mixed evidence",
+    "captured_at": "2026-10-24T16:45:15.105129Z",
+    "analysis_at": "2026-10-24T17:11:13.640889Z",
+    "input_snapshot_id": "b3fded373a5cd647bee31a54e9f6a5afc2e53b053285438fc68dbbd67e4b65d6",
+    "scope": "human_review",
+    "source_limit": "Historical selected PR; automated sources omitted from this public demonstration. Not a complete inbox or complete source intake. Open GitHub for all context.",
+    "model_manifest": "model-manifest.json",
+    "model": "google/gemma-4-E2B-it Q4_0",
+    "runtime": "Pinned local llama.cpp, loopback inference",
+    "prompt_version": "human-review-passages-v13",
+    "annotations": "Exposed engineering demonstration: two human asks occur in the retained sources. This actual curated-input run is separate from the full-snapshot final evaluation; inspect its own output and full context. Not a fresh holdout or a verified fix.",
+    "rights": "Public third-party comments retain original attribution and source links; see fixtures/public/PROVENANCE.md. No relicensing of comments is asserted.",
+    "not_live": true,
+    "implementation_sha256": "24caf2b5b4713df24641ebf6c6b66b846e28893bf5aa5900ad66580530bcba47",
+    "run_method": "Actual local run_analysis on a new normalized human-only demonstration snapshot with explicit incomplete-source warnings; result retained without rewriting.",
+    "evaluation": "evaluation/v13-final/REPORT.md"
+  }
+}
