@@ -1,3 +1,21 @@
+# Current evaluation — 24 October 2026
+
+**Experimental reading aid: model cards are not a complete list of outstanding work.** Mechanical source checks do not establish conversational relevance or code correctness.
+
+| Evidence | Observed result |
+|---|---|
+| [v10 fresh, eight PRs](v10-fresh/REPORT.md) | 18 assistant labels: 16 full, one partial, one missed; four duplicate and five non-ask extras; one wrong response. |
+| [v11 exposed regression](v11-development/REPORT.md) | Test-location response improved; false tasks remain. Not fresh accuracy evidence. |
+| [v11 separate six PRs](v11-unseen/REPORT.md) | Five asks found plus three false approval/thanks cards; one acknowledgement-only response. |
+| [v12 rejected experiment](v12-development/REPORT.md) | Nine full, one partial, eight missed. Fewer cards concealed substantial recall loss; rejected. |
+| [v13 frozen final, six further PRs](v13-final/REPORT.md) | Eight labels: five covered, three missed; five cards include one duplicate; one insufficient generic-test reply. Two bot-invocation cases correctly produced zero cards. |
+
+Labels are assistant engineering annotations, not independent human truth. Fixed-order whole-PR selection, frozen hashes and first attempts are retained. Sets differ in difficulty: no combined accuracy or percentage improvement is inferred. No prompt tuning followed v13's final test. Its narrow acknowledgement guard and local eligibility enforcement are bounded safeguards, not general intent classification.
+
+The mixed replay preserves a separate actual v13 run on a human-only Visdom #1919 excerpt, visibly incomplete, with its missed branch-update ask and poor response retained. It is an exposed demonstration. Original v9 sample unchanged. No genuine trial or measured human savings. See [execution](../docs/19-UPGRADE-EXECUTION.md).
+
+---
+
 # ReviewRadar engineering pilot
 
 23 October 2026. **This is a small engineering study, not customer validation or a population accuracy benchmark.** Labels were created by an assistant, not an independent human panel. Full case-level summaries and frozen hashes are in `results-summary.json` and `dataset-manifest.json`.
@@ -37,7 +55,7 @@ On the tested Apple Silicon Mac with 24 GiB RAM, the final v9 development PRs to
 
 `run.py` verifies frozen source and label hashes before running. Full downloaded discussion histories and raw predictions remain local in ignored outputs to avoid redistributing long automated guides and unnecessary discussion text. Public manifests retain source URLs, IDs and hashes. A fresh GitHub fetch may have different states, edits and timestamps; it is a new snapshot and cannot be presented as the identical frozen run. These release artifacts support an inspectable pilot, not a universally reproducible benchmark claim.
 
-No genuine participant trial, manual-reading timing, screen-reader evaluation or measured time-saving percentage has been obtained. An initial rendered/browser-flow audit occurred during temporary browser access and exposed focus issues now fixed with DOM regression tests. Access became disabled again before the corrected build could be visually retested. See `docs/15-FOLLOW-UP-AUDIT.md`; no completed final accessibility audit is claimed.
+No genuine participant trial, manual-reading timing, screen-reader evaluation or measured time-saving percentage has been obtained. The initial rendered audit exposed focus defects that received regression fixes. A later bounded corrected-build browser pass checked desktop/320px evidence, history/fallback focus, actual service recovery, import/inference and export; see `docs/18-FINAL-BROWSER-AND-LIFECYCLE-AUDIT.md`. Full screen-reader and actual reduced-motion preference testing remain unverified. These observations are interface evidence, not human-productivity evidence.
 
 ## Follow-up engineering change
 

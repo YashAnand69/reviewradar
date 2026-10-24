@@ -1,5 +1,6 @@
 import type {
   Analysis,
+  Assessment,
   Card,
   Disposition,
   PullRequest,
@@ -12,6 +13,49 @@ export const labels = {
   possibly_responded: "Possible response found",
   unclear: "Needs interpretation",
 };
+export const assessmentLabels: Record<Assessment, string> = {
+  unassessed: "No disagreement recorded",
+  not_a_request: "Not a request",
+  reply_not_relevant: "Reply not relevant",
+};
+export function assessmentFor(
+  value: unknown,
+  card: Card,
+  mode: Analysis["mode"],
+): Assessment {
+  if (mode !== "model") return "unassessed";
+  if (value === "not_a_request") return value;
+  if (value === "reply_not_relevant" && card.response) return value;
+  return "unassessed";
+}
+export function normalizeDispositions(
+  values: Disposition[],
+  analysis: Analysis,
+): Disposition[] {
+  return values.flatMap((value) => {
+    if (
+      !value ||
+      typeof value !== "object" ||
+      value.analysis_id !== analysis.id ||
+      (value.state !== "open" && value.state !== "reviewed") ||
+      typeof value.note !== "string" ||
+      typeof value.updated_at !== "string"
+    )
+      return [];
+    const card = analysis.cards.find((item) => item.id === value.card_id);
+    return card
+      ? [{
+          ...value,
+          assessment: assessmentFor(value.assessment, card, analysis.mode),
+        }]
+      : [];
+  });
+}
+export function evidenceSummary(card: Card): string {
+  return card.response
+    ? "A reviewer passage is paired with a later author passage. Compare both in context; their relationship has not been verified."
+    : "A reviewer passage is shown without a matched author reply. Read the full conversation before deciding what needs attention.";
+}
 export function displayDate(value: string): string {
   const date = new Date(value);
   return Number.isNaN(date.getTime())
@@ -230,8 +274,10 @@ export function exportReview(
       );
     }
     lines.push(
+      `${analysis.mode === "model" ? "Unverified model explanation" : "Baseline reading note"}: ${plainMarkdown(card.rationale)}`,
       `Uncertainty: ${plainMarkdown(card.uncertainty.join("; ") || "Inspect source context.")}`,
       `Local decision: ${dispositions[card.id]?.state ?? "open"}`,
+      ...(analysis.mode === "model" ? [`Local assessment: ${assessmentLabels[assessmentFor(dispositions[card.id]?.assessment, card, analysis.mode)]}. This is your judgment, not a change to model output or GitHub.`] : []),
       `Note: ${plainMarkdown(dispositions[card.id]?.note ?? "")}`,
       "",
     );

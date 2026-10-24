@@ -1,0 +1,12 @@
+# Reserved final engineering set (capture directory v12-unseen)
+
+Declared 24 October 2026 after the v12 candidate was frozen and before these source discussions or model predictions are inspected. Continue the original frozen search-selection.json ordering from zero-based rank31, after all v11 selections. Select the first six complete, public, non-self authored PRs with at least one nonempty non-bot reviewer comment. Exclude all earlier evaluation/showcase PRs. Log every inclusion/exclusion/intake failure. No semantic category quota and no replacement of inference failures.
+
+Freeze source hashes, assistant-created request labels, acceptable later response IDs and ambiguity notes before predictions. These labels are engineering annotations, not independent human ground truth. The author may have seen discussions during OSS work; unseen means not used to inspect ReviewRadar predictions. Keep full histories ignored; public results use source IDs, links and paraphrases.
+
+Run the frozen human-review-passages-v13 candidate once per case with the existing model/runtime. Retain every outcome, failures, mechanical validation and latency. Compare chronology as a reading list, not as a semantic classifier. Report full/partial/missed requests, duplicate/non-request extras, response errors/abstentions and coverage separately. Do not tune the candidate after labels/results; the set becomes exposed after prediction. No combined accuracy, human savings or population claim. Any legitimate label/scoring amendment is recorded separately without overwriting the frozen original.
+
+Pure whole-comment acknowledgements are excluded from request eligibility by a narrow deterministic rule; mixed approval/request comments remain eligible. A zero-card case may therefore require no generation. Report that pipeline behavior, not inference where none occurred.
+
+## Candidate amendment before labels and predictions
+The pool was captured for v12 before any source bodies were inspected. v12 was rejected on exposed regression cases for missing genuine requests. The final v13 candidate was frozen at 2026-10-24T17:04:28Z before reading this pool. It restores the v11 extraction prompt, adds a narrow whole-acknowledgement exclusion and enforces eligible reviewer keys locally. The original capture log retains its initial protocol hash. Selection/order and sources remain unchanged. No further prompt tuning follows the final-pool predictions.

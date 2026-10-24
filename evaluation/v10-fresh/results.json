@@ -1,0 +1,448 @@
+{
+  "created_at": "2026-10-24T11:02:53.613885+00:00",
+  "review_status": "assistant-scored; parent independent engineering review pending",
+  "frozen_labels_sha256": "eee87456650129d8f751287efdfdff7a2b0f4a3e315f4e7986394e55ace674b4",
+  "freeze_manifest_sha256": "1d50ab779fd5ce93d8e0dae1df9b1eb625fcc6ba971b3b261c80d2776072689e",
+  "run_manifest_sha256": "4e0c427ef764875f809bc06638df92a7fdba4b83b503d29a707c949f3dcc88c7",
+  "summary": {
+    "labelled_asks": 18,
+    "fully_covered_asks": 16,
+    "partially_covered_asks": 1,
+    "missed_asks": 1,
+    "emitted_cards": 26,
+    "duplicate_extra_cards": 4,
+    "non_request_extra_cards": 5,
+    "matched_cards_with_relevant_response": 15,
+    "matched_cards_with_wrong_response": 1,
+    "expected_null_respected": 1,
+    "matched_null_omissions": 0,
+    "missed_asks_with_expected_response": 1,
+    "successfully_analyzed_prs": 8,
+    "total_prs": 8,
+    "mechanically_valid_analysis_sets": 8,
+    "baseline_reviewer_comments": 21,
+    "model_seconds_min": 0.278,
+    "model_seconds_max": 19.058,
+    "model_seconds_median": 3.044,
+    "model_seconds_sum": 50.614
+  },
+  "cases": [
+    {
+      "pr_id": "fossasia/eventyay#6581",
+      "expected_asks": 7,
+      "model_cards": 8,
+      "fully_covered": 7,
+      "partially_covered": 0,
+      "missed_label_ids": [],
+      "duplicate_cards": 1,
+      "non_request_extra_cards": 0,
+      "wrong_response_associations": 0,
+      "baseline_reviewer_comments": 8,
+      "seconds": 19.058,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "cards": [
+        {
+          "card_index": 0,
+          "card_id": "a2c003c64791fca3c409ec47",
+          "request_source_id": "inline:4307818521",
+          "response_source_id": "inline:4365999772",
+          "matched_label": "generic",
+          "extraction": "full",
+          "response_adjudication": "relevant_alternate",
+          "note": "The selected later author passage explicitly retains the localized generic fallback. Its source ID was omitted from the frozen acceptable-ID list; record a semantic alternate without changing original labels. The request quote is an awkward fragment split inside translated error text; it remains exact but needs full-source context."
+        },
+        {
+          "card_index": 1,
+          "card_id": "7f7f54a0cc384897bf4c5cf6",
+          "request_source_id": "inline:4307825673",
+          "response_source_id": "comment:6263462235",
+          "matched_label": "alert",
+          "extraction": "full",
+          "response_adjudication": "relevant",
+          "note": ""
+        },
+        {
+          "card_index": 2,
+          "card_id": "944e1dca81cb1d220f8cbcb6",
+          "request_source_id": "inline:4307831085",
+          "response_source_id": "comment:6263462235",
+          "matched_label": "detail",
+          "extraction": "full",
+          "response_adjudication": "relevant",
+          "note": ""
+        },
+        {
+          "card_index": 3,
+          "card_id": "f9c5a751f3d8bff4fcc9576d",
+          "request_source_id": "inline:4307834070",
+          "response_source_id": "comment:6263462235",
+          "matched_label": "glob",
+          "extraction": "full",
+          "response_adjudication": "relevant",
+          "note": ""
+        },
+        {
+          "card_index": 4,
+          "card_id": "eba0ec15f3502c2a69ce0bb1",
+          "request_source_id": "inline:4307837055",
+          "response_source_id": "comment:6263462235",
+          "matched_label": "vite-root",
+          "extraction": "full",
+          "response_adjudication": "relevant",
+          "note": ""
+        },
+        {
+          "card_index": 5,
+          "card_id": "a2206974031c7eb937b3371e",
+          "request_source_id": "review:5624395806",
+          "response_source_id": "comment:6379920942",
+          "matched_label": "embedded-video",
+          "extraction": "full",
+          "response_adjudication": "relevant",
+          "note": "Compound source also mentions unresolved threads; this card's selected response/rationale covers the video ask. Thread follow-through has its own card7. Count this card once."
+        },
+        {
+          "card_index": 6,
+          "card_id": "f27c01585accc61df44828e4",
+          "request_source_id": "review:5629629275",
+          "response_source_id": "comment:6379920942",
+          "matched_label": null,
+          "extraction": "duplicate",
+          "response_adjudication": "not_scored",
+          "note": "Another reviewer repeats the embedded-video request. This is a duplicate semantic ask, not additional work."
+        },
+        {
+          "card_index": 7,
+          "card_id": "c7071a37329c13c21e746c9c",
+          "request_source_id": "review:5629629275",
+          "response_source_id": "comment:6379920942",
+          "matched_label": "resolve-inline",
+          "extraction": "full",
+          "response_adjudication": "relevant_partial_evidence",
+          "note": "The quoted response reports rechecking, while the full same comment also says the author is resolving the historical threads. Do not equate the short quoted sentence or author statement with verified completion."
+        }
+      ]
+    },
+    {
+      "pr_id": "openfoodfacts/search-a-licious#482",
+      "expected_asks": 1,
+      "model_cards": 1,
+      "fully_covered": 1,
+      "partially_covered": 0,
+      "missed_label_ids": [],
+      "duplicate_cards": 0,
+      "non_request_extra_cards": 0,
+      "wrong_response_associations": 0,
+      "baseline_reviewer_comments": 1,
+      "seconds": 2.295,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "cards": [
+        {
+          "card_index": 0,
+          "card_id": "043d3e963c21033993f1fb62",
+          "request_source_id": "review:5637351530",
+          "response_source_id": null,
+          "matched_label": "guard-uploaded-images",
+          "extraction": "full",
+          "response_adjudication": "expected_null",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "pr_id": "fossasia/WPFAevent#365",
+      "expected_asks": 0,
+      "model_cards": 0,
+      "fully_covered": 0,
+      "partially_covered": 0,
+      "missed_label_ids": [],
+      "duplicate_cards": 0,
+      "non_request_extra_cards": 0,
+      "wrong_response_associations": 0,
+      "baseline_reviewer_comments": 2,
+      "seconds": 0.278,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "cards": []
+    },
+    {
+      "pr_id": "fossasia/eventyay-teamshifts#229",
+      "expected_asks": 1,
+      "model_cards": 1,
+      "fully_covered": 1,
+      "partially_covered": 0,
+      "missed_label_ids": [],
+      "duplicate_cards": 0,
+      "non_request_extra_cards": 0,
+      "wrong_response_associations": 0,
+      "baseline_reviewer_comments": 1,
+      "seconds": 2.319,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "cards": [
+        {
+          "card_index": 0,
+          "card_id": "1158ed3a2ff8155dcc9820ce",
+          "request_source_id": "review:5625557358",
+          "response_source_id": "comment:6379961988",
+          "matched_label": "screencast",
+          "extraction": "full",
+          "response_adjudication": "relevant",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "pr_id": "fossasia/eventyay-exhibition#316",
+      "expected_asks": 7,
+      "model_cards": 10,
+      "fully_covered": 5,
+      "partially_covered": 1,
+      "missed_label_ids": [
+        "outline-colors"
+      ],
+      "duplicate_cards": 3,
+      "non_request_extra_cards": 1,
+      "wrong_response_associations": 1,
+      "baseline_reviewer_comments": 5,
+      "seconds": 16.72,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "cards": [
+        {
+          "card_index": 0,
+          "card_id": "a42f3a7dca05675196276ad5",
+          "request_source_id": "inline:4259284809",
+          "response_source_id": "comment:6232132353",
+          "matched_label": "test-location",
+          "extraction": "full",
+          "response_adjudication": "wrong_association",
+          "note": "Wrong response passage: later color/geometry changes and passing tests do not answer where the reviewer requested test coverage be organized. The relevant earlier author paragraph explicitly moving assertions into existing suites was available."
+        },
+        {
+          "card_index": 1,
+          "card_id": "5b4e70ebaa2a181598ea894b",
+          "request_source_id": "review:5504327571",
+          "response_source_id": "comment:6161040851",
+          "matched_label": "state-colors",
+          "extraction": "full",
+          "response_adjudication": "relevant",
+          "note": ""
+        },
+        {
+          "card_index": 2,
+          "card_id": "3f280f1484989b3ac3d3cee5",
+          "request_source_id": "review:5532269834",
+          "response_source_id": "comment:6208249456",
+          "matched_label": null,
+          "extraction": "duplicate",
+          "response_adjudication": "not_scored",
+          "note": "Generic complaint duplicates the more informative explicit reuse-existing-dropdown ask in card3."
+        },
+        {
+          "card_index": 3,
+          "card_id": "e0b68e1d830c12e39e4bfadf",
+          "request_source_id": "review:5532269834",
+          "response_source_id": "comment:6208249456",
+          "matched_label": "reference-dropdown",
+          "extraction": "full",
+          "response_adjudication": "relevant",
+          "note": ""
+        },
+        {
+          "card_index": 4,
+          "card_id": "f9eca5daa0d532c9eb7267f9",
+          "request_source_id": "review:5547379241",
+          "response_source_id": "comment:6232132353",
+          "matched_label": null,
+          "extraction": "duplicate",
+          "response_adjudication": "not_scored",
+          "note": "Complaint about variable length overlaps the compact/fixed geometry ask, represented primarily by card6. It also mentions color context, but is not an additional distinct new ask."
+        },
+        {
+          "card_index": 5,
+          "card_id": "e2f3c133f99e02b001ff3c58",
+          "request_source_id": "review:5547379241",
+          "response_source_id": "comment:6232132353",
+          "matched_label": null,
+          "extraction": "non_request_extra",
+          "response_adjudication": "not_scored",
+          "note": "Context-only imperative, with no requested action inside its own passage. The following concrete requirements are already separate cards."
+        },
+        {
+          "card_index": 6,
+          "card_id": "8c5ae5a4501a86f95b4954b5",
+          "request_source_id": "review:5547379241",
+          "response_source_id": "comment:6232132353",
+          "matched_label": "compact-fixed-size",
+          "extraction": "partial",
+          "response_adjudication": "relevant",
+          "note": "Partially covers the frozen compact+uniform geometry ask: width/height reduction is present, but uniformity is elsewhere in a separate card. Other granularity conventions could count these as separate requirements; preserve this sensitivity."
+        },
+        {
+          "card_index": 7,
+          "card_id": "ce2e4b863fe111d011fa1054",
+          "request_source_id": "review:5547379241",
+          "response_source_id": "comment:6232132353",
+          "matched_label": "filled-colors",
+          "extraction": "full",
+          "response_adjudication": "relevant",
+          "note": ""
+        },
+        {
+          "card_index": 8,
+          "card_id": "bf821e1eceb894f9bb887907",
+          "request_source_id": "review:5547379241",
+          "response_source_id": "comment:6232132353",
+          "matched_label": null,
+          "extraction": "duplicate",
+          "response_adjudication": "not_scored",
+          "note": "Second geometry fragment. Together with card6 it covers uniform compact geometry, but the frozen grouping expected one coupled ask. It adds reading burden rather than a new issue."
+        },
+        {
+          "card_index": 9,
+          "card_id": "1dcf8671a24ad6a256ceeb20",
+          "request_source_id": "review:5625432053",
+          "response_source_id": "comment:6379925552",
+          "matched_label": "long-option-clipping",
+          "extraction": "full",
+          "response_adjudication": "relevant_partial_investigation",
+          "note": "Relevant investigation/limitation in response to clipping; the author asks for a layout decision in surrounding text. The UI improvement is not complete."
+        }
+      ]
+    },
+    {
+      "pr_id": "openfoodfacts/openfoodfacts-python#527",
+      "expected_asks": 0,
+      "model_cards": 1,
+      "fully_covered": 0,
+      "partially_covered": 0,
+      "missed_label_ids": [],
+      "duplicate_cards": 0,
+      "non_request_extra_cards": 1,
+      "wrong_response_associations": 0,
+      "baseline_reviewer_comments": 1,
+      "seconds": 1.713,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "cards": [
+        {
+          "card_index": 0,
+          "card_id": "528301bbe3e6f23faf64f7ee",
+          "request_source_id": "comment:6165768940",
+          "response_source_id": null,
+          "matched_label": null,
+          "extraction": "non_request_extra",
+          "response_adjudication": "not_scored",
+          "note": "Support/context for an already-proposed UTF-8 change, not a distinct new author task under the frozen concrete-new-ask rule. Could reasonably be read as an optional suggestion; report annotation sensitivity."
+        }
+      ]
+    },
+    {
+      "pr_id": "GMOD/Apollo3#867",
+      "expected_asks": 2,
+      "model_cards": 2,
+      "fully_covered": 2,
+      "partially_covered": 0,
+      "missed_label_ids": [],
+      "duplicate_cards": 0,
+      "non_request_extra_cards": 0,
+      "wrong_response_associations": 0,
+      "baseline_reviewer_comments": 2,
+      "seconds": 3.769,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "cards": [
+        {
+          "card_index": 0,
+          "card_id": "6939e2fa5a1b144bb32d20aa",
+          "request_source_id": "inline:4339456712",
+          "response_source_id": "comment:6336151930",
+          "matched_label": "feature-utilities",
+          "extraction": "full",
+          "response_adjudication": "relevant",
+          "note": ""
+        },
+        {
+          "card_index": 1,
+          "card_id": "c6f86957bbcdfa158319325a",
+          "request_source_id": "review:5603108328",
+          "response_source_id": "comment:6336151930",
+          "matched_label": "before-after",
+          "extraction": "full",
+          "response_adjudication": "relevant",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "pr_id": "json-schema-org/JSON-Schema-Test-Suite#1234",
+      "expected_asks": 0,
+      "model_cards": 3,
+      "fully_covered": 0,
+      "partially_covered": 0,
+      "missed_label_ids": [],
+      "duplicate_cards": 0,
+      "non_request_extra_cards": 3,
+      "wrong_response_associations": 0,
+      "baseline_reviewer_comments": 1,
+      "seconds": 4.462,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "cards": [
+        {
+          "card_index": 0,
+          "card_id": "179fcc1a5aac823ee5107ade",
+          "request_source_id": "review:5608500963",
+          "response_source_id": null,
+          "matched_label": null,
+          "extraction": "non_request_extra",
+          "response_adjudication": "not_scored",
+          "note": "Maintainer reports an action they already completed, not a new instruction to the author."
+        },
+        {
+          "card_index": 1,
+          "card_id": "1ffde69bd51eff214bac0e2d",
+          "request_source_id": "review:5608500963",
+          "response_source_id": null,
+          "matched_label": null,
+          "extraction": "non_request_extra",
+          "response_adjudication": "not_scored",
+          "note": "Maintainer reports an action they already completed, not a new instruction to the author."
+        },
+        {
+          "card_index": 2,
+          "card_id": "dccdb0e6efd4ccf6d5bbd6d6",
+          "request_source_id": "review:5608500963",
+          "response_source_id": null,
+          "matched_label": null,
+          "extraction": "non_request_extra",
+          "response_adjudication": "not_scored",
+          "note": "Maintainer reports an action they already completed, not a new instruction to the author."
+        }
+      ]
+    }
+  ],
+  "scoring_addenda": [
+    {
+      "label": "generic",
+      "pr_id": "fossasia/eventyay#6581",
+      "additional_acceptable_response_source": "inline:4365999772",
+      "reason": "A later author passage explicitly states that the localized generic fallback is retained. This is semantically relevant even though original annotation listed other relevant author comments. Original frozen labels remain byte-for-byte unchanged."
+    }
+  ],
+  "sensitivity": [
+    "Treating optional/supportive OFFPython527 as a new ask would change one non-request extra; its frozen exclusion is retained.",
+    "Exhibition316 request grouping is subjective; splitting width/height and uniformity into separate asks changes duplicate/partial counts. Frozen coupled-geometry grouping retained.",
+    "Generic complaint passages and repeated reviewer requests can be useful reminders, but are counted as duplicates rather than additional distinct asks."
+  ],
+  "limitations": [
+    "Eight recently updated reviewed public PRs from one author; convenience sample, not representative.",
+    "These discussions may have been encountered in earlier OSS contribution work; they are new to this ReviewRadar evaluation, not guaranteed unknown to the author.",
+    "Only one optional ask has no later author response; no broad no-response claim.",
+    "Three cases contain no concrete new asks. No category quota was imposed.",
+    "No untouched reserve was selected; any tuning after this run requires separately selected new evidence."
+  ]
+}

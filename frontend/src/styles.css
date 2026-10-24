@@ -1091,6 +1091,52 @@ main {
 .interpretation-box .small-copy {
   margin-top: 10px;
 }
+.model-explanation {
+  margin-top: 12px;
+  color: var(--muted, #677c6a);
+  font-size: 12px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.model-explanation summary {
+  cursor: pointer;
+  padding: 6px 0;
+  font-weight: 600;
+}
+.model-explanation summary:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+.model-explanation p {
+  margin-top: 10px;
+}
+.decision-box select {
+  max-width: 100%;
+  min-height: 44px;
+}
+.saved-example-switcher {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 18px 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.55);
+}
+.saved-example-switcher .field {
+  flex: 1 1 200px;
+  min-width: 0;
+  margin: 0;
+}
+.saved-example-switcher select {
+  min-height: 44px;
+}
+.saved-example-switcher p {
+  flex-basis: 100%;
+  margin: 0;
+}
 .github-state {
   padding-bottom: 23px;
   margin-bottom: 23px;

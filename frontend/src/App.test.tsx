@@ -59,11 +59,12 @@ beforeEach(() => {
   vi.mocked(api.dispositions).mockResolvedValue([]);
   vi.mocked(api.history).mockResolvedValue([]);
   vi.mocked(api.save).mockImplementation(
-    async (analysis_id, card_id, state, note) => ({
+    async (analysis_id, card_id, state, note, assessment) => ({
       analysis_id,
       card_id,
       state,
       note,
+      assessment,
       updated_at: "2026-10-23T12:00:00Z",
     }),
   );
@@ -83,6 +84,140 @@ async function openSample() {
 }
 
 describe("evidence workbench integration (DOM simulation, not a visual browser audit)", () => {
+  it("opens a fixed mixed example and restores the original example's unsaved decision on return", async () => {
+    const user = await openSample();
+    await user.type(screen.getByRole("textbox", { name: /Note/ }), "Original example draft");
+    await user.selectOptions(screen.getByRole("combobox", { name: /Assessment of this model suggestion/ }), "not_a_request");
+    const mixed = structuredClone(packet);
+    mixed.analysis.id = "synthetic-switch-test-mixed-analysis";
+    vi.mocked(api.sample).mockResolvedValueOnce(mixed as never);
+    await user.selectOptions(screen.getByRole("combobox", { name: /^Saved example$/ }), "mixed");
+    expect(api.sample).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole("button", { name: /Open saved example/ }));
+    await waitFor(() => expect(api.sample).toHaveBeenLastCalledWith("mixed"));
+    expect((screen.getByRole("textbox", { name: /Note/ }) as HTMLTextAreaElement).value).toBe("");
+    expect((screen.getByRole("combobox", { name: /Assessment of this model suggestion/ }) as HTMLSelectElement).value).toBe("unassessed");
+    await user.selectOptions(screen.getByRole("combobox", { name: /^Saved example$/ }), "original");
+    await user.click(screen.getByRole("button", { name: /Open saved example/ }));
+    await waitFor(() => expect((screen.getByRole("textbox", { name: /Note/ }) as HTMLTextAreaElement).value).toBe("Original example draft"));
+    expect((screen.getByRole("combobox", { name: /Assessment of this model suggestion/ }) as HTMLSelectElement).value).toBe("not_a_request");
+    expect(api.analyse).not.toHaveBeenCalled();
+    expect(api.save).not.toHaveBeenCalled();
+  });
+  it("records disagreement explicitly without changing review state, hiding evidence or rewriting the model", async () => {
+    const user = await openSample();
+    const originalRationale = packet.analysis.cards[0].rationale;
+    const explanation = screen.getByText("Unverified model explanation").closest("details")!;
+    expect(explanation.open).toBe(false);
+    expect(explanation.textContent).toContain(originalRationale);
+    const assessment = screen.getByRole("combobox", { name: /Assessment of this model suggestion/ });
+    await user.selectOptions(assessment, "reply_not_relevant");
+    expect(api.save).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("button", { name: /Save decision/ }));
+    await screen.findByText("Saved locally. GitHub was not changed.");
+    expect(api.save).toHaveBeenLastCalledWith(packet.analysis.id, packet.analysis.cards[0].id, "open", "", "reply_not_relevant");
+    expect(screen.getByText("Not yet reviewed locally")).toBeTruthy();
+    expect(explanation.textContent).toContain(originalRationale);
+    await user.click(screen.getByRole("button", { name: /Mark reviewed locally/ }));
+    await screen.findByRole("button", { name: /Reopen locally/ });
+    expect(api.save).toHaveBeenLastCalledWith(packet.analysis.id, packet.analysis.cards[0].id, "reviewed", "", "reply_not_relevant");
+    await user.selectOptions(assessment, "unassessed");
+    await user.click(screen.getByRole("button", { name: /Save decision/ }));
+    await waitFor(() => expect(api.save).toHaveBeenLastCalledWith(packet.analysis.id, packet.analysis.cards[0].id, "reviewed", "", "unassessed"));
+  });
+  it("keeps a failed assessment and note together when changing cards or opening Sources", async () => {
+    const user = await openSample();
+    const firstCard = packet.analysis.cards[0];
+    await user.type(screen.getByRole("textbox", { name: /Note/ }), "This is a status update, not a demand");
+    await user.selectOptions(screen.getByRole("combobox", { name: /Assessment of this model suggestion/ }), "not_a_request");
+    vi.mocked(api.save).mockRejectedValueOnce(new Error("Disk write failed"));
+    await user.click(screen.getByRole("button", { name: /Save decision/ }));
+    await screen.findByText(/Not saved. Your note and assessment remain here/);
+    const cards = within(screen.getByRole("region", { name: "Review request list" })).getAllByRole("button");
+    await user.click(cards[1]);
+    expect((screen.getByRole("combobox", { name: /Assessment of this model suggestion/ }) as HTMLSelectElement).value).toBe("unassessed");
+    expect((screen.getByRole("textbox", { name: /Note/ }) as HTMLTextAreaElement).value).toBe("");
+    await user.click(cards[0]);
+    await user.click(screen.getByRole("button", { name: /^Sources / }));
+    await user.click(screen.getByRole("button", { name: /^Review queue/ }));
+    expect((screen.getByRole("combobox", { name: /Assessment of this model suggestion/ }) as HTMLSelectElement).value).toBe("not_a_request");
+    expect((screen.getByRole("textbox", { name: /Note/ }) as HTMLTextAreaElement).value).toBe("This is a status update, not a demand");
+    await user.click(screen.getByRole("button", { name: /Save decision/ }));
+    await waitFor(() => expect(api.save).toHaveBeenLastCalledWith(packet.analysis.id, firstCard.id, "open", "This is a status update, not a demand", "not_a_request"));
+  });
+  it("does not offer reply disagreement without a response or model controls in baseline mode", async () => {
+    const changed = structuredClone(packet);
+    changed.analysis.cards[0].response = null as never;
+    changed.analysis.cards[0].interpretation = "follow_up";
+    vi.mocked(api.sample).mockResolvedValueOnce(changed as never);
+    const user = await openSample();
+    expect(screen.queryByRole("option", { name: "Reply not relevant" })).toBeNull();
+    const baseline = { ...changed.analysis, id: "baseline-run", mode: "baseline", model: null };
+    vi.mocked(api.analyse).mockResolvedValueOnce(baseline as never);
+    await user.click(screen.getByRole("button", { name: /Chronology baseline/ }));
+    await waitFor(() => expect(screen.queryByRole("combobox", { name: /Assessment of this model suggestion/ })).toBeNull());
+  });
+  it("does not apply an in-flight card assessment to another selected card", async () => {
+    const user = await openSample();
+    let finish: (value: Awaited<ReturnType<typeof api.save>>) => void = () => {};
+    vi.mocked(api.save).mockImplementationOnce(() => new Promise((resolve) => { finish = resolve; }));
+    await user.selectOptions(screen.getByRole("combobox", { name: /Assessment of this model suggestion/ }), "not_a_request");
+    await user.click(screen.getByRole("button", { name: /Save decision/ }));
+    expect(screen.getByRole("textbox", { name: /Note/ }).hasAttribute("disabled")).toBe(true);
+    const cards = within(screen.getByRole("region", { name: "Review request list" })).getAllByRole("button");
+    await user.click(cards[1]);
+    await user.type(screen.getByRole("textbox", { name: /Note/ }), "Second card draft");
+    await act(async () => finish({
+      analysis_id: packet.analysis.id,
+      card_id: packet.analysis.cards[0].id,
+      state: "open",
+      assessment: "not_a_request",
+      note: "",
+      updated_at: "2026-10-24T10:00:00Z",
+    }));
+    expect((screen.getByRole("combobox", { name: /Assessment of this model suggestion/ }) as HTMLSelectElement).value).toBe("unassessed");
+    expect((screen.getByRole("textbox", { name: /Note/ }) as HTMLTextAreaElement).value).toBe("Second card draft");
+    await user.click(cards[0]);
+    expect((screen.getByRole("combobox", { name: /Assessment of this model suggestion/ }) as HTMLSelectElement).value).toBe("not_a_request");
+    expect(screen.getByRole("button", { name: /Save decision/ }).hasAttribute("disabled")).toBe(true);
+  });
+  it("keeps one save per analysis and card pending across A to B to A remounts", async () => {
+    const user = await openSample();
+    let finish: (value: Awaited<ReturnType<typeof api.save>>) => void = () => {};
+    vi.mocked(api.save).mockImplementationOnce(
+      () => new Promise((resolve) => { finish = resolve; }),
+    );
+    await user.type(screen.getByRole("textbox", { name: /Note/ }), "A decision awaiting storage");
+    await user.selectOptions(screen.getByRole("combobox", { name: /Assessment of this model suggestion/ }), "not_a_request");
+    await user.click(screen.getByRole("button", { name: /Save decision/ }));
+    const cards = within(screen.getByRole("region", { name: "Review request list" })).getAllByRole("button");
+    await user.click(cards[1]);
+    await user.type(screen.getByRole("textbox", { name: /Note/ }), "B draft is independent");
+    await user.click(cards[0]);
+    expect((screen.getByRole("textbox", { name: /Note/ }) as HTMLTextAreaElement).value).toBe("A decision awaiting storage");
+    expect(screen.getByRole("textbox", { name: /Note/ }).hasAttribute("disabled")).toBe(true);
+    expect(screen.getByRole("combobox", { name: /Assessment of this model suggestion/ }).hasAttribute("disabled")).toBe(true);
+    expect(screen.getByRole("button", { name: /Save decision/ }).hasAttribute("disabled")).toBe(true);
+    await user.click(screen.getByRole("button", { name: /Save decision/ }));
+    expect(api.save).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole("button", { name: /^Sources / }));
+    await user.click(screen.getByRole("button", { name: /^Review queue/ }));
+    expect(screen.getByRole("button", { name: /Save decision/ }).hasAttribute("disabled")).toBe(true);
+    await act(async () => finish({
+      analysis_id: packet.analysis.id,
+      card_id: packet.analysis.cards[0].id,
+      state: "open",
+      assessment: "not_a_request",
+      note: "A decision awaiting storage",
+      updated_at: "2026-10-24T10:00:00Z",
+    }));
+    await waitFor(() => expect(screen.getByRole("textbox", { name: /Note/ }).hasAttribute("disabled")).toBe(false));
+    expect(screen.getByRole("button", { name: /Save decision/ }).hasAttribute("disabled")).toBe(true);
+    const newCards = within(screen.getByRole("region", { name: "Review request list" })).getAllByRole("button");
+    await user.click(newCards[1]);
+    expect((screen.getByRole("textbox", { name: /Note/ }) as HTMLTextAreaElement).value).toBe("B draft is independent");
+    expect(api.save).toHaveBeenCalledTimes(1);
+  });
   it("retains incomplete historical context and never equates a response with a verified fix", async () => {
     await openSample();
     expect(
@@ -106,6 +241,7 @@ describe("evidence workbench integration (DOM simulation, not a visual browser a
       expect.any(String),
       "reviewed",
       "",
+      "unassessed",
     );
     await user.click(screen.getByRole("button", { name: /Reopen locally/ }));
     await screen.findByRole("button", { name: /Mark reviewed locally/ });
@@ -114,6 +250,7 @@ describe("evidence workbench integration (DOM simulation, not a visual browser a
       expect.any(String),
       "open",
       "",
+      "unassessed",
     );
   });
   it("keeps an unsaved note when inspecting Sources and returning", async () => {
@@ -138,8 +275,8 @@ describe("evidence workbench integration (DOM simulation, not a visual browser a
       screen.getByRole("textbox", { name: /Note/ }),
       "Keep this note",
     );
-    await user.click(screen.getByRole("button", { name: /Save note/ }));
-    await screen.findByText(/Not saved. Your note remains here/);
+    await user.click(screen.getByRole("button", { name: /Save decision/ }));
+    await screen.findByText(/Not saved. Your note and assessment remain here/);
     expect(
       (screen.getByRole("textbox", { name: /Note/ }) as HTMLTextAreaElement)
         .value,
@@ -183,6 +320,7 @@ describe("evidence workbench integration (DOM simulation, not a visual browser a
           releaseSave = resolve;
         }),
     );
+    await user.selectOptions(screen.getByRole("combobox", { name: /Assessment of this model suggestion/ }), "not_a_request");
     await user.click(
       screen.getByRole("button", { name: /Mark reviewed locally/ }),
     );
@@ -196,6 +334,7 @@ describe("evidence workbench integration (DOM simulation, not a visual browser a
         card_id: packet.analysis.cards[0].id,
         state: "reviewed",
         note: "old analysis only",
+        assessment: "not_a_request",
         updated_at: "2026-10-23T12:00:00Z",
       });
     });
@@ -205,6 +344,7 @@ describe("evidence workbench integration (DOM simulation, not a visual browser a
       ).toBeNull(),
     );
     expect(screen.getByText("Not yet reviewed locally")).toBeTruthy();
+    expect((screen.getByRole("combobox", { name: /Assessment of this model suggestion/ }) as HTMLSelectElement).value).toBe("unassessed");
   });
   it("warns when the current request wording was edited after a possible reply", async () => {
     const changed = structuredClone(packet);
@@ -294,7 +434,7 @@ describe("evidence workbench integration (DOM simulation, not a visual browser a
       screen.getByRole("textbox", { name: /Note/ }),
       "Keep my review context",
     );
-    await user.click(screen.getByRole("button", { name: /Save note/ }));
+    await user.click(screen.getByRole("button", { name: /Save decision/ }));
     await screen.findByText("Local connection needed");
     expect(
       (screen.getByRole("textbox", { name: /Note/ }) as HTMLTextAreaElement)
@@ -312,13 +452,14 @@ describe("evidence workbench integration (DOM simulation, not a visual browser a
         .value,
     ).toBe("Keep my review context");
     expect(api.sample).toHaveBeenCalledTimes(1);
-    await user.click(screen.getByRole("button", { name: /Save note/ }));
+    await user.click(screen.getByRole("button", { name: /Save decision/ }));
     await screen.findByText("Saved locally. GitHub was not changed.");
     expect(api.save).toHaveBeenLastCalledWith(
       packet.analysis.id,
       expect.any(String),
       "open",
       "Keep my review context",
+      "unassessed",
     );
   });
   it("checks connectivity when the tab returns without polling or clearing the workbench", async () => {
@@ -416,8 +557,8 @@ describe("evidence workbench integration (DOM simulation, not a visual browser a
       screen.getByRole("textbox", { name: /Note/ }),
       "Keep my next step",
     );
-    await user.click(screen.getByRole("button", { name: /Save note/ }));
-    await screen.findByText(/Not saved. Your note remains here/);
+    await user.click(screen.getByRole("button", { name: /Save decision/ }));
+    await screen.findByText(/Not saved. Your note and assessment remain here/);
     fireEvent(window, new Event("focus"));
     await screen.findByText("Local workspace");
     expect(screen.getByRole("alert").textContent).toContain(
@@ -437,7 +578,7 @@ describe("evidence workbench integration (DOM simulation, not a visual browser a
       screen.getByRole("textbox", { name: /Note/ }),
       "Do not lose this draft",
     );
-    await user.click(screen.getByRole("button", { name: /Save note/ }));
+    await user.click(screen.getByRole("button", { name: /Save decision/ }));
     await screen.findByText("Local connection needed");
     await user.click(screen.getByRole("button", { name: /Dismiss error/ }));
     expect(screen.queryByRole("alert")).toBeNull();

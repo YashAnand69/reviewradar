@@ -6,7 +6,10 @@ import os
 from pathlib import Path
 import sqlite3
 
-from .schemas import Analysis, Disposition, Snapshot, utc_now
+from .schemas import Analysis, Assessment, Disposition, Snapshot, utc_now
+
+
+SCHEMA_VERSION = 1
 
 
 class Store:
@@ -14,22 +17,47 @@ class Store:
         data_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
         self.path = data_dir / "reviewradar.sqlite3"
         with self.connect() as db:
-            db.executescript("""
+            # Keep schema changes and the version marker in one transaction. A
+            # write lock also prevents concurrent startups migrating the same DB.
+            db.execute("BEGIN IMMEDIATE")
+            version = db.execute("PRAGMA user_version").fetchone()[0]
+            if version > SCHEMA_VERSION:
+                raise ValueError(
+                    "This database was created by a newer ReviewRadar version. "
+                    "Use that version rather than downgrading the database."
+                )
+            db.execute("""
                 CREATE TABLE IF NOT EXISTS snapshots (
                     id TEXT PRIMARY KEY, fetched_at TEXT NOT NULL,
                     owner TEXT NOT NULL, payload TEXT NOT NULL
-                );
+                )
+            """)
+            db.execute("""
                 CREATE TABLE IF NOT EXISTS analyses (
                     id TEXT PRIMARY KEY, snapshot_id TEXT NOT NULL REFERENCES snapshots(id),
                     created_at TEXT NOT NULL, mode TEXT NOT NULL, payload TEXT NOT NULL
-                );
+                )
+            """)
+            db.execute("""
                 CREATE TABLE IF NOT EXISTS dispositions (
                     analysis_id TEXT NOT NULL REFERENCES analyses(id) ON DELETE CASCADE,
                     card_id TEXT NOT NULL, state TEXT NOT NULL, note TEXT NOT NULL,
                     updated_at TEXT NOT NULL,
                     PRIMARY KEY (analysis_id, card_id)
-                );
+                )
             """)
+            columns = {
+                row["name"] for row in db.execute("PRAGMA table_info(dispositions)")
+            }
+            if "assessment" not in columns:
+                if version == SCHEMA_VERSION:
+                    raise ValueError(
+                        "The disposition schema is incomplete; restore a consistent database backup."
+                    )
+                db.execute(
+                    "ALTER TABLE dispositions ADD COLUMN assessment TEXT NOT NULL DEFAULT 'unassessed'"
+                )
+            db.execute(f"PRAGMA user_version = {SCHEMA_VERSION}")
         os.chmod(self.path, 0o600)
 
     @contextmanager
@@ -141,29 +169,56 @@ class Store:
         return [Disposition.model_validate(dict(row)) for row in rows]
 
     def set_disposition(
-        self, analysis_id: str, card_id: str, state: str, note: str
+        self,
+        analysis_id: str,
+        card_id: str,
+        state: str,
+        note: str,
+        assessment: Assessment | None = None,
     ) -> Disposition:
         analysis = self.get_analysis(analysis_id)
-        if analysis is None or not any(card.id == card_id for card in analysis.cards):
+        if analysis is None:
             raise KeyError("Analysis or card not found")
-        disposition = Disposition(
-            analysis_id=analysis_id,
-            card_id=card_id,
-            state=state,
-            note=note,
-            updated_at=utc_now(),
-        )
+        card = next((card for card in analysis.cards if card.id == card_id), None)
+        if card is None:
+            raise KeyError("Analysis or card not found")
+        if assessment is not None and assessment != "unassessed":
+            if analysis.mode != "model":
+                raise ValueError(
+                    "Model assessments apply only to model analyses, not the chronology baseline."
+                )
+            if assessment == "reply_not_relevant" and card.response is None:
+                raise ValueError(
+                    "A reply can be assessed only when the card has a possible response."
+                )
         with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            previous = db.execute(
+                "SELECT assessment FROM dispositions WHERE analysis_id = ? AND card_id = ?",
+                (analysis_id, card_id),
+            ).fetchone()
+            saved_assessment = previous["assessment"] if previous else "unassessed"
+            disposition = Disposition(
+                analysis_id=analysis_id,
+                card_id=card_id,
+                state=state,
+                note=note,
+                assessment=assessment if assessment is not None else saved_assessment,
+                updated_at=utc_now(),
+            )
             db.execute(
-                """INSERT INTO dispositions VALUES (?, ?, ?, ?, ?)
+                """INSERT INTO dispositions (analysis_id, card_id, state, note, updated_at, assessment)
+                VALUES (?, ?, ?, ?, ?, ?)
                 ON CONFLICT(analysis_id, card_id) DO UPDATE SET
-                state=excluded.state, note=excluded.note, updated_at=excluded.updated_at""",
+                state=excluded.state, note=excluded.note, updated_at=excluded.updated_at,
+                assessment=excluded.assessment""",
                 (
                     analysis_id,
                     card_id,
                     disposition.state,
                     disposition.note,
                     disposition.updated_at,
+                    disposition.assessment,
                 ),
             )
         return disposition

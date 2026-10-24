@@ -76,11 +76,14 @@ export interface Analysis {
     elapsed_seconds: number;
   };
 }
+export type Assessment = "unassessed" | "not_a_request" | "reply_not_relevant";
 export interface Disposition {
   analysis_id: string;
   card_id: string;
   state: "open" | "reviewed";
   note: string;
+  // Older saved replay decisions have no assessment.
+  assessment?: Assessment;
   updated_at: string;
 }
 export interface Health {
@@ -106,3 +109,4 @@ export interface Sample {
   analysis?: Analysis;
   manifest?: Record<string, unknown>;
 }
+export type SavedExample = "original" | "mixed";

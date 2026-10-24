@@ -233,11 +233,15 @@ class Analysis(StrictModel):
     stats: Stats
 
 
+Assessment = Literal["unassessed", "not_a_request", "reply_not_relevant"]
+
+
 class Disposition(StrictModel):
     analysis_id: str
     card_id: str
     state: Literal["open", "reviewed"]
     note: str = Field(default="", max_length=2000)
+    assessment: Assessment = "unassessed"
     updated_at: str
 
 
@@ -272,3 +276,4 @@ class AnalysisRequest(StrictModel):
 class DispositionRequest(StrictModel):
     state: Literal["open", "reviewed"]
     note: str = Field(default="", max_length=2000)
+    assessment: Assessment = "unassessed"

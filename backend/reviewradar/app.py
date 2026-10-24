@@ -4,6 +4,7 @@ import json
 import secrets
 import shutil
 import threading
+from typing import Literal
 
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
@@ -275,15 +276,28 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def disposition(analysis_id: str, card_id: str, request: DispositionRequest):
         try:
             return store.set_disposition(
-                analysis_id, card_id, request.state, request.note
+                analysis_id,
+                card_id,
+                request.state,
+                request.note,
+                request.assessment
+                if "assessment" in request.model_fields_set
+                else None,
             )
         except KeyError as exc:
             raise HTTPException(404, "Analysis or card not found.") from exc
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
 
     @app.get("/api/sample")
-    def sample():
+    def sample(example: Literal["original", "mixed"] = "original"):
         try:
-            raw = json.loads(settings.sample_file.read_text())
+            path = (
+                settings.sample_file
+                if example == "original"
+                else settings.sample_file.with_name("mixed-sample.json")
+            )
+            raw = json.loads(path.read_text())
             snapshot = normalize_snapshot(raw["snapshot"])
             analysis = (
                 Analysis.model_validate(raw["analysis"])

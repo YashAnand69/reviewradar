@@ -3,9 +3,12 @@ import type { FormEvent, ReactNode } from "react";
 import { api } from "./api";
 import {
   analysisWarnings,
+  assessmentFor,
   displayDate,
   exportReview,
+  evidenceSummary,
   labels,
+  normalizeDispositions,
   parseUrls,
   sourceFor,
   validSourceUrl,
@@ -14,12 +17,14 @@ import {
 } from "./domain";
 import type {
   Analysis,
+  Assessment,
   Card,
   Disposition,
   Health,
   PullRequest,
   Sample,
   SavedAnalysis,
+  SavedExample,
   Snapshot,
   SourceComment,
 } from "./types";
@@ -27,6 +32,11 @@ import type {
 const REPLAY = import.meta.env.VITE_REPLAY === "1";
 const REPOSITORY = "https://github.com/YashAnand69/reviewradar";
 type View = "review" | "sources";
+type DecisionDraft = { note: string; assessment: Assessment };
+const SAMPLE_FILES: Record<SavedExample, string> = {
+  original: "sample.json",
+  mixed: "mixed-sample.json",
+};
 function Glyph({
   name,
   className = "",
@@ -229,7 +239,9 @@ function App() {
   const [search, setSearch] = useState("");
   const [includeReviewed, setIncludeReviewed] = useState(true);
   const [busy, setBusy] = useState("");
-  const drafts = useRef<Record<string, string>>({});
+  const drafts = useRef<Record<string, DecisionDraft>>({});
+  const pendingSaveKeys = useRef(new Set<string>());
+  const [pendingSaves, setPendingSaves] = useState(new Set<string>());
   const [resetVersion, setResetVersion] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState("");
@@ -243,6 +255,7 @@ function App() {
   const [urlText, setUrlText] = useState("");
   const [importError, setImportError] = useState("");
   const [isSavedRun, setIsSavedRun] = useState(false);
+  const [exampleChoice, setExampleChoice] = useState<SavedExample>("original");
   const [mobileDetail, setMobileDetail] = useState(false);
   const busyRef = useRef(false);
   const connectionRevision = useRef(0);
@@ -266,7 +279,14 @@ function App() {
     setSnapshot(nextSnapshot);
     activeAnalysisId.current = nextAnalysis?.id ?? null;
     setAnalysis(nextAnalysis);
-    setDecisions(Object.fromEntries(nextDecisions.map((d) => [d.card_id, d])));
+    setDecisions(
+      Object.fromEntries(
+        (nextAnalysis
+          ? normalizeDispositions(nextDecisions, nextAnalysis)
+          : []
+        ).map((d) => [d.card_id, d]),
+      ),
+    );
     setSelected(nextAnalysis?.cards[0]?.id ?? null);
     setView("review");
     setMobileDetail(false);
@@ -329,7 +349,7 @@ function App() {
       connectionRestored(result, true);
     });
   }
-  async function loadSample() {
+  async function loadSample(example: SavedExample = "original") {
     await operation(
       REPLAY
         ? "Opening the historical replay"
@@ -338,7 +358,7 @@ function App() {
         let packet: Sample;
         if (REPLAY) {
           const response = await fetch(
-            `${import.meta.env.BASE_URL}sample.json`,
+            `${import.meta.env.BASE_URL}${SAMPLE_FILES[example]}`,
             { cache: "no-cache" },
           );
           if (!response.ok)
@@ -347,7 +367,7 @@ function App() {
             );
           packet = await response.json();
         } else {
-          const data = await api.sample();
+          const data = await api.sample(example);
           packet = "snapshot" in data ? data : { snapshot: data };
         }
         if (!packet.snapshot?.prs || !Array.isArray(packet.snapshot.prs))
@@ -378,6 +398,7 @@ function App() {
           !!packet.analysis,
           packet.manifest ?? null,
         );
+        setExampleChoice(example);
       },
     );
   }
@@ -539,8 +560,18 @@ function App() {
       },
     );
   }
-  async function save(card: Card, state: "open" | "reviewed", note: string) {
+  async function save(
+    card: Card,
+    state: "open" | "reviewed",
+    note: string,
+    assessment: Assessment,
+  ) {
     if (!analysis) return;
+    const saveKey = `${analysis.id}:${card.id}`;
+    if (pendingSaveKeys.current.has(saveKey))
+      throw new Error("This decision is already being saved. Wait before trying again.");
+    pendingSaveKeys.current.add(saveKey);
+    setPendingSaves((old) => new Set(old).add(saveKey));
     setError("");
     setStatus("");
     const disposition: Disposition = {
@@ -548,6 +579,7 @@ function App() {
       card_id: card.id,
       state,
       note,
+      assessment: assessmentFor(assessment, card, analysis.mode),
       updated_at: new Date().toISOString(),
     };
     try {
@@ -559,7 +591,15 @@ function App() {
           JSON.stringify(Object.values(next)),
         );
         saved = disposition;
-      } else saved = await api.save(analysis.id, card.id, state, note);
+      } else {
+        saved = await api.save(
+          analysis.id,
+          card.id,
+          state,
+          note,
+          disposition.assessment,
+        );
+      }
       // A slow save belongs to the analysis that started it, even if a new
       // result with the same deterministic card ID has since been opened.
       if (activeAnalysisId.current !== disposition.analysis_id) return;
@@ -578,6 +618,13 @@ function App() {
           : "Your decision could not be saved. The note remains in the editor.",
       );
       throw cause;
+    } finally {
+      pendingSaveKeys.current.delete(saveKey);
+      setPendingSaves((old) => {
+        const next = new Set(old);
+        next.delete(saveKey);
+        return next;
+      });
     }
   }
   async function download() {
@@ -747,6 +794,37 @@ function App() {
               </a>
             </p>
           </Note>
+        )}
+        {(REPLAY || snapshot) && (
+          <section className="saved-example-switcher" aria-label="Saved examples">
+            <label className="field">
+              <span>Saved example</span>
+              <select
+                value={exampleChoice}
+                disabled={!!busy}
+                onChange={(event) => {
+                  const next = event.target.value;
+                  if (next === "original" || next === "mixed")
+                    setExampleChoice(next);
+                }}
+              >
+                <option value="original">Original example</option>
+                <option value="mixed">Mixed evidence example</option>
+              </select>
+            </label>
+            <button
+              className="button"
+              disabled={!!busy || pendingSaves.size > 0 || (!REPLAY && !connected)}
+              onClick={() => void loadSample(exampleChoice)}
+            >
+              Open saved example
+            </button>
+            <p className="small-copy">
+              Saved evidence and analysis; opening an example does not run Gemma.
+              Unsaved decisions remain in this tab when you return to an example.
+              Save them before closing the tab.
+            </p>
+          </section>
         )}
         {error && (
           <div className="error-block" role="alert">
@@ -1259,6 +1337,7 @@ function App() {
                         snapshot={snapshot}
                         baseline={isBaseline}
                         decision={decisions[selectedCard.id]}
+                        saving={pendingSaves.has(`${analysis.id}:${selectedCard.id}`)}
                         replay={REPLAY}
                         draft={
                           drafts.current[`${analysis.id}:${selectedCard.id}`]
@@ -1528,6 +1607,7 @@ function Evidence({
   snapshot,
   baseline,
   decision,
+  saving,
   replay,
   draft,
   onDraft,
@@ -1538,19 +1618,27 @@ function Evidence({
   snapshot: Snapshot;
   baseline: boolean;
   decision: Disposition | undefined;
+  saving: boolean;
   replay: boolean;
-  draft: string | undefined;
-  onDraft: (value: string) => void;
+  draft: DecisionDraft | undefined;
+  onDraft: (value: DecisionDraft) => void;
   onSave: (
     card: Card,
     state: "open" | "reviewed",
     note: string,
+    assessment: Assessment,
   ) => Promise<void>;
   headingRef: React.RefObject<HTMLHeadingElement | null>;
 }) {
   const { pr, request, response } = sourceFor(snapshot, card);
-  const [note, setNote] = useState(draft ?? decision?.note ?? "");
-  const [saving, setSaving] = useState(false);
+  const [note, setNote] = useState(draft?.note ?? decision?.note ?? "");
+  const [assessment, setAssessment] = useState<Assessment>(
+    assessmentFor(
+      draft?.assessment ?? decision?.assessment,
+      card,
+      baseline ? "baseline" : "model",
+    ),
+  );
   const [saved, setSaved] = useState("");
   if (!pr || !request)
     return (
@@ -1559,17 +1647,16 @@ function Evidence({
         title="This evidence could not be found in its snapshot."
       />
     );
-  const dirty = note !== (decision?.note ?? "");
+  const dirty =
+    note !== (decision?.note ?? "") ||
+    assessment !== (decision?.assessment ?? "unassessed");
   async function persist(state: "open" | "reviewed") {
-    setSaving(true);
     setSaved("");
     try {
-      await onSave(card, state, note);
+      await onSave(card, state, note, assessment);
       setSaved("Saved. GitHub was not changed.");
     } catch {
-      setSaved("Not saved. Your note remains here; retry when ready.");
-    } finally {
-      setSaving(false);
+      setSaved("Not saved. Your note and assessment remain here; retry when ready.");
     }
   }
   return (
@@ -1626,14 +1713,18 @@ function Evidence({
               {labels[card.interpretation]}
             </span>
           </div>
-          <p>{card.rationale}</p>
-          {!!card.uncertainty.length && (
-            <ul>
-              {card.uncertainty.map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </ul>
-          )}
+          <p>{evidenceSummary(card)}</p>
+          <details className="model-explanation">
+            <summary>Unverified model explanation</summary>
+            <p>{card.rationale}</p>
+            {!!card.uncertainty.length && (
+              <ul>
+                {card.uncertainty.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            )}
+          </details>
           <p className="small-copy">
             Unverified interpretation — an author’s report is not proof the
             request was fulfilled. Read the surrounding conversation before
@@ -1686,6 +1777,32 @@ function Evidence({
               : "Not yet reviewed locally"}
           </span>
         </div>
+        {!baseline && (
+          <label className="field">
+            <span>Assessment of this model suggestion</span>
+            <select
+              value={assessment}
+              disabled={saving}
+              onChange={(event) => {
+                const next = assessmentFor(event.target.value, card, "model");
+                setAssessment(next);
+                onDraft({ note, assessment: next });
+                setSaved("");
+              }}
+              aria-describedby="assessment-help"
+            >
+              <option value="unassessed">No disagreement recorded</option>
+              <option value="not_a_request">Not a request</option>
+              {card.response && (
+                <option value="reply_not_relevant">Reply not relevant</option>
+              )}
+            </select>
+            <span className="small-copy" id="assessment-help">
+              Your judgment only. Save explicitly; this does not hide the card,
+              mark it reviewed, or change the original analysis.
+            </span>
+          </label>
+        )}
         <label className="field">
           <span>
             Note <span className="optional">(optional)</span>
@@ -1694,9 +1811,10 @@ function Evidence({
             rows={3}
             maxLength={2000}
             value={note}
+            disabled={saving}
             onChange={(event) => {
               setNote(event.target.value);
-              onDraft(event.target.value);
+              onDraft({ note: event.target.value, assessment });
               setSaved("");
             }}
             placeholder="What will you inspect or reply to next? Keep your reasoning here."
@@ -1724,7 +1842,7 @@ function Evidence({
             disabled={!dirty || saving}
             onClick={() => void persist(decision?.state ?? "open")}
           >
-            Save note
+            Save decision
           </button>
         </div>
         <p className="small-copy">
@@ -1734,12 +1852,12 @@ function Evidence({
           This does not change GitHub.
         </p>
         <p className="save-status" role="status">
-          {saved || (dirty ? "Unsaved note" : "")}
+          {saved || (dirty ? "Unsaved decision" : "")}
         </p>
       </section>
       <details className="conversation-context">
         <summary>
-          Read this PR's full conversation{" "}
+          Read this PR's captured conversation{" "}
           <span>{pr.comments.length} source entries</span>
         </summary>
         <SourceTimeline pr={pr} />
@@ -1854,10 +1972,11 @@ function Sources({ snapshot }: { snapshot: Snapshot }) {
     <section className="sources-view">
       <div className="sources-intro">
         <div>
-          <h2>The full conversation stays available.</h2>
+          <h2>The captured conversation stays available.</h2>
           <p>
-            Original text, review submissions and inline comments, including all
-            automated entries. Imported text is untrusted evidence.
+            Original text, review submissions, inline comments and automated entries
+            retained in this snapshot. Check coverage before treating it as a
+            complete discussion. Imported text is untrusted evidence.
           </p>
         </div>
         <label className="field compact">

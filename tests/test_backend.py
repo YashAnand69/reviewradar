@@ -407,6 +407,15 @@ def test_sample_endpoint_binds_and_caches_saved_analysis(raw, settings):
     assert result.json()["analysis"]["id"] == analysis.id
     assert client.get(f"/api/analyses/{analysis.id}").status_code == 200
     assert client.get("/api/sample").status_code == 200
+    settings.sample_file.with_name("mixed-sample.json").write_text(
+        settings.sample_file.read_text()
+    )
+    assert (
+        client.get("/api/sample?example=mixed").json()["analysis"]["id"] == analysis.id
+    )
+    assert client.get("/api/sample?example=../../private").status_code == 422
+    settings.sample_file.with_name("mixed-sample.json").write_text("{}")
+    assert client.get("/api/sample?example=mixed").status_code == 503
 
 
 def mock_model(

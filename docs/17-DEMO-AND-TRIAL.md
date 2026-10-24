@@ -1,6 +1,6 @@
 # ReviewRadar: demonstration and genuine-contributor trial
 
-Prepared 24 October 2026. This is a script and trial invitation, **not a completed recording or participant result**. The final corrected build still requires its rendered retest when browser access is available. Do not treat this document as proof that a step has passed.
+Prepared 24 October 2026. This is a script and trial invitation, **not a completed recording or participant result**. The later bounded rendered checks are recorded in `18-FINAL-BROWSER-AND-LIFECYCLE-AUDIT.md`; this script is not itself proof of a recording or participant result.
 
 ## What the demonstration must establish
 
@@ -66,3 +66,11 @@ Use `docs/09-TRIAL-GUIDE.md` for the full comparison protocol. For a short compr
 Record elapsed and correction time only if actually measured, including help and waiting. The five-minute invitation is an estimated commitment, not a measured completion claim. The public replay's familiar, curated example is not a controlled performance comparison against GitHub reading.
 
 If nobody completes a trial, report plainly: **“No genuine contributor trial conducted; available evidence is engineering and demonstration evidence.”** Preserve negative results and unresolved problems. No person, feedback, result or recording may be invented to complete the submission checklist.
+
+## 24 October upgrade follow-up
+
+The public replay now has fixed Original/Mixed saved examples. The mixed example retains an actual v13 error and a missed request, rather than inventing an unanswered card. An agent-operated local session saved Reply not relevant plus a next-inspection note and downloaded `reviewradar-3c46c52d0010.md`; the file was read back and contains exact sources, incomplete coverage, unverified rationale and separate local decisions. A copy is published as `example-review-sheet.md`, with a genuine local screenshot `mixed-assessment.jpg`. Neither is genuine-user feedback.
+
+Screen capture attempts produced only a subsecond clip and an interrupted attempt. They were retained privately and are not published as a useful live-inference demonstration. The interactive replay and actual exported artifact are the delivered demo. No complete 60–90-second recording is claimed.
+
+One authorized recruitment request was actually posted at https://github.com/YashAnand69/reviewradar/issues/1; it had zero replies at the latest check. This supersedes the earlier prepared-only outreach status, not the absence of a completed trial.

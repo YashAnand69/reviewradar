@@ -1,0 +1,274 @@
+{
+  "schema_version": 1,
+  "label_kind": "assistant-created engineering annotations; no independent human adjudication",
+  "labelled_at": "2026-10-24T10:56:06.853525+00:00",
+  "scope": "human_review",
+  "expected_requests": [
+    {
+      "id": "generic",
+      "pr_id": "fossasia/eventyay#6581",
+      "request_sources": [
+        "inline:4307818521"
+      ],
+      "intent": "Use a localized generic fallback instead of technical HTTP error details.",
+      "acceptable_response_ids": [
+        "comment:6263462235",
+        "comment:6379920942"
+      ],
+      "expected_response": "relevant_later_author_passage"
+    },
+    {
+      "id": "alert",
+      "pr_id": "fossasia/eventyay#6581",
+      "request_sources": [
+        "inline:4307825673"
+      ],
+      "intent": "Announce asynchronous errors through an alert role.",
+      "acceptable_response_ids": [
+        "comment:6263462235",
+        "comment:6379920942"
+      ],
+      "expected_response": "relevant_later_author_passage"
+    },
+    {
+      "id": "detail",
+      "pr_id": "fossasia/eventyay#6581",
+      "request_sources": [
+        "inline:4307831085"
+      ],
+      "intent": "Store error detail as a readonly instance property.",
+      "acceptable_response_ids": [
+        "comment:6263462235",
+        "comment:6379920942"
+      ],
+      "expected_response": "relevant_later_author_passage"
+    },
+    {
+      "id": "glob",
+      "pr_id": "fossasia/eventyay#6581",
+      "request_sources": [
+        "inline:4307834070"
+      ],
+      "intent": "Make the test command work without Unix shell glob expansion.",
+      "acceptable_response_ids": [
+        "comment:6263462235",
+        "comment:6379920942"
+      ],
+      "expected_response": "relevant_later_author_passage"
+    },
+    {
+      "id": "vite-root",
+      "pr_id": "fossasia/eventyay#6581",
+      "request_sources": [
+        "inline:4307837055"
+      ],
+      "intent": "Resolve the Vite test root independently of the invocation directory.",
+      "acceptable_response_ids": [
+        "comment:6263462235",
+        "comment:6379920942"
+      ],
+      "expected_response": "relevant_later_author_passage"
+    },
+    {
+      "id": "embedded-video",
+      "pr_id": "fossasia/eventyay#6581",
+      "request_sources": [
+        "review:5624395806",
+        "review:5629629275"
+      ],
+      "intent": "Embed a playable demo directly in the PR rather than a downloadable external video.",
+      "acceptable_response_ids": [
+        "comment:6379920942"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "note": "Two reviewers repeat the same request; one semantic ask with either source accepted."
+    },
+    {
+      "id": "resolve-inline",
+      "pr_id": "fossasia/eventyay#6581",
+      "request_sources": [
+        "review:5624395806",
+        "review:5629629275"
+      ],
+      "intent": "Recheck and resolve the still-open inline review threads.",
+      "acceptable_response_ids": [
+        "comment:6379920942"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "note": "Procedural thread follow-through is separate from the five earlier code requests. The generic review5563901773 wrapper is not a sixth initial code ask."
+    },
+    {
+      "id": "guard-uploaded-images",
+      "pr_id": "openfoodfacts/search-a-licious#482",
+      "request_sources": [
+        "review:5637351530"
+      ],
+      "intent": "Optional follow-up: guard missing uploaded-image id/full_size fields.",
+      "acceptable_response_ids": [],
+      "expected_response": "none_visible",
+      "optional": true,
+      "note": "A specific optional improvement is an ask under this protocol, even though the reviewer approves this PR and describes it as follow-up work."
+    },
+    {
+      "id": "screencast",
+      "pr_id": "fossasia/eventyay-teamshifts#229",
+      "request_sources": [
+        "review:5625557358"
+      ],
+      "intent": "Add a screencast.",
+      "acceptable_response_ids": [
+        "comment:6379961988"
+      ],
+      "expected_response": "relevant_later_author_passage"
+    },
+    {
+      "id": "test-location",
+      "pr_id": "fossasia/eventyay-exhibition#316",
+      "request_sources": [
+        "inline:4259284809"
+      ],
+      "intent": "Avoid a redundant standalone transition test file; put missing UI coverage in existing suites.",
+      "acceptable_response_ids": [
+        "comment:6161040851"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "note": "Question plus conditional alternative is one test-organization ask."
+    },
+    {
+      "id": "state-colors",
+      "pr_id": "fossasia/eventyay-exhibition#316",
+      "request_sources": [
+        "review:5504327571"
+      ],
+      "intent": "Use appropriate state/action colors matching the prior buttons.",
+      "acceptable_response_ids": [
+        "comment:6161040851"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "note": "Later requests refine the presentation; this initial author report is relevant without proving that the reviewer accepted it."
+    },
+    {
+      "id": "reference-dropdown",
+      "pr_id": "fossasia/eventyay-exhibition#316",
+      "request_sources": [
+        "review:5504327571",
+        "review:5532269834"
+      ],
+      "intent": "Follow an existing dropdown pattern; the later review specifies the Exhibitor form control.",
+      "acceptable_response_ids": [
+        "comment:6208249456"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "note": "The later review repeats and makes the earlier reference-pattern ask concrete; count one ask, not two."
+    },
+    {
+      "id": "outline-colors",
+      "pr_id": "fossasia/eventyay-exhibition#316",
+      "request_sources": [
+        "review:5532269834"
+      ],
+      "intent": "Restore the original action outline colors consistently.",
+      "acceptable_response_ids": [
+        "comment:6208249456"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "note": "The explicit outline requirement is more specific than the initial generic state-color ask and is scored separately."
+    },
+    {
+      "id": "compact-fixed-size",
+      "pr_id": "fossasia/eventyay-exhibition#316",
+      "request_sources": [
+        "review:5547379241"
+      ],
+      "intent": "Use compact TeamShifts width/height and one fixed size for every state.",
+      "acceptable_response_ids": [
+        "comment:6232132353"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "note": "Width/height and equal geometry are closely coupled acceptance criteria; one card can cover both. A card mentioning only one is partial extraction."
+    },
+    {
+      "id": "filled-colors",
+      "pr_id": "fossasia/eventyay-exhibition#316",
+      "request_sources": [
+        "review:5547379241"
+      ],
+      "intent": "Fill each state control with its state color.",
+      "acceptable_response_ids": [
+        "comment:6232132353"
+      ],
+      "expected_response": "relevant_later_author_passage"
+    },
+    {
+      "id": "long-option-clipping",
+      "pr_id": "fossasia/eventyay-exhibition#316",
+      "request_sources": [
+        "review:5625432053"
+      ],
+      "intent": "Investigate/improve the cramped dropdown and longer option labels.",
+      "acceptable_response_ids": [
+        "comment:6379925552"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "response_scope": "partial_investigation_and_clarification",
+      "note": "The author diagnoses native popup clipping and asks which layout tradeoff is acceptable. It is a relevant conversational response, not a completed UI fix; preserve that distinction."
+    },
+    {
+      "id": "feature-utilities",
+      "pr_id": "GMOD/Apollo3#867",
+      "request_sources": [
+        "inline:4339456712"
+      ],
+      "intent": "Use existing feature-classification utilities.",
+      "acceptable_response_ids": [
+        "comment:6336151930",
+        "inline:4346057297"
+      ],
+      "expected_response": "relevant_later_author_passage"
+    },
+    {
+      "id": "before-after",
+      "pr_id": "GMOD/Apollo3#867",
+      "request_sources": [
+        "review:5603108328"
+      ],
+      "intent": "Post before-and-after screenshot/video evidence for the track UI change.",
+      "acceptable_response_ids": [
+        "comment:6336151930"
+      ],
+      "expected_response": "relevant_later_author_passage"
+    }
+  ],
+  "no_request_cases": {
+    "fossasia/WPFAevent#365": [
+      {
+        "id": "review:5607780289",
+        "reason": "Approval, report that error handling works, and waiting for workflow approval; no concrete new author task."
+      },
+      {
+        "id": "review:5637106200",
+        "reason": "Approval only."
+      }
+    ],
+    "openfoodfacts/openfoodfacts-python#527": [
+      {
+        "id": "comment:6165768940",
+        "reason": "Context/support for adding UTF-8 handling on earlier Python versions; the proposed PR already adds it, with no new change or question requested. Ambiguous supportive suggestion, excluded by the concrete-new-ask rule."
+      }
+    ],
+    "json-schema-org/JSON-Schema-Test-Suite#1234": [
+      {
+        "id": "review:5608500963",
+        "reason": "Praise and maintainer report of changes they already made; no requested author action."
+      }
+    ]
+  },
+  "ambiguity_policy": "Semantic ask grouping and optionality are judgement calls. Original labels are frozen; scoring must preserve alternative acceptable sources and author-response passages. Partial conversational response does not prove completion.",
+  "limitations": [
+    "Eight recently updated reviewed public PRs from one author; convenience sample, not representative.",
+    "These discussions may have been encountered in earlier OSS contribution work; they are new to this ReviewRadar evaluation, not guaranteed unknown to the author.",
+    "Only one optional ask has no later author response; no broad no-response claim.",
+    "Three cases contain no concrete new asks. No category quota was imposed.",
+    "No untouched reserve was selected; any tuning after this run requires separately selected new evidence."
+  ]
+}

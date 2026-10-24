@@ -1,0 +1,7 @@
+{
+  "frozen_at": "2026-10-24T16:44:33.129516+00:00",
+  "prompt_version": "human-review-passages-v12",
+  "model_implementation_sha256": "63703ac19ebe9dedf03b8ea4d9c203bcdac40e1276bfcc241c170e4fae196bad",
+  "prompt_sha256": "d0beb84cb02a929635b3a355a85b600a99108ce43988c65dbaa0eaece9ab09cc",
+  "scope": "Second and final bounded development candidate; explicit empty-output examples and narrow whole-comment acknowledgement exclusion, mixed comments remain model inputs. Informed by exposed v10/v11 errors. No new-pool predictions inspected."
+}

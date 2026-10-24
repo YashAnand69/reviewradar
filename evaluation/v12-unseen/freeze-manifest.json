@@ -1,0 +1,89 @@
+{
+  "frozen_at": "2026-10-24T17:08:06.496792+00:00",
+  "protocol_sha256": "2460a4e983f8a6397ee714b89bed8dff7c4eaac0e73bf225eeec30904e2c3e92",
+  "labels_sha256": "5b7b4453e2ee5aa28e4c7f58dfd07c1f4a1ddcd8a2d304e8a74cac4faa67d365",
+  "search_sha256": "fd76f02760be04bb46e24f66321109c78455524c8553165d38c5b93f09dd38a1",
+  "selected": [
+    {
+      "rank": 34,
+      "pr_id": "openfoodfacts/open-prices-frontend#2472",
+      "url": "https://github.com/openfoodfacts/open-prices-frontend/pull/2472",
+      "snapshot_id": "9e288cd60644c652389f8b919b07320302537e7d1392c8ac3902f1adb9710812",
+      "sha256": "3c5fa5c8020b97c72e7c38954d544e5e28efa07dada4ee3a49e5010e8173f327",
+      "path": "outputs/upgrade/v12-unseen/openfoodfacts-open-prices-frontend-2472-snapshot.json",
+      "complete": true,
+      "sources": 3,
+      "reviewer_sources": 1,
+      "fetched_at": "2026-10-24T16:45:05.014252Z",
+      "status": "selected"
+    },
+    {
+      "rank": 38,
+      "pr_id": "fossasia/visdom#1919",
+      "url": "https://github.com/fossasia/visdom/pull/1919",
+      "snapshot_id": "ba9041de2bfada220175ce4583ee3f377217bca6f4485010ad839f4269bb9b75",
+      "sha256": "5645925fd4b0eb954ae0d89e5e7f89151b6e69ebdb8797de075953cd000fa818",
+      "path": "outputs/upgrade/v12-unseen/fossasia-visdom-1919-snapshot.json",
+      "complete": true,
+      "sources": 18,
+      "reviewer_sources": 2,
+      "fetched_at": "2026-10-24T16:45:15.105129Z",
+      "status": "selected"
+    },
+    {
+      "rank": 43,
+      "pr_id": "fossasia/visdom#1952",
+      "url": "https://github.com/fossasia/visdom/pull/1952",
+      "snapshot_id": "06aa91923436f5e0c5ad3371105df03cd1aa3082c1bbf8569cf922e6364ee044",
+      "sha256": "ef340813456a7525bfb01410dfb2d1e4a843bfa0b5218e1fada1da3ee0ddce78",
+      "path": "outputs/upgrade/v12-unseen/fossasia-visdom-1952-snapshot.json",
+      "complete": true,
+      "sources": 9,
+      "reviewer_sources": 1,
+      "fetched_at": "2026-10-24T16:45:25.921989Z",
+      "status": "selected"
+    },
+    {
+      "rank": 44,
+      "pr_id": "fossasia/visdom#1929",
+      "url": "https://github.com/fossasia/visdom/pull/1929",
+      "snapshot_id": "72a7ecf264e98760e96488e4eeef3602bb626d1d447f30e8c28a7a0f79a8d0e8",
+      "sha256": "9665d4dcd18867cab878c2031cab4bebf4e955c2614d77b21265826130adcc0d",
+      "path": "outputs/upgrade/v12-unseen/fossasia-visdom-1929-snapshot.json",
+      "complete": true,
+      "sources": 10,
+      "reviewer_sources": 1,
+      "fetched_at": "2026-10-24T16:45:28.464990Z",
+      "status": "selected"
+    },
+    {
+      "rank": 45,
+      "pr_id": "fossasia/visdom#1954",
+      "url": "https://github.com/fossasia/visdom/pull/1954",
+      "snapshot_id": "4465f33d990025e0d764730f57370e1738280b5d76aae36dd93626b8bc4a7d89",
+      "sha256": "adcd8d0b921e55789b0a6ccebde9f5b1506fd786059f9128eb94b79be61247fb",
+      "path": "outputs/upgrade/v12-unseen/fossasia-visdom-1954-snapshot.json",
+      "complete": true,
+      "sources": 7,
+      "reviewer_sources": 2,
+      "fetched_at": "2026-10-24T16:45:31.094719Z",
+      "status": "selected"
+    },
+    {
+      "rank": 48,
+      "pr_id": "fossasia/visdom#1928",
+      "url": "https://github.com/fossasia/visdom/pull/1928",
+      "snapshot_id": "a3e3158277c62623f1685335b14d1cd5e5df6c614181e26ced4eeea3b55ea076",
+      "sha256": "9a7953e8385bcec559c2e71357362734099d829683481af96a01bf4f7ad13f12",
+      "path": "outputs/upgrade/v12-unseen/fossasia-visdom-1928-snapshot.json",
+      "complete": true,
+      "sources": 8,
+      "reviewer_sources": 2,
+      "fetched_at": "2026-10-24T16:45:39.270684Z",
+      "status": "selected"
+    }
+  ],
+  "screened": 18,
+  "candidate": "evaluation/v13-final/candidate.json",
+  "capture_protocol_sha256": "be40f1756c2cd15080edc32cb2445ec42cd7ae17a25f54edf081d798c9d1a274"
+}

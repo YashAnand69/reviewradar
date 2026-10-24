@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "label_kind": "assistant-created engineering annotations; not independent human adjudication",
+  "labelled_at": "2026-10-24T17:08:06.496224+00:00",
+  "scope": "human_review",
+  "expected_requests": [
+    {
+      "id": "update-branch",
+      "pr_id": "fossasia/visdom#1919",
+      "request_sources": [
+        "review:5460600410"
+      ],
+      "intent": "Update the contribution branch from upstream.",
+      "acceptable_response_ids": [
+        "comment:6066718273"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "optional": false
+    },
+    {
+      "id": "underflow-warning",
+      "pr_id": "fossasia/visdom#1919",
+      "request_sources": [
+        "review:5500719597"
+      ],
+      "intent": "Warn when normalization turns a nonzero input vector into zero.",
+      "acceptable_response_ids": [
+        "comment:6160926073"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "optional": false
+    },
+    {
+      "id": "remove-del",
+      "pr_id": "fossasia/visdom#1929",
+      "request_sources": [
+        "review:5528845515"
+      ],
+      "intent": "Remove the unnecessary del finite statement.",
+      "acceptable_response_ids": [
+        "comment:6188924705"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "optional": true
+    },
+    {
+      "id": "rendering-path-coverage",
+      "pr_id": "fossasia/visdom#1929",
+      "request_sources": [
+        "review:5528845515"
+      ],
+      "intent": "Keep test coverage for both rendering paths.",
+      "acceptable_response_ids": [
+        "comment:6188924705"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "optional": false
+    },
+    {
+      "id": "preserve-options",
+      "pr_id": "fossasia/visdom#1954",
+      "request_sources": [
+        "review:5453005077"
+      ],
+      "intent": "Avoid mutating the caller options object.",
+      "acceptable_response_ids": [
+        "comment:6066660896"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "optional": false
+    },
+    {
+      "id": "skip-unused-bounds",
+      "pr_id": "fossasia/visdom#1954",
+      "request_sources": [
+        "review:5477821073"
+      ],
+      "intent": "Skip unused min/max reductions for contours, avoiding all-NaN warnings.",
+      "acceptable_response_ids": [
+        "comment:6099232284"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "optional": false
+    },
+    {
+      "id": "keyed-legends",
+      "pr_id": "fossasia/visdom#1928",
+      "request_sources": [
+        "review:5528835799"
+      ],
+      "intent": "Map legend labels by metric name rather than relying on positional order.",
+      "acceptable_response_ids": [
+        "comment:6188969729"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "optional": false
+    },
+    {
+      "id": "pr-template",
+      "pr_id": "fossasia/visdom#1928",
+      "request_sources": [
+        "review:5547274829"
+      ],
+      "intent": "Update the PR description to follow the template.",
+      "acceptable_response_ids": [],
+      "expected_response": "none_visible",
+      "optional": false
+    }
+  ],
+  "no_request_cases": {
+    "openfoodfacts/open-prices-frontend#2472": [
+      {
+        "id": "comment:6250842810",
+        "reason": "Human invokes a review bot; no requested change from the PR author."
+      }
+    ],
+    "fossasia/visdom#1952": [
+      {
+        "id": "comment:6065673339",
+        "reason": "Human invokes a review bot; no requested change from the PR author."
+      }
+    ]
+  },
+  "ambiguity_policy": "A card can fully cover both removal and preservation of tests in the same quote; count ask coverage separately from duplicate cards. Keep absence of a response distinct from code status. Branch-update instructions are actionable. Bot invocations are not author requests. Source spans, not mere response IDs, determine relevance.",
+  "limitations": [
+    "Six convenience-sampled PRs from one author; five are Visdom. Not representative or independently adjudicated.",
+    "Eight assistant-labelled asks, including one without a later author reply; no claims about verified code fixes or time savings.",
+    "Sources may have been encountered during prior OSS maintenance. No ReviewRadar predictions for this pool were inspected before candidate and label freezes."
+  ]
+}

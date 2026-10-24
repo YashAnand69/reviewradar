@@ -22,6 +22,20 @@ async function connect() {
   fetchMock.mockClear();
 }
 describe("local connection recovery", () => {
+  it("uses a fixed saved-example endpoint and rejects arbitrary paths before fetch", async () => {
+    await connect();
+    fetchMock.mockResolvedValueOnce(json({snapshot: {}}));
+    await api.sample("mixed");
+    expect(fetchMock.mock.calls[0][0]).toBe("/api/sample?example=mixed");
+    expect(() => api.sample("https://evil.example/fake.json" as never)).toThrow("published saved examples");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+  it("omits an unspecified assessment so older callers do not clear an existing judgment", async () => {
+    await connect();
+    fetchMock.mockResolvedValueOnce(json({state: "open"}));
+    await api.save("analysis", "card", "open", "edited note");
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({state: "open", note: "edited note"});
+  });
   it("explains an offline server without retrying a potentially executed write", async () => {
     await connect();
     fetchMock.mockRejectedValueOnce(new TypeError("Failed to fetch"));
@@ -40,7 +54,7 @@ describe("local connection recovery", () => {
       .mockResolvedValueOnce(json({ api_token: "new-session" }))
       .mockResolvedValueOnce(json({ state: "reviewed" }));
     await expect(
-      api.save("analysis", "card", "reviewed", "check patch"),
+      api.save("analysis", "card", "reviewed", "check patch", "reply_not_relevant"),
     ).resolves.toEqual({ state: "reviewed" });
     expect(fetchMock).toHaveBeenCalledTimes(3);
     expect(fetchMock.mock.calls[0][1].body).toBe(
@@ -50,6 +64,7 @@ describe("local connection recovery", () => {
       "new-session",
     );
     expect(fetchMock.mock.calls[1][0]).toBe("/runtime-config");
+    expect(JSON.parse(fetchMock.mock.calls[2][1].body)).toEqual({state: "reviewed", note: "check patch", assessment: "reply_not_relevant"});
   });
   it("stops after a second rejected token instead of looping", async () => {
     await connect();

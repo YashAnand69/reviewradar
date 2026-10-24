@@ -347,10 +347,26 @@ def export_markdown(analysis: Analysis, snapshot: Snapshot, dispositions: list) 
                     "",
                 ]
             )
-        lines.append(markdown_text(card.rationale))
+        explanation_label = (
+            "Unverified model explanation"
+            if analysis.mode == "model"
+            else "Baseline explanation"
+        )
+        lines.append(f"{explanation_label}: {markdown_text(card.rationale)}")
         for uncertainty in card.uncertainty:
             lines.append(f"Uncertainty: {markdown_text(uncertainty)}")
         lines.append(f"Local decision: {decision.state if decision else 'open'}")
+        assessment_labels = {
+            "unassessed": "Unassessed",
+            "not_a_request": "Not a request",
+            "reply_not_relevant": "Reply not relevant",
+        }
+        assessment = decision.assessment if decision else "unassessed"
+        lines.append(f"Human assessment (local): {assessment_labels[assessment]}")
+        if assessment != "unassessed":
+            lines.append(
+                "This human assessment does not alter the original model output or GitHub."
+            )
         if decision and decision.note:
             lines.append(f"Local note: {markdown_text(decision.note)}")
     if not analysis.cards:

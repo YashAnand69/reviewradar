@@ -8,7 +8,11 @@ A new Hacktoberfest Week 3 project, begun **23 October 2026**. ReviewRadar reads
 
 ## Project status
 
-The complete local workflow is implemented and has passed API, persistence, adversarial and DOM integration checks. **The Week 3 entry is [published on DEV](https://dev.to/yashanand69/reviewradar-the-request-a-possible-reply-and-a-calmer-review-session-486)** (24 October 2026). The public site remains a historical replay; the full workflow runs locally. The corrected compact workbench has now received a rendered desktop and 320 px check with no observed page-level horizontal overflow. A real service interruption reproduced a failed note save, retained the typed draft, and recovered through Retry connection to a successful save; saved-history Escape/return focus was also checked. These bounded observations are not a complete screen-reader or reduced-motion audit, and no genuine contributor trial has occurred. A separate macOS lifecycle issue remains: jobs launched from ChatGPT were removed when ChatGPT quit. The new user-run launcher addresses how jobs are started, but survival after quitting ChatGPT has not yet been verified. See [reliability and practical use](docs/16-RELIABILITY-AND-PRACTICAL-USE.md) for current evidence and the [earlier follow-up audit](docs/15-FOLLOW-UP-AUDIT.md) for the preceding findings.
+The [Week 3 entry is published on DEV](https://dev.to/yashanand69/reviewradar-the-request-a-possible-reply-and-a-calmer-review-session-486). This remains an **experimental reading aid**, not a reliable task classifier. Current evaluation retains missed requests, duplicate suggestions and incorrect reply matches; see [evaluation](evaluation/REPORT.md).
+
+Record **Not a request** or **Reply not relevant**, independently of notes and reviewed state. These decisions never rewrite model evidence or update GitHub. Select the original saved example or a mixed-evidence example preserving a real failure. Unsaved drafts survive card/example switches and reconnection in the open tab; save before closing/reloading.
+
+No genuine contributor trial has occurred. The [feedback request](https://github.com/YashAnand69/reviewradar/issues/1) is open. Jobs launched from ChatGPT were removed on quit; the user-run launcher exists, but its ChatGPT-quit survival test remains outstanding. See [upgrade execution](docs/19-UPGRADE-EXECUTION.md).
 
 ## Planning package
 
@@ -93,7 +97,7 @@ The public replay is built separately with `python3.12 scripts/build_replay.py`;
 
 ## Evaluation and remaining limits
 
-The engineering pilot uses four PRs and seven pre-labelled requests, not a large benchmark or independent human ground truth. Development iterations and a frozen holdout are separated by whole PR. The untouched v8 holdout found the three labelled requests plus one repeated quotation as an extra request. A subsequent v9 quote-handling change is a **regression check**, not a fresh holdout; additional agreement can still be treated as a distinct ask. Do not treat these small counts as population accuracy. Source linkage and later-author constraints prevent invalid references, not semantic mistakes.
+The original four-PR pilot remains historical evidence. Fresh v10 testing exposed errors; v11 improved a specific response association but retained false tasks. v12 was rejected for losing genuine asks. Final v13 was frozen before six further discussions were labelled/tested: five of eight assistant-labelled asks covered, three missed, one duplicate and one poor response. These are convenience samples, not independent human ground truth or population accuracy. Source validation prevents invalid references, not semantic mistakes.
 
 See [evaluation results](evaluation/REPORT.md) and [release audit](docs/13-INDEPENDENT-CODE-AUDIT.md). No contest win, selection probability, human-only authorship or human time savings is promised.
 

@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   analysisWarnings,
+  assessmentFor,
   exportReview,
+  normalizeDispositions,
   parseUrls,
   validSourceUrl,
   verifiedCard,
@@ -266,6 +268,32 @@ describe("attention filters and coverage", () => {
     ).toContain("Source coverage is incomplete"));
 });
 describe("safe import and export", () => {
+  it("exports human disagreement independently from the original model interpretation and reviewed status", () => {
+    const output = exportReview(snapshot, analysis, {
+      [card.id]: { analysis_id: analysis.id, card_id: card.id, state: "open", note: "Inspect manually", assessment: "reply_not_relevant", updated_at: analysis.created_at },
+    });
+    expect(output).toContain("Possible response found");
+    expect(output).toContain("Local decision: open");
+    expect(output).toContain("Local assessment: Reply not relevant. This is your judgment");
+    expect(output).toContain("Inspect manually");
+  });
+  it("labels original model rationale as unverified without mutating saved analysis", () => {
+    const before = structuredClone(analysis);
+    const output = exportReview(snapshot, analysis, {});
+    expect(output).toContain("Unverified model explanation: A later author comment mentions the requested test\\.");
+    expect(analysis).toEqual(before);
+    const baselineOutput = exportReview(snapshot, { ...analysis, mode: "baseline", model: null }, {});
+    expect(baselineOutput).toContain("Baseline reading note: A later author comment mentions the requested test\\.");
+    expect(baselineOutput).not.toContain("Unverified model explanation:");
+  });
+  it("normalizes legacy replay decisions and rejects cross-analysis or malformed browser records", () => {
+    const legacy: Disposition = { analysis_id: analysis.id, card_id: card.id, state: "reviewed", note: "Kept", updated_at: analysis.created_at };
+    expect(normalizeDispositions([legacy], analysis)).toEqual([{ ...legacy, assessment: "unassessed" }]);
+    expect(normalizeDispositions([null, { ...legacy, analysis_id: "other" }, { ...legacy, note: {} }] as never, analysis)).toEqual([]);
+    expect(assessmentFor("reply_not_relevant", { ...card, response: null }, "model")).toBe("unassessed");
+    expect(assessmentFor("not_a_request", card, "baseline")).toBe("unassessed");
+    expect(assessmentFor("invented", card, "model")).toBe("unassessed");
+  });
   it("accepts and deduplicates canonical PR URLs", () =>
     expect(
       parseUrls(

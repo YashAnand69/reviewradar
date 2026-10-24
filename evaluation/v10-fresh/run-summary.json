@@ -1,0 +1,209 @@
+{
+  "started_at": "2026-10-24T11:00:13.178903+00:00",
+  "protocol": "human-review-passages-v10-fresh-1",
+  "freeze_manifest_sha256": "1d50ab779fd5ce93d8e0dae1df9b1eb625fcc6ba971b3b261c80d2776072689e",
+  "labels_sha256": "eee87456650129d8f751287efdfdff7a2b0f4a3e315f4e7986394e55ace674b4",
+  "model_implementation_sha256": "7df9cce236cfddccfbb37ee710397e31853a35cd70956b754b16ba05ecc75367",
+  "prompt_version": "human-review-passages-v10",
+  "prompt_sha256": "1d2fe0f3164ad6f83c262ea1eb81aefdadd162f5574f81553575c6587fc110b7",
+  "model_sha256": "8e30dff3ac4c8434c49a7036fa15564bdbb6044e42bf04550bf1a096ad7e6a52",
+  "runtime_sha256": "330ef197918263288c4017f164154bd11406b6e86d1357b5f83625bb85c10b1e",
+  "commit": "0617c84cb3a4b201ba527573c56fb0bf9498c51f",
+  "python": "3.12.13",
+  "settings": {
+    "model": "reviewradar-gemma4-e2b",
+    "context": 16384,
+    "max_output": 2048,
+    "margin": 1024,
+    "timeout_seconds": 90.0,
+    "temperature": 0
+  },
+  "results": [
+    {
+      "pr_id": "fossasia/eventyay#6581",
+      "snapshot_id": "ffaf14c59c00cc9440e6c4e7314591bb1246836d6564a38eb02c7004d3685055",
+      "started_at": "2026-10-24T11:00:14.119534+00:00",
+      "mechanical_bound_validation": "pass",
+      "analysis_id": "f83806fe89b6452380ee2aaf511b4dc9",
+      "complete": true,
+      "model_cards": 8,
+      "reported_elapsed_seconds": 19.055,
+      "coverage": [
+        {
+          "pr_id": "fossasia/eventyay#6581",
+          "status": "analyzed",
+          "comments_total": 28,
+          "comments_processed": 15,
+          "comments_excluded_bots": 13,
+          "reason": null
+        }
+      ],
+      "wall_seconds": 19.058,
+      "baseline_cards": 8,
+      "baseline_elapsed_seconds": 0.0
+    },
+    {
+      "pr_id": "openfoodfacts/search-a-licious#482",
+      "snapshot_id": "9233651060e9b798255d9e081fdeab9852c9cc6949bf741f0e67f8086cf431e3",
+      "started_at": "2026-10-24T11:00:33.178748+00:00",
+      "mechanical_bound_validation": "pass",
+      "analysis_id": "7150552e7d1a4ce59ed38c0a90a4871a",
+      "complete": true,
+      "model_cards": 1,
+      "reported_elapsed_seconds": 2.295,
+      "coverage": [
+        {
+          "pr_id": "openfoodfacts/search-a-licious#482",
+          "status": "analyzed",
+          "comments_total": 2,
+          "comments_processed": 1,
+          "comments_excluded_bots": 1,
+          "reason": null
+        }
+      ],
+      "wall_seconds": 2.295,
+      "baseline_cards": 1,
+      "baseline_elapsed_seconds": 0.0
+    },
+    {
+      "pr_id": "fossasia/WPFAevent#365",
+      "snapshot_id": "46a51b570cc93d6b425f76658675048b1b0ea256b8be497b589f9981fcc941c6",
+      "started_at": "2026-10-24T11:00:35.475421+00:00",
+      "mechanical_bound_validation": "pass",
+      "analysis_id": "01337397aeb548818ac4924b71a38af8",
+      "complete": true,
+      "model_cards": 0,
+      "reported_elapsed_seconds": 0.278,
+      "coverage": [
+        {
+          "pr_id": "fossasia/WPFAevent#365",
+          "status": "analyzed",
+          "comments_total": 5,
+          "comments_processed": 2,
+          "comments_excluded_bots": 3,
+          "reason": null
+        }
+      ],
+      "wall_seconds": 0.278,
+      "baseline_cards": 2,
+      "baseline_elapsed_seconds": 0.0
+    },
+    {
+      "pr_id": "fossasia/eventyay-teamshifts#229",
+      "snapshot_id": "1d54abc4e09a913f8bc111537b193d032e9d341400b6bf87426bd2c141e5575b",
+      "started_at": "2026-10-24T11:00:35.755974+00:00",
+      "mechanical_bound_validation": "pass",
+      "analysis_id": "c284b9c023a742bdbb79e16428dc4764",
+      "complete": true,
+      "model_cards": 1,
+      "reported_elapsed_seconds": 2.319,
+      "coverage": [
+        {
+          "pr_id": "fossasia/eventyay-teamshifts#229",
+          "status": "analyzed",
+          "comments_total": 17,
+          "comments_processed": 8,
+          "comments_excluded_bots": 9,
+          "reason": null
+        }
+      ],
+      "wall_seconds": 2.319,
+      "baseline_cards": 1,
+      "baseline_elapsed_seconds": 0.0
+    },
+    {
+      "pr_id": "fossasia/eventyay-exhibition#316",
+      "snapshot_id": "9b02c1d45811c123ca7aa2f7fc63c85c2c28656592d4181207168174df1294d6",
+      "started_at": "2026-10-24T11:00:38.077196+00:00",
+      "mechanical_bound_validation": "pass",
+      "analysis_id": "52834ce357974d55a87a482419772dcc",
+      "complete": true,
+      "model_cards": 10,
+      "reported_elapsed_seconds": 16.719,
+      "coverage": [
+        {
+          "pr_id": "fossasia/eventyay-exhibition#316",
+          "status": "analyzed",
+          "comments_total": 20,
+          "comments_processed": 14,
+          "comments_excluded_bots": 6,
+          "reason": null
+        }
+      ],
+      "wall_seconds": 16.72,
+      "baseline_cards": 5,
+      "baseline_elapsed_seconds": 0.0
+    },
+    {
+      "pr_id": "openfoodfacts/openfoodfacts-python#527",
+      "snapshot_id": "d19a868e346a37e40cab9112be822e54d468bc74da69e5af51945cdf1095d920",
+      "started_at": "2026-10-24T11:00:54.798422+00:00",
+      "mechanical_bound_validation": "pass",
+      "analysis_id": "2be5a5bce36041b4ad45ab920f03254c",
+      "complete": true,
+      "model_cards": 1,
+      "reported_elapsed_seconds": 1.713,
+      "coverage": [
+        {
+          "pr_id": "openfoodfacts/openfoodfacts-python#527",
+          "status": "analyzed",
+          "comments_total": 2,
+          "comments_processed": 1,
+          "comments_excluded_bots": 1,
+          "reason": null
+        }
+      ],
+      "wall_seconds": 1.713,
+      "baseline_cards": 1,
+      "baseline_elapsed_seconds": 0.0
+    },
+    {
+      "pr_id": "GMOD/Apollo3#867",
+      "snapshot_id": "4a066e4ef3ab1bba4ba2b10a8c9024edc3643402e0d77cdc66abe095c1125179",
+      "started_at": "2026-10-24T11:00:56.512818+00:00",
+      "mechanical_bound_validation": "pass",
+      "analysis_id": "f3ed3077ea5e49b3afbf9afd1a80c756",
+      "complete": true,
+      "model_cards": 2,
+      "reported_elapsed_seconds": 3.769,
+      "coverage": [
+        {
+          "pr_id": "GMOD/Apollo3#867",
+          "status": "analyzed",
+          "comments_total": 5,
+          "comments_processed": 5,
+          "comments_excluded_bots": 0,
+          "reason": null
+        }
+      ],
+      "wall_seconds": 3.769,
+      "baseline_cards": 2,
+      "baseline_elapsed_seconds": 0.0
+    },
+    {
+      "pr_id": "json-schema-org/JSON-Schema-Test-Suite#1234",
+      "snapshot_id": "d4e4176d90c74149d016961e8f32e20b1ffb98599813bdbde0dcc67e2e26923f",
+      "started_at": "2026-10-24T11:01:00.282523+00:00",
+      "mechanical_bound_validation": "pass",
+      "analysis_id": "20d2e9fb2f6042a8966b51a25ce577f2",
+      "complete": true,
+      "model_cards": 3,
+      "reported_elapsed_seconds": 4.461,
+      "coverage": [
+        {
+          "pr_id": "json-schema-org/JSON-Schema-Test-Suite#1234",
+          "status": "analyzed",
+          "comments_total": 1,
+          "comments_processed": 1,
+          "comments_excluded_bots": 0,
+          "reason": null
+        }
+      ],
+      "wall_seconds": 4.462,
+      "baseline_cards": 1,
+      "baseline_elapsed_seconds": 0.0
+    }
+  ],
+  "complete": true,
+  "finished_at": "2026-10-24T11:01:04.745701+00:00"
+}

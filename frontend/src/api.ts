@@ -1,9 +1,11 @@
 import type {
   Analysis,
+  Assessment,
   Disposition,
   Health,
   Sample,
   SavedAnalysis,
+  SavedExample,
   Snapshot,
 } from "./types";
 let sessionToken = "";
@@ -123,7 +125,13 @@ export const api = {
       );
     }
   },
-  sample: () => request<Sample | Snapshot>("/api/sample"),
+  sample: (example: SavedExample = "original") => {
+    if (example !== "original" && example !== "mixed")
+      throw new Error("Choose one of the published saved examples.");
+    return request<Sample | Snapshot>(
+      example === "mixed" ? "/api/sample?example=mixed" : "/api/sample",
+    );
+  },
   history: () => request<SavedAnalysis[]>("/api/analyses"),
   snapshot: (id: string) =>
     request<Snapshot>(`/api/snapshots/${encodeURIComponent(id)}`),
@@ -153,10 +161,11 @@ export const api = {
     cardId: string,
     state: "open" | "reviewed",
     note: string,
+    assessment?: Assessment,
   ) =>
     request<Disposition>(
       `/api/analyses/${encodeURIComponent(analysisId)}/cards/${encodeURIComponent(cardId)}/disposition`,
-      { method: "PUT", body: JSON.stringify({ state, note }) },
+      { method: "PUT", body: JSON.stringify({ state, note, assessment }) },
     ),
   async export(id: string): Promise<Blob> {
     const response = await responseFor(

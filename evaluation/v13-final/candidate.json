@@ -1,0 +1,7 @@
+{
+  "frozen_at": "2026-10-24T17:04:28.614810+00:00",
+  "prompt_version": "human-review-passages-v13",
+  "model_implementation_sha256": "24caf2b5b4713df24641ebf6c6b66b846e28893bf5aa5900ad66580530bcba47",
+  "prompt_sha256": "c842fd59d779305c43799569d343dac9d8b82ff3ec795f237c169b4d29dba5d7",
+  "scope": "Final release candidate: restore v11 extraction prompt after v12 recall regression; retain narrow whole-comment acknowledgement exclusion and enforce reviewer eligibility locally. No reserved rank31+ discussion bodies or predictions inspected. No further prompt tuning after this freeze."
+}

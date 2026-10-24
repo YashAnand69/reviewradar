@@ -1,0 +1,7 @@
+{
+  "frozen_at": "2026-10-24T16:39:25.164358+00:00",
+  "prompt_version": "human-review-passages-v11",
+  "model_implementation_sha256": "26a0beeb956ac0efefe1935319e3e5c79438b57a0766e04afe88bc3810911ab8",
+  "prompt_sha256": "139b592743f0bceef78d36c09955e65d0f6c0bca08fae66c81a95e15eafab1b1",
+  "scope": "One bounded development candidate informed by exposed v10 failures; no reserved predictions inspected; no claims of semantic improvement until scored."
+}

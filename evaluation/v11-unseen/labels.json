@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "label_kind": "assistant-created engineering annotations; not independent human adjudication",
+  "labelled_at": "2026-10-24T11:08:02.948762+00:00",
+  "scope": "human_review",
+  "expected_requests": [
+    {
+      "id": "explicit-y-validation",
+      "pr_id": "fossasia/visdom#1924",
+      "request_sources": [
+        "review:5516817517"
+      ],
+      "intent": "Replace the bare missing-score assertion with explicit validation that remains active in optimized Python.",
+      "acceptable_response_ids": [
+        "comment:6289252317",
+        "comment:6318039932"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "note": "The later comprehensive validation update is also an acceptable response, but the first author repair specifically acknowledges and fixes the omitted assertion."
+    },
+    {
+      "id": "dimension-length-validation",
+      "pr_id": "fossasia/visdom#1924",
+      "request_sources": [
+        "review:5598532463"
+      ],
+      "intent": "Make X/Y dimensions and lengths consistently validated before indexing or producing output.",
+      "acceptable_response_ids": [
+        "comment:6318039932"
+      ],
+      "expected_response": "relevant_later_author_passage"
+    },
+    {
+      "id": "plotly-ci",
+      "pr_id": "fossasia/visdom#1923",
+      "request_sources": [
+        "review:5516811835"
+      ],
+      "intent": "Ensure the real Plotly encoding test actually runs in CI instead of being skipped without Plotly.",
+      "acceptable_response_ids": [
+        "comment:6288991448"
+      ],
+      "expected_response": "relevant_later_author_passage"
+    },
+    {
+      "id": "existing-cli-tests",
+      "pr_id": "GMOD/Apollo3#864",
+      "request_sources": [
+        "review:5588786863"
+      ],
+      "intent": "Move CLI coverage into the existing CLI integration test pattern and file.",
+      "acceptable_response_ids": [
+        "comment:6297870248"
+      ],
+      "expected_response": "relevant_later_author_passage"
+    },
+    {
+      "id": "before-after-screenshots",
+      "pr_id": "openfoodfacts/open-prices-frontend#2471",
+      "request_sources": [
+        "inline:4308626448"
+      ],
+      "intent": "Provide before-and-after screenshots for the UI change.",
+      "acceptable_response_ids": [
+        "inline:4308842748"
+      ],
+      "expected_response": "relevant_later_author_passage",
+      "optional": true,
+      "note": "Polite phrasing still requests concrete visual evidence; do not remove or de-prioritize the existing tests from this comment alone."
+    }
+  ],
+  "no_request_cases": {
+    "fossasia/eventyay-socialmedia#84": [
+      {
+        "id": "review:5600588059",
+        "reason": "Approval only."
+      },
+      {
+        "id": "review:5601312638",
+        "reason": "Approval only."
+      }
+    ],
+    "GMOD/Apollo3#861": [
+      {
+        "id": "comment:6278089802",
+        "reason": "Thanks only."
+      }
+    ]
+  },
+  "non_request_sources": [
+    {
+      "pr_id": "fossasia/visdom#1923",
+      "source_id": "comment:6287320431",
+      "reason": "Maintainer closure/inactivity announcement, not a concrete new author task; relevant context but not independently extracted work."
+    }
+  ],
+  "ambiguity_policy": "Semantic scope and optionality are engineering judgements. Preserve original labels; record legitimate response alternatives transparently in separate scoring addenda. Possible response never proves code correctness or acceptance.",
+  "limitations": [
+    "Six convenience-sampled recently updated reviewed PRs from one author and three organizations; not representative.",
+    "Discussions can have been encountered in earlier OSS maintenance; unseen means no ReviewRadar model evaluation output inspected.",
+    "Only five asks, all with a visible later author response. No no-response, partial-response, quotation-heavy or large-multiask capability claim can follow from this set.",
+    "Two PRs have only approval/thanks sources. This set is simpler than v10-fresh; its scores cannot be directly interpreted as the amount of improvement.",
+    "No category quotas or favourable-output filtering; fixed continuation of the previously frozen search order."
+  ]
+}
