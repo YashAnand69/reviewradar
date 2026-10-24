@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Manage ReviewRadar's two project-scoped macOS login-session services.
+"""Run ReviewRadar in a dedicated Terminal or manage its legacy launchd jobs.
 
-Jobs live in this project's ignored .runtime directory; nothing is installed in
-~/Library/LaunchAgents. Loaded jobs restart after a crash, but macOS can remove
-jobs attributed to ChatGPT when that app quits. Start from your own Terminal;
-survival after ChatGPT quits remains unverified. Jobs end at logout or reboot.
+The foreground action owns only new child groups and remains attached to a
+visible Terminal; Ctrl+C requests bounded cleanup. It creates no launchd job or
+login item. Start independently from Finder/Terminal; actual ChatGPT-quit
+survival still requires a user lifecycle check. Legacy jobs remain supported,
+but macOS can remove jobs attributed to ChatGPT when that app quits.
 No download, credential copying, process takeover, or login startup is performed.
 """
 
@@ -17,6 +18,7 @@ import os
 from pathlib import Path
 import plistlib
 import re
+import signal
 import shutil
 import socket
 import subprocess
@@ -277,6 +279,164 @@ class LocalServices:
             raise
         return self.status()
 
+    def foreground(self, config: dict, timeout: float) -> dict:
+        """Own app/model children in a visible Terminal session, without launchd.
+
+        Run this independently from Finder/Terminal. This process remains the
+        supervisor; closing its Terminal or Ctrl+C requests cleanup. There is no
+        PID-file takeover, detached daemon, login item, or automatic restart.
+        """
+        self.validate(config)
+        # Check every owner and listener before configuration writes or children.
+        for service in PORTS:
+            if self.inspect(service) is not None:
+                raise ServiceError(
+                    "Owned login-session jobs are still loaded. Stop them before "
+                    "starting the foreground session. No process was changed."
+                )
+        for service in PORTS:
+            if not self.port_free(service):
+                raise ServiceError(
+                    f"Port {PORTS[service]} is occupied. A foreground session or "
+                    "another application may already be running. Return to its "
+                    "Terminal and stop it if appropriate; no process was stopped."
+                )
+        self.write_configuration(config)
+        children: dict[str, subprocess.Popen] = {}
+        logs = []
+        previous_handlers = {}
+        self._foreground_stop_requested = False
+
+        def interrupted(signum, frame):
+            # Defer the interruption until Popen's returned child has been
+            # registered. Raising inside process creation can orphan a new group.
+            self._foreground_stop_requested = True
+
+        try:
+            for signum in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
+                previous_handlers[signum] = signal.signal(signum, interrupted)
+            for service in ("model", "app"):
+                self.check_foreground_children(children)
+                log_path = self.directory / f"foreground-{service}.log"
+                descriptor = os.open(
+                    log_path,
+                    os.O_WRONLY | os.O_CREAT | os.O_APPEND | os.O_NOFOLLOW,
+                    0o600,
+                )
+                os.fchmod(descriptor, 0o600)
+                log = os.fdopen(descriptor, "a")
+                logs.append(log)
+                specification = self.build_plist(service, config)
+                children[service] = subprocess.Popen(
+                    specification["ProgramArguments"],
+                    cwd=self.root,
+                    env=specification["EnvironmentVariables"],
+                    stdout=log,
+                    stderr=subprocess.STDOUT,
+                    # Each invocation owns only these new groups, including the
+                    # llama-server descendant of the verified model launcher.
+                    start_new_session=True,
+                )
+                self.wait_foreground(service, children, timeout)
+            print(
+                json.dumps(
+                    {
+                        "foreground": "ready",
+                        "url": "http://127.0.0.1:8893/",
+                        "supervisor_pid": os.getpid(),
+                        "supervisor_parent_pid": os.getppid(),
+                        "children": {
+                            name: child.pid for name, child in children.items()
+                        },
+                        "lifetime": "Keep this dedicated Terminal open; Ctrl+C stops this session. No automatic restart or login startup.",
+                        "quit_test": "ChatGPT-quit survival requires an actual independent launch and quit test; readiness alone does not verify it.",
+                        "log_directory": str(self.directory),
+                    },
+                    indent=2,
+                ),
+                flush=True,
+            )
+            while True:
+                self.check_foreground_children(children)
+                time.sleep(0.5)
+        except KeyboardInterrupt:
+            return {"foreground": "stopped", "saved_data": "preserved"}
+        finally:
+            # Ignore a second Ctrl+C while the bounded cleanup finishes.
+            for signum in previous_handlers:
+                signal.signal(signum, signal.SIG_IGN)
+            try:
+                self.stop_foreground_children(children)
+            finally:
+                for log in logs:
+                    log.close()
+                for signum, handler in previous_handlers.items():
+                    signal.signal(signum, handler)
+
+    def check_foreground_children(self, children: dict[str, subprocess.Popen]) -> None:
+        if getattr(self, "_foreground_stop_requested", False):
+            raise KeyboardInterrupt
+        for service, child in children.items():
+            result = child.poll()
+            if result is not None:
+                raise ServiceError(
+                    f"The foreground {service} process exited (status {result}). "
+                    f"Inspect {self.directory / ('foreground-' + service + '.log')}. "
+                    "This session's other child processes will be stopped. "
+                    "No unrelated process will be changed."
+                )
+
+    def wait_foreground(
+        self, service: str, children: dict[str, subprocess.Popen], timeout: float
+    ) -> None:
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            self.check_foreground_children(children)
+            if self.healthy(service):
+                return
+            time.sleep(0.2)
+        raise ServiceError(
+            f"The foreground {service} process did not become ready. "
+            f"Inspect {self.directory / ('foreground-' + service + '.log')}."
+        )
+
+    @staticmethod
+    def stop_foreground_children(children: dict[str, subprocess.Popen]) -> None:
+        """Terminate only new process groups retained by this live invocation.
+
+        No persisted/stale PID is accepted. A launcher which has exited can
+        still have a runtime descendant in its original group, so stop groups
+        rather than just the immediate Python wrapper.
+        """
+        groups = [child.pid for child in reversed(list(children.values()))]
+
+        def send(group: int, signum: int) -> bool:
+            try:
+                os.killpg(group, signum)
+                return True
+            except ProcessLookupError:
+                return False
+
+        for group in groups:
+            send(group, signal.SIGTERM)
+        deadline = time.monotonic() + 8
+        while time.monotonic() < deadline:
+            for child in children.values():
+                child.poll()  # Reap wrapper children while descendants exit.
+            if not any(send(group, 0) for group in groups):
+                break
+            time.sleep(0.1)
+        for group in groups:
+            if send(group, 0):
+                send(group, signal.SIGKILL)
+        for child in children.values():
+            try:
+                child.wait(timeout=3)
+            except subprocess.TimeoutExpired:
+                # Bounded cleanup already requested KILL for this exact group.
+                # Never scan or kill a process chosen by name/occupied port.
+                pass
+
     def stop_service(self, service: str) -> None:
         if self.inspect(service) is None:
             return
@@ -309,7 +469,9 @@ class LocalServices:
     def status(self) -> dict:
         result = {
             "url": "http://127.0.0.1:8893/",
-            "lifetime": "login-session jobs; survival after ChatGPT quits is unverified",
+            "lifetime": "Legacy launchd jobs only; foreground sessions are controlled by their own Terminal. ChatGPT-quit survival requires an actual test.",
+            "status_scope": "Job state and managed fields refer only to legacy launchd jobs. Endpoint health does not prove process ownership.",
+            "endpoint_health": {service: self.healthy(service) for service in PORTS},
             "services": {},
         }
         for service in PORTS:
@@ -329,7 +491,9 @@ class LocalServices:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("start", "status", "stop", "check"))
+    parser.add_argument(
+        "action", choices=("start", "status", "stop", "check", "foreground")
+    )
     parser.add_argument("--runtime", type=Path)
     parser.add_argument("--model", type=Path)
     parser.add_argument(
@@ -341,7 +505,7 @@ def main() -> int:
     args = parser.parse_args()
     if sys.platform != "darwin":
         parser.error(
-            "This durable service launcher requires macOS; use the documented foreground launchers elsewhere."
+            "This local service controller requires macOS; use the documented foreground launchers elsewhere."
         )
     if not 5 <= args.timeout <= 600:
         parser.error("Timeout must be between 5 and 600 seconds.")
@@ -355,6 +519,10 @@ def main() -> int:
                 "services_changed": False,
                 "note": "Artifact checksums are verified during model startup, not by this preflight.",
             }
+        elif args.action == "foreground":
+            result = services.foreground(
+                services.configuration(args.runtime, args.model), args.timeout
+            )
         elif args.action == "start":
             result = services.start(
                 services.configuration(args.runtime, args.model), args.timeout

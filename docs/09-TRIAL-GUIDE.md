@@ -1,6 +1,6 @@
 # ReviewRadar: five-minute first-use guide and comparison protocol
 
-Status: prepared 23 October 2026; **no participant trial has yet been conducted through this guide**. Do not turn this document, engineering labels or an agent-operated browser session into a testimonial or human time-saving result.
+Status: prepared 23 October, updated 25 October 2026; **no participant trial has yet been conducted through this guide**. Do not turn this document, engineering labels or an agent-operated browser session into a testimonial or human time-saving result.
 
 ## Short guide to share with a volunteer
 
@@ -73,3 +73,9 @@ If no real person completes the guide, report: **“No genuine user trial conduc
 5. Update release notes and article claims only from observed results.
 
 No outreach is sent by this document. Any recruitment or external message uses only an authorized channel and actual recipient; avoid repeated unsolicited maintainer requests.
+
+## Self-guided local-only feedback page
+
+The [trial page](https://yashanand69.github.io/reviewradar/trial.html) helps a volunteer record observations without sending them to a server. It asks open-ended questions before giving any expected answers, records an optional session interval including pauses and writing, defaults to no quotation permission, and invalidates prepared feedback when answers change. Download/copy and public GitHub sharing are separate explicit actions. Public comments expose the GitHub account; no named quotation permission is inferred.
+
+This form cannot verify participant identity or completion. Its synthetic tests use visibly labelled synthetic strings and are never submitted or treated as feedback. No real participant result exists until an actual person responds. The original GitHub issue is updated instead of posting duplicate requests; any additional invitation uses specific user authorization.

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer"><meta name="robots" content="noindex">
+  <title>Try ReviewRadar — a short contributor trial</title>
+  <link rel="stylesheet" href="./assets/trial.css">
+  <script type="module" src="./assets/trial.js"></script>
+</head>
+<body>
+  <a class="skip" href="#trial">Skip to trial</a>
+  <header><a href="./">ReviewRadar <span>/ contributor trial</span></a><a href="https://github.com/YashAnand69/reviewradar/issues/1" target="_blank" rel="noopener noreferrer">Feedback request ↗</a></header>
+  <main id="trial">
+    <p class="eyebrow">A SMALL, HONEST FIRST-USE TEST</p>
+    <h1>Does this make a review easier to pick up?</h1>
+    <p class="lead">Try a public example, then tell us what helped—and what got in your way. About five minutes is an estimate, not a measured result. Negative feedback is welcome.</p>
+    <aside><strong>Your answers stay in this tab.</strong> No analytics, recording, automatic upload or account is needed here. Download a copy before closing. Sharing on GitHub is a separate choice: comments there are public under your GitHub account. Don’t include private PRs, personal details or credentials.</aside>
+    <section class="card" aria-labelledby="start-title">
+      <span class="step">01 / BEGIN</span><h2 id="start-title">A few things to try</h2>
+      <p>Use only the supplied historical examples. Open a request, inspect its sources and possible reply, save a next-inspection note, mark reviewed locally, reopen it and download the review sheet. You can stop at any time.</p>
+      <p>We want your own observations. This is a usability trial, not an endorsement or a comparison proving time savings. AI agents assisted the app and this guide.</p>
+      <button id="start" type="button">Start my trial</button>
+      <a id="open-app" class="secondary" href="https://yashanand69.github.io/reviewradar/" target="_blank" rel="noopener noreferrer">Open the public example ↗</a>
+      <p id="start-status" class="hint" role="status">Starting records a local timestamp only. No browsing activity is tracked.</p>
+    </section>
+    <section id="trial-form" class="card" aria-labelledby="responses-title">
+      <span class="step">02 / YOUR OBSERVATIONS</span><h2 id="responses-title">Tell us what actually happened</h2>
+      <fieldset id="answers" disabled><legend class="sr-only">Trial observations</legend>
+        <div class="columns"><label>Your perspective<select name="role" required><option value="">Choose one</option><option>OSS contributor or reviewer</option><option>Developer in another setting</option><option>Student</option><option>Other</option></select></label>
+        <label>Prior familiarity with these PRs<select name="familiarity" required><option value="">Choose one</option><option>None</option><option>Some</option><option>I authored or reviewed them</option></select></label></div>
+        <label>Which example did you use?<select name="example" required><option value="">Choose one</option><option>Original example</option><option>Mixed evidence example</option><option>Both</option></select></label>
+        <label>What did you think the app was helping you do?<textarea maxlength="4000" name="purpose" required rows="3"></textarea></label>
+        <label>Which request did you inspect? Was the proposed reply relevant, and what source helped you decide?<textarea maxlength="4000" name="evidence" required rows="4"></textarea></label>
+        <label>What changed when you saved, marked reviewed and reopened the item? Did anything surprise you?<textarea maxlength="4000" name="actions" required rows="3"></textarea></label>
+        <label>What was confusing or unnecessary? Would you choose this instead of reading GitHub directly, and why?<textarea maxlength="4000" name="usefulness" required rows="4"></textarea></label>
+        <label>Did anyone help you, or did anything prevent completing the tasks? <span class="hint">Optional; incomplete attempts are useful too.</span><textarea maxlength="4000" name="help" rows="2"></textarea></label>
+        <label>Permission to quote your answers<select name="quotePermission"><option value="not_granted">Not granted—ask me separately</option><option value="anonymous_only">Anonymous quotations of these answers are okay</option></select></label>
+        <p class="hint">No name or contact details are requested. If you post on GitHub, your account identity will be visible. Quoting anonymously does not hide a public comment’s account.</p>
+        <button id="prepare" type="button">Prepare my feedback</button>
+      </fieldset>
+      <p id="status" role="status" aria-live="polite"></p>
+    </section>
+    <section id="result" class="card" hidden aria-labelledby="result-title">
+      <span class="step">03 / REVIEW BEFORE SHARING</span><h2 id="result-title">Your feedback, in your words</h2>
+      <p>Read this first and remove anything you don’t want public. Elapsed time includes reading, pauses and writing answers; it is not a time-saving measurement.</p>
+      <label>Prepared feedback<textarea id="feedback" rows="16"></textarea></label>
+      <div class="actions"><button id="download" type="button">Download feedback</button><button id="copy" class="secondary" type="button">Copy feedback</button><a class="secondary" href="https://github.com/YashAnand69/reviewradar/issues/1" target="_blank" rel="noopener noreferrer">Open the existing feedback thread ↗</a></div>
+      <p class="hint">Nothing is sent by this page. You decide whether to paste and submit it in the GitHub thread. This page cannot verify identity or certify that a participant trial occurred.</p>
+    </section>
+    <noscript><p class="card">This guide needs JavaScript only to prepare a local download. You can still <a href="./">try the example</a> and share your observations in the linked feedback thread.</p></noscript>
+  </main>
+  <footer>No private inputs. No automatic submission. Your own judgement.</footer>
+</body></html>

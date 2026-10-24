@@ -14,7 +14,9 @@ finish() {
 }
 
 printf 'Stop ReviewRadar local services\n\n'
-printf 'This stops only this project\047s managed app and model in the current login session.\n'
+printf 'For a foreground workspace, return to its dedicated Terminal and press Ctrl+C.\n'
+printf 'This file stops only this project\047s legacy launchd jobs, if any.\n'
+printf 'It does not terminate a foreground session by searching for a PID or port.\n'
 printf 'It does not remove saved evidence or notes and does not stop unrelated applications.\n'
 printf 'No login-startup item is installed or removed.\n\n'
 
@@ -33,6 +35,7 @@ if [ "$reviewradar_result" -ne 0 ]; then
   finish "$reviewradar_result"
 fi
 
-printf '\nThis project\047s managed services are stopped.\n'
+printf '\nThis project\047s legacy launchd jobs are stopped.\n'
+printf 'If the foreground workspace is still open, use Ctrl+C in its Terminal to stop it.\n'
 printf 'Double-click Start ReviewRadar.command when you want to resume.\n'
 finish 0

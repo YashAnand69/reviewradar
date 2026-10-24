@@ -795,6 +795,13 @@ function App() {
             </p>
           </Note>
         )}
+        <p className="small-copy trial-invitation">
+          Can this help you pick up a review?{" "}
+          <a href="./trial.html" target="_blank" rel="noopener noreferrer">
+            Try a short contributor trial
+          </a>
+          . No sign-in or private data needed.
+        </p>
         {(REPLAY || snapshot) && (
           <section className="saved-example-switcher" aria-label="Saved examples">
             <label className="field">

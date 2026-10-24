@@ -331,7 +331,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         if (
             path
             and "/" not in path
-            and path in {"sample.json", "favicon.svg", "manifest.webmanifest"}
+            and path
+            in {"sample.json", "trial.html", "favicon.svg", "manifest.webmanifest"}
         ):
             target = settings.frontend_dir / path
             if target.is_file():
