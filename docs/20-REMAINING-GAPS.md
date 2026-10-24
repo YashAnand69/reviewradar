@@ -6,7 +6,7 @@
 
 The archived v14 experiment examines each eligible reviewer comment independently while retaining full reviewer context. Selection remains source-bound; source text is untrusted. More than 12 eligible comments, 40 candidate requests, token overflow or failure rejects the affected PR visibly. The shared 90-second budget is cooperative around HTTP operations and streamed chunks, not an operating-system hard deadline.
 
-On the exposed cases containing the three original misses, v14 recovered all eight labelled actions (v13 found five). A separate frozen six-PR set covered six of six actions with two duplicate cards. That is a limited positive result, not a perfect classifier. The broader eight-PR regression emitted31cards, including4duplicates and8non-request/context extras, plus2insufficient/wrong primary replies. A subsequent independent pool exposed five missed actions out of eight. A v15 verifier was tested and rejected: little noise reduction, retained misses, additional work. Original predictions and frozen annotations were preserved. See the evaluation index for every denominator and counter-reading.
+On the exposed cases containing the three original misses, v14 recovered all eight labelled actions (v13 found five). A separate frozen six-PR set covered six of six actions with two duplicate cards. That is a limited positive result, not a perfect classifier. The broader eight-PR regression emitted 31 cards, including four duplicates and eight non-request/context extras, plus two insufficient/wrong primary replies. A subsequent independent pool exposed five missed actions out of eight. A v15 verifier was tested and rejected: little noise reduction, retained misses, additional work. Original predictions and frozen annotations were preserved. See the evaluation index for every denominator and counter-reading.
 
 The model-only panel **Reviewer comments without a request card** exposes exact retained human reviewer text with dates and original links. It may include approvals or context. A comment with a card can still have missed asks, so the panel does not prove coverage. It never adds model cards, marks obligations or changes GitHub. A person can inspect Sources, record disagreement and choose a next action.
 
@@ -20,7 +20,7 @@ Published [self-guided trial](https://yashanand69.github.io/reviewradar/trial.ht
 
 The single [GitHub recruitment request](https://github.com/YashAnand69/reviewradar/issues/1) was updated with the live guide. Latest check: zero comments. The user also authorized one DEV invitation. Its exact text is prepared locally, but publication is pending because browser control is disabled in this chat's Work settings. No duplicate issue, repeated maintainer ping, vote request, fabricated participant or testimonial was created. The prior DEV entry remains published; it is not claimed updated with these latest changes while browser access is unavailable.
 
-Trial HTML/JS/CSS were deployed in Pages commit3d7f10c1d22bda8536b802a880f8674cc730bf72 and verified200with exact built bytes and correct content types. Four synthetic form tests pass. The current trial's rendered browser check remains pending after browser control became disabled; earlier screenshots do not count as this check.
+Trial HTML/JS/CSS were deployed in Pages commit `3d7f10c1d22bda8536b802a880f8674cc730bf72` and verified HTTP 200 with exact built bytes and correct content types. Four synthetic form tests pass. The current trial's rendered browser check remains pending after browser control became disabled; earlier screenshots do not count as this check.
 
 ## 3. Startup and lifetime
 
@@ -35,3 +35,7 @@ Thirty-nine lifecycle tests passed, including a real disposable wrapper/descenda
 The final retained code passed 165 Python tests and 34 subtests, 66 local frontend tests and six replay tests. Thirty-nine lifecycle tests are included in that backend count. Type/build and source formatting checks passed; the existing Starlette/httpx deprecation warning remains disclosed. The final **live model request-card smoke failed**, as described above; passing structural tests do not override that result. CI/deployment checkpoints are recorded in the execution ledger after release.
 
 No genuine participant feedback, current rendered-browser pass, full screen-reader certification, exhaustive model recall or independent quit-test success is claimed. The DEV invitation is prepared and authorized, but not posted while browser access is disabled.
+
+## Released checkpoint
+
+Source `0f143c110e63d775795546b2840c0bc82297f170` passed [Linux CI](https://github.com/YashAnand69/reviewradar/actions/runs/40127077510). Pages `32e8cb038f358e547f07a1798a7e479af780a2bf` passed [deployment](https://github.com/YashAnand69/reviewradar/actions/runs/40127122147). Public index, JavaScript and trial assets returned 200 with exact built bytes and expected content types. The [public replay](https://yashanand69.github.io/reviewradar/) includes the source-inspection panel; it runs saved evidence, not hosted inference. Publication does not resolve the open limitations above.

@@ -64,3 +64,7 @@ Final factual record written 2026-10-24T17:28:15.240124+00:00. Publication proof
 - Public trial assets were already verified at Pages `3d7f10c1d22bda8536b802a880f8674cc730bf72`; deployment of the source-inspection panel is recorded separately after release. No current rendered-browser check is claimed while browser control is disabled.
 
 See [remaining-gap record](20-REMAINING-GAPS.md) and [all evaluation results](../evaluation/REPORT.md). Quality, actual feedback and judging outcome remain distinct.
+
+### Verified follow-up deployment
+
+Source checkpoint `0f143c110e63d775795546b2840c0bc82297f170`: [Linux CI 40127077510](https://github.com/YashAnand69/reviewradar/actions/runs/40127077510) passed. Public Pages checkpoint `32e8cb038f358e547f07a1798a7e479af780a2bf`: [deployment 40127122147](https://github.com/YashAnand69/reviewradar/actions/runs/40127122147) passed. The deployed index, new JavaScript bundle and trial HTML/JS/CSS returned 200 with bytes identical to the tested build and expected content types. This HTTP artifact check is not a rendered-browser audit. The final real-model smoke failure, absence of genuine feedback and outstanding user-started quit test remain unresolved.

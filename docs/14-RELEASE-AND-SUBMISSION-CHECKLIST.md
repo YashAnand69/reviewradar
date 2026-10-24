@@ -77,3 +77,5 @@ No genuine trial or completed long recording. User-start then ChatGPT-quit check
 - [ ] Current rendered-browser audit of trial and source panel: pending browser access.
 
 [Full current record](20-REMAINING-GAPS.md). These open items do not become complete through passing automated tests or publication.
+
+- [x] Follow-up source `0f143c1` passed Linux CI; Pages `32e8cb0` deployed successfully. Public index, bundle and trial assets match the tested build byte-for-byte. Current rendered-browser audit remains unchecked.
