@@ -81,3 +81,16 @@ No genuine trial or completed long recording. User-start then ChatGPT-quit check
 [Full current record](20-REMAINING-GAPS.md). These open items do not become complete through passing automated tests or publication.
 
 - [x] Follow-up source `0f143c1` passed Linux CI; Pages `32e8cb0` deployed successfully. Public index, bundle and trial assets match the tested build byte-for-byte. Current rendered-browser audit remains unchecked.
+
+
+## Later 25 October daily-use checkpoint
+
+- [x] Repeated use: recognizable/paginated history, explicit source refresh, independent notes and zero-card non-AI reading workflow implemented and cross-reviewed.
+- [x] 174 Python tests + 34 subtests; 71 local frontend + six replay tests; type/build, focused lint and dependency audit pass.
+- [x] Actual API baseline/save/reopen/export/refresh workflow on authored public PRs passes; old evidence and notes retained.
+- [x] Additional model candidate evaluated on 20 exposed PRs and rejected. No default-model improvement or complete recall claimed.
+- [ ] Full current rendered-browser workflow: pending consistent browser controls/user idle window.
+- [ ] Revised DEV entry save/verification: prepared, pending browser completion.
+- [ ] Genuine participant trial and actual ChatGPT-quit survival result remain unverified.
+
+[Daily-use evidence](21-DAILY-USE-UPGRADE.md) distinguishes these outcomes from older checkpoints.

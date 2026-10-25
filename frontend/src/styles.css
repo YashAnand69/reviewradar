@@ -1609,6 +1609,13 @@ main {
 .history-item:hover {
   background: var(--soft);
 }
+.history-item > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.history-item > svg {
+  flex-shrink: 0;
+}
 .history-item strong {
   display: block;
   font-size: 13px;

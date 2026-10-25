@@ -6,7 +6,7 @@ import shutil
 import threading
 from typing import Literal
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse, Response
 from pydantic import ValidationError
@@ -239,8 +239,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             app.state.operation_lock.release()
 
     @app.get("/api/analyses")
-    def analyses():
-        return store.analyses()
+    def analyses(before: str | None = Query(default=None, min_length=1, max_length=200)):
+        try:
+            return store.analyses(before=before)
+        except KeyError as exc:
+            raise HTTPException(
+                404, "History cursor not found. Reload the saved analyses list."
+            ) from exc
 
     def get_analysis(analysis_id: str):
         result = store.get_analysis(analysis_id)

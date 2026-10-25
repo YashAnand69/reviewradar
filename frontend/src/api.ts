@@ -12,7 +12,7 @@ let sessionToken = "";
 let refreshPending: Promise<void> | null = null;
 
 const connectionMessage =
-  "The local ReviewRadar server is not responding. Your open evidence and typed notes remain in this tab. Run .venv/bin/python scripts/local_services.py start from the project folder, then choose Retry connection; do not reload before saving your notes.";
+  "The local ReviewRadar server is not responding. Your open evidence and typed notes remain in this tab. Double-click Start ReviewRadar.command in the project folder, keep its Terminal open, then choose Retry connection; do not reload before saving your notes.";
 
 export class LocalConnectionError extends Error {
   constructor(message = connectionMessage) {
@@ -132,7 +132,10 @@ export const api = {
       example === "mixed" ? "/api/sample?example=mixed" : "/api/sample",
     );
   },
-  history: () => request<SavedAnalysis[]>("/api/analyses"),
+  history: (before?: string) =>
+    request<SavedAnalysis[]>(
+      before ? `/api/analyses?before=${encodeURIComponent(before)}` : "/api/analyses",
+    ),
   snapshot: (id: string) =>
     request<Snapshot>(`/api/snapshots/${encodeURIComponent(id)}`),
   analysis: (id: string) =>

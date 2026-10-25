@@ -14,6 +14,12 @@ Record **Not a request** or **Reply not relevant**, independently of notes and r
 
 No genuine contributor trial has occurred. The [feedback request](https://github.com/YashAnand69/reviewradar/issues/1) and [local-only trial guide](https://yashanand69.github.io/reviewradar/trial.html) are available. The new foreground launcher keeps the app/model in a dedicated Terminal; its actual ChatGPT-quit test remains outstanding. See [upgrade execution](docs/19-UPGRADE-EXECUTION.md).
 
+## Use it for a returning review session
+
+Open **Saved analyses**, search by account/repository/PR title, and load older readings when needed. Source capture dates remain distinct from analysis dates. **Check these PRs again** prefills the current selection for an explicit fresh import; the old reading and its notes remain unchanged. Choose the analysis mode after import.
+
+When Gemma produces no cards, **Read reviewer comments without AI** creates a separate chronology reading list with notes, reviewed/reopen and export. It includes approvals and context, not just asks, and performs no request extraction or response matching. The original model result stays in history. See the [daily routine](docs/22-DAILY-ROUTINE.md) and [upgrade evidence](docs/21-DAILY-USE-UPGRADE.md).
+
 ## Planning package
 
 | Document | Purpose |

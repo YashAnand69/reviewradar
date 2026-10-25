@@ -38,6 +38,10 @@ class Store:
                     created_at TEXT NOT NULL, mode TEXT NOT NULL, payload TEXT NOT NULL
                 )
             """)
+            db.execute(
+                "CREATE INDEX IF NOT EXISTS analyses_created_id "
+                "ON analyses(created_at DESC, id DESC)"
+            )
             db.execute("""
                 CREATE TABLE IF NOT EXISTS dispositions (
                     analysis_id TEXT NOT NULL REFERENCES analyses(id) ON DELETE CASCADE,
@@ -142,23 +146,62 @@ class Store:
             ).fetchone()
         return Analysis.model_validate_json(row["payload"]) if row else None
 
-    def analyses(self) -> list[dict]:
+    def analyses(self, before: str | None = None) -> list[dict]:
+        source_prs: dict[str, list[dict]] = {}
         with self.connect() as db:
+            # Resolve the cursor and its page in one read transaction. Newer
+            # analyses can be inserted between pages without shifting older rows.
+            db.execute("BEGIN")
+            values: tuple = ()
+            where = ""
+            if before is not None:
+                cursor = db.execute(
+                    "SELECT created_at, id FROM analyses WHERE id = ?", (before,)
+                ).fetchone()
+                if cursor is None:
+                    raise KeyError("History cursor not found")
+                where = "WHERE (a.created_at, a.id) < (?, ?)"
+                values = (cursor["created_at"], cursor["id"])
             rows = db.execute(
-                "SELECT payload FROM analyses ORDER BY created_at DESC, id DESC LIMIT 100"
+                f"""SELECT a.payload, s.owner, s.fetched_at,
+                    s.id AS source_id
+                    FROM analyses a JOIN snapshots s ON s.id = a.snapshot_id
+                    {where}
+                    ORDER BY a.created_at DESC, a.id DESC LIMIT 100""",
+                values,
             ).fetchall()
-        return [
-            {
-                "id": a["id"],
-                "snapshot_id": a["snapshot_id"],
-                "created_at": a["created_at"],
-                "mode": a["mode"],
-                "complete": a["complete"],
-                "card_count": len(a["cards"]),
-                "model": a["model"],
-            }
-            for a in (json.loads(row["payload"]) for row in rows)
-        ]
+            # Several readings may share a large discussion snapshot. Read each
+            # source once rather than duplicating its full body for every row.
+            source_ids = list(dict.fromkeys(row["source_id"] for row in rows))
+            if source_ids:
+                placeholders = ",".join("?" for _ in source_ids)
+                for source in db.execute(
+                    f"SELECT id, payload FROM snapshots WHERE id IN ({placeholders})",
+                    source_ids,
+                ):
+                    source_prs[source["id"]] = [
+                        {key: pr[key] for key in ("id", "title", "url")}
+                        for pr in json.loads(source["payload"])["prs"]
+                    ]
+        result = []
+        for row in rows:
+            analysis = json.loads(row["payload"])
+            source_id = row["source_id"]
+            result.append(
+                {
+                    "id": analysis["id"],
+                    "snapshot_id": analysis["snapshot_id"],
+                    "created_at": analysis["created_at"],
+                    "mode": analysis["mode"],
+                    "complete": analysis["complete"],
+                    "card_count": len(analysis["cards"]),
+                    "model": analysis["model"],
+                    "owner": row["owner"],
+                    "fetched_at": row["fetched_at"],
+                    "prs": source_prs[source_id],
+                }
+            )
+        return result
 
     def dispositions(self, analysis_id: str) -> list[Disposition]:
         with self.connect() as db:

@@ -1,0 +1,1244 @@
+{
+  "scored_at": "2026-10-25T15:21:22.659812+00:00",
+  "label_policy": "Unchanged frozen labels; semantic assistant scoring, not independent human adjudication. Same assistant implemented and scored candidate. Request mapping fixed before selected reply inspection.",
+  "candidate_sha256": "eea9e56288a5da45833ff780d70075f41d1b7bb47e99a5193e5a1025cd77ec46",
+  "implementation_sha256": "5303c8d204d8f8c701a87dc88283ad05913d0d16f605fbc11a6602a4dbd2074c",
+  "run_manifest_sha256": "30d2816368da5d54bd2bfb6906b5bf7636088774b979d3a33817c1a33fc6719f",
+  "request_mapping_sha256": "586d93bf2b15c71f4abd85da007e483efa1004ae9b01f2f2a3310a505b83286c",
+  "request_mapping_written_at": "2026-10-25T15:19:26.755350+00:00",
+  "summary": {
+    "v10-fresh": {
+      "full": 16,
+      "partial": 1,
+      "missed": 1,
+      "primary": 18,
+      "duplicate": 2,
+      "non_request": 2,
+      "relevant": 15,
+      "insufficient_or_wrong": 2,
+      "correctly_absent": 1,
+      "prs": 8,
+      "labels": 18,
+      "cards": 22,
+      "all_complete": true,
+      "seconds_total": 91.229,
+      "seconds_median": 5.0504999999999995
+    },
+    "v13-final": {
+      "full": 6,
+      "partial": 0,
+      "missed": 2,
+      "primary": 5,
+      "duplicate": 2,
+      "non_request": 1,
+      "relevant": 3,
+      "insufficient_or_wrong": 1,
+      "correctly_absent": 1,
+      "prs": 6,
+      "labels": 8,
+      "cards": 8,
+      "all_complete": true,
+      "seconds_total": 35.732,
+      "seconds_median": 6.3255
+    },
+    "v15-unseen": {
+      "full": 4,
+      "partial": 0,
+      "missed": 4,
+      "primary": 3,
+      "duplicate": 0,
+      "non_request": 1,
+      "relevant": 1,
+      "insufficient_or_wrong": 0,
+      "correctly_absent": 2,
+      "prs": 6,
+      "labels": 8,
+      "cards": 4,
+      "all_complete": true,
+      "seconds_total": 18.629,
+      "seconds_median": 4.4065
+    }
+  },
+  "cases": [
+    {
+      "set": "v10-fresh",
+      "pr_id": "fossasia/eventyay#6581",
+      "url": "https://github.com/fossasia/eventyay/pull/6581",
+      "label_count": 7,
+      "model_cards": 8,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 34.895,
+      "metrics": {
+        "full": 7,
+        "partial": 0,
+        "missed": 0,
+        "primary": 7,
+        "duplicate": 1,
+        "non_request": 0,
+        "relevant": 7,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 0
+      },
+      "labels": [
+        {
+          "label": "generic",
+          "coverage": "full",
+          "primary_cards": [
+            0
+          ]
+        },
+        {
+          "label": "alert",
+          "coverage": "full",
+          "primary_cards": [
+            1
+          ]
+        },
+        {
+          "label": "detail",
+          "coverage": "full",
+          "primary_cards": [
+            2
+          ]
+        },
+        {
+          "label": "glob",
+          "coverage": "full",
+          "primary_cards": [
+            3
+          ]
+        },
+        {
+          "label": "vite-root",
+          "coverage": "full",
+          "primary_cards": [
+            4
+          ]
+        },
+        {
+          "label": "embedded-video",
+          "coverage": "full",
+          "primary_cards": [
+            6
+          ]
+        },
+        {
+          "label": "resolve-inline",
+          "coverage": "full",
+          "primary_cards": [
+            7
+          ]
+        }
+      ],
+      "cards": [
+        {
+          "labels": [
+            "generic"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 0,
+          "request_source": "inline:4307818521",
+          "response_source": "inline:4365999772",
+          "response_assessment": "relevant",
+          "response_note": "The exact selected inline response retains the localized fallback. Existing scoring addendum already accepts this source outside the original frozen ID list; labels are not overwritten."
+        },
+        {
+          "labels": [
+            "alert"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 1,
+          "request_source": "inline:4307825673",
+          "response_source": "comment:6263462235",
+          "response_assessment": "relevant",
+          "response_note": "Selected passage addresses the specific ask; this is conversational relevance, not verified code correctness."
+        },
+        {
+          "labels": [
+            "detail"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 2,
+          "request_source": "inline:4307831085",
+          "response_source": "comment:6379920942",
+          "response_assessment": "relevant",
+          "response_note": "Selected passage addresses the specific ask; this is conversational relevance, not verified code correctness."
+        },
+        {
+          "labels": [
+            "glob"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 3,
+          "request_source": "inline:4307834070",
+          "response_source": "comment:6263462235",
+          "response_assessment": "relevant",
+          "response_note": "Selected passage addresses the specific ask; this is conversational relevance, not verified code correctness."
+        },
+        {
+          "labels": [
+            "vite-root"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 4,
+          "request_source": "inline:4307837055",
+          "response_source": "comment:6263462235",
+          "response_assessment": "relevant",
+          "response_note": "Selected passage addresses the specific ask; this is conversational relevance, not verified code correctness."
+        },
+        {
+          "labels": [
+            "embedded-video",
+            "resolve-inline"
+          ],
+          "kind": "duplicate",
+          "coverage": "full",
+          "note": "Combined repeated video/thread ask; clearer individual cards6/7 are primary.",
+          "card_index": 5,
+          "request_source": "review:5624395806",
+          "response_source": "comment:6379920942"
+        },
+        {
+          "labels": [
+            "embedded-video"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 6,
+          "request_source": "review:5629629275",
+          "response_source": "comment:6379920942",
+          "response_assessment": "relevant",
+          "response_note": "Selected passage addresses the specific ask; this is conversational relevance, not verified code correctness."
+        },
+        {
+          "labels": [
+            "resolve-inline"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 7,
+          "request_source": "review:5629629275",
+          "response_source": "comment:6379920942",
+          "response_assessment": "relevant",
+          "response_note": "Specific rechecking report is relevant follow-through, not proof that GitHub threads were resolved."
+        }
+      ]
+    },
+    {
+      "set": "v10-fresh",
+      "pr_id": "openfoodfacts/search-a-licious#482",
+      "url": "https://github.com/openfoodfacts/search-a-licious/pull/482",
+      "label_count": 1,
+      "model_cards": 1,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 5.318,
+      "metrics": {
+        "full": 1,
+        "partial": 0,
+        "missed": 0,
+        "primary": 1,
+        "duplicate": 0,
+        "non_request": 0,
+        "relevant": 0,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 1
+      },
+      "labels": [
+        {
+          "label": "guard-uploaded-images",
+          "coverage": "full",
+          "primary_cards": [
+            0
+          ]
+        }
+      ],
+      "cards": [
+        {
+          "labels": [
+            "guard-uploaded-images"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 0,
+          "request_source": "review:5637351530",
+          "response_source": null,
+          "response_assessment": "correctly_absent",
+          "response_note": "No strictly later relevant author reply is visible under the frozen annotation."
+        }
+      ]
+    },
+    {
+      "set": "v10-fresh",
+      "pr_id": "fossasia/WPFAevent#365",
+      "url": "https://github.com/fossasia/WPFAevent/pull/365",
+      "label_count": 0,
+      "model_cards": 0,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 0.658,
+      "metrics": {
+        "full": 0,
+        "partial": 0,
+        "missed": 0,
+        "primary": 0,
+        "duplicate": 0,
+        "non_request": 0,
+        "relevant": 0,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 0
+      },
+      "labels": [],
+      "cards": []
+    },
+    {
+      "set": "v10-fresh",
+      "pr_id": "fossasia/eventyay-teamshifts#229",
+      "url": "https://github.com/fossasia/eventyay-teamshifts/pull/229",
+      "label_count": 1,
+      "model_cards": 1,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 4.783,
+      "metrics": {
+        "full": 1,
+        "partial": 0,
+        "missed": 0,
+        "primary": 1,
+        "duplicate": 0,
+        "non_request": 0,
+        "relevant": 1,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 0
+      },
+      "labels": [
+        {
+          "label": "screencast",
+          "coverage": "full",
+          "primary_cards": [
+            0
+          ]
+        }
+      ],
+      "cards": [
+        {
+          "labels": [
+            "screencast"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 0,
+          "request_source": "review:5625557358",
+          "response_source": "comment:6379961988",
+          "response_assessment": "relevant",
+          "response_note": "Selected passage addresses the specific ask; this is conversational relevance, not verified code correctness."
+        }
+      ]
+    },
+    {
+      "set": "v10-fresh",
+      "pr_id": "fossasia/eventyay-exhibition#316",
+      "url": "https://github.com/fossasia/eventyay-exhibition/pull/316",
+      "label_count": 7,
+      "model_cards": 9,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 33.24,
+      "metrics": {
+        "full": 5,
+        "partial": 1,
+        "missed": 1,
+        "primary": 7,
+        "duplicate": 1,
+        "non_request": 1,
+        "relevant": 5,
+        "insufficient_or_wrong": 2,
+        "correctly_absent": 0
+      },
+      "labels": [
+        {
+          "label": "test-location",
+          "coverage": "full",
+          "primary_cards": [
+            0
+          ]
+        },
+        {
+          "label": "state-colors",
+          "coverage": "full",
+          "primary_cards": [
+            1
+          ]
+        },
+        {
+          "label": "reference-dropdown",
+          "coverage": "full",
+          "primary_cards": [
+            3
+          ]
+        },
+        {
+          "label": "outline-colors",
+          "coverage": "missed",
+          "primary_cards": []
+        },
+        {
+          "label": "compact-fixed-size",
+          "coverage": "partial",
+          "primary_cards": [
+            5,
+            7
+          ]
+        },
+        {
+          "label": "filled-colors",
+          "coverage": "full",
+          "primary_cards": [
+            6
+          ]
+        },
+        {
+          "label": "long-option-clipping",
+          "coverage": "full",
+          "primary_cards": [
+            8
+          ]
+        }
+      ],
+      "cards": [
+        {
+          "labels": [
+            "test-location"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "Conditional alternative refers to existing suite via full original source. Selected quote is weaker than the whole question; strict standalone reading could score partial.",
+          "card_index": 0,
+          "request_source": "inline:4259284809",
+          "response_source": "comment:6161040851",
+          "response_assessment": "relevant",
+          "response_note": "Selected passage addresses the specific ask; this is conversational relevance, not verified code correctness."
+        },
+        {
+          "labels": [
+            "state-colors"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 1,
+          "request_source": "review:5504327571",
+          "response_source": "comment:6161040851",
+          "response_assessment": "relevant",
+          "response_note": "Selected passage addresses the specific ask; this is conversational relevance, not verified code correctness."
+        },
+        {
+          "labels": [],
+          "kind": "duplicate",
+          "coverage": "full",
+          "note": "General rejection of same dropdown UI, not a distinct action beyond concrete pattern/color refinements.",
+          "card_index": 2,
+          "request_source": "review:5532269834",
+          "response_source": "comment:6208249456"
+        },
+        {
+          "labels": [
+            "reference-dropdown"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 3,
+          "request_source": "review:5532269834",
+          "response_source": "comment:6208249456",
+          "response_assessment": "insufficient_or_wrong",
+          "response_note": "Outline-color restoration does not answer the selected request to reuse the Exhibitor form dropdown pattern."
+        },
+        {
+          "labels": [],
+          "kind": "non_request",
+          "coverage": "full",
+          "note": "Bare introduction without concrete work.",
+          "card_index": 4,
+          "request_source": "review:5547379241",
+          "response_source": "comment:6232132353"
+        },
+        {
+          "labels": [
+            "compact-fixed-size"
+          ],
+          "kind": "primary",
+          "coverage": "partial",
+          "note": "Compact dimensions only; fixed geometry is a separate fragment.",
+          "card_index": 5,
+          "request_source": "review:5547379241",
+          "response_source": "comment:6232132353",
+          "response_assessment": "relevant",
+          "response_note": "Selected passage addresses the specific ask; this is conversational relevance, not verified code correctness."
+        },
+        {
+          "labels": [
+            "filled-colors"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 6,
+          "request_source": "review:5547379241",
+          "response_source": "comment:6232132353",
+          "response_assessment": "relevant",
+          "response_note": "Selected passage addresses the specific ask; this is conversational relevance, not verified code correctness."
+        },
+        {
+          "labels": [
+            "compact-fixed-size"
+          ],
+          "kind": "primary",
+          "coverage": "partial",
+          "note": "Fixed geometry only; compact dimensions are a separate fragment.",
+          "card_index": 7,
+          "request_source": "review:5547379241",
+          "response_source": "comment:6232132353",
+          "response_assessment": "insufficient_or_wrong",
+          "response_note": "Tests/browser checks mention size but selected passage does not state fixed geometry across states. A more permissive investigation reading could accept this weak reply; primary score treats it as insufficient."
+        },
+        {
+          "labels": [
+            "long-option-clipping"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 8,
+          "request_source": "review:5625432053",
+          "response_source": "comment:6379925552",
+          "response_assessment": "relevant",
+          "response_note": "Browser/OS-dependent native-popup diagnosis is relevant partial investigation, not an implemented clipping fix."
+        }
+      ]
+    },
+    {
+      "set": "v10-fresh",
+      "pr_id": "openfoodfacts/openfoodfacts-python#527",
+      "url": "https://github.com/openfoodfacts/openfoodfacts-python/pull/527",
+      "label_count": 0,
+      "model_cards": 1,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 3.922,
+      "metrics": {
+        "full": 0,
+        "partial": 0,
+        "missed": 0,
+        "primary": 0,
+        "duplicate": 0,
+        "non_request": 1,
+        "relevant": 0,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 0
+      },
+      "labels": [],
+      "cards": [
+        {
+          "labels": [],
+          "kind": "non_request",
+          "coverage": "full",
+          "note": "Support for the already-proposed UTF8 change under frozen concrete-new-ask annotation; alternative optional-suggestion reading retained.",
+          "card_index": 0,
+          "request_source": "comment:6165768940",
+          "response_source": null
+        }
+      ]
+    },
+    {
+      "set": "v10-fresh",
+      "pr_id": "GMOD/Apollo3#867",
+      "url": "https://github.com/GMOD/Apollo3/pull/867",
+      "label_count": 2,
+      "model_cards": 2,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 7.893,
+      "metrics": {
+        "full": 2,
+        "partial": 0,
+        "missed": 0,
+        "primary": 2,
+        "duplicate": 0,
+        "non_request": 0,
+        "relevant": 2,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 0
+      },
+      "labels": [
+        {
+          "label": "feature-utilities",
+          "coverage": "full",
+          "primary_cards": [
+            0
+          ]
+        },
+        {
+          "label": "before-after",
+          "coverage": "full",
+          "primary_cards": [
+            1
+          ]
+        }
+      ],
+      "cards": [
+        {
+          "labels": [
+            "feature-utilities"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 0,
+          "request_source": "inline:4339456712",
+          "response_source": "comment:6336151930",
+          "response_assessment": "relevant",
+          "response_note": "Selected passage addresses the specific ask; this is conversational relevance, not verified code correctness."
+        },
+        {
+          "labels": [
+            "before-after"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 1,
+          "request_source": "review:5603108328",
+          "response_source": "comment:6336151930",
+          "response_assessment": "relevant",
+          "response_note": "Selected passage addresses the specific ask; this is conversational relevance, not verified code correctness."
+        }
+      ]
+    },
+    {
+      "set": "v10-fresh",
+      "pr_id": "json-schema-org/JSON-Schema-Test-Suite#1234",
+      "url": "https://github.com/json-schema-org/JSON-Schema-Test-Suite/pull/1234",
+      "label_count": 0,
+      "model_cards": 0,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 0.52,
+      "metrics": {
+        "full": 0,
+        "partial": 0,
+        "missed": 0,
+        "primary": 0,
+        "duplicate": 0,
+        "non_request": 0,
+        "relevant": 0,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 0
+      },
+      "labels": [],
+      "cards": []
+    },
+    {
+      "set": "v13-final",
+      "pr_id": "openfoodfacts/open-prices-frontend#2472",
+      "url": "https://github.com/openfoodfacts/open-prices-frontend/pull/2472",
+      "label_count": 0,
+      "model_cards": 0,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 0.473,
+      "metrics": {
+        "full": 0,
+        "partial": 0,
+        "missed": 0,
+        "primary": 0,
+        "duplicate": 0,
+        "non_request": 0,
+        "relevant": 0,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 0
+      },
+      "labels": [],
+      "cards": []
+    },
+    {
+      "set": "v13-final",
+      "pr_id": "fossasia/visdom#1919",
+      "url": "https://github.com/fossasia/visdom/pull/1919",
+      "label_count": 2,
+      "model_cards": 2,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 8.957,
+      "metrics": {
+        "full": 1,
+        "partial": 0,
+        "missed": 1,
+        "primary": 1,
+        "duplicate": 1,
+        "non_request": 0,
+        "relevant": 0,
+        "insufficient_or_wrong": 1,
+        "correctly_absent": 0
+      },
+      "labels": [
+        {
+          "label": "update-branch",
+          "coverage": "missed",
+          "primary_cards": []
+        },
+        {
+          "label": "underflow-warning",
+          "coverage": "full",
+          "primary_cards": [
+            0
+          ]
+        }
+      ],
+      "cards": [
+        {
+          "labels": [
+            "underflow-warning"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 0,
+          "request_source": "review:5500719597",
+          "response_source": "inline:4304903403",
+          "response_assessment": "insufficient_or_wrong",
+          "response_note": "Selected test-pass statement does not report retaining the requested normalization warning. Duplicate card1 has a better reply, but cannot replace the preselected primary to improve scoring."
+        },
+        {
+          "labels": [
+            "underflow-warning"
+          ],
+          "kind": "duplicate",
+          "coverage": "full",
+          "note": "Consequence/rationale of the same requested warning, not another ask.",
+          "card_index": 1,
+          "request_source": "review:5500719597",
+          "response_source": "comment:6160926073"
+        }
+      ]
+    },
+    {
+      "set": "v13-final",
+      "pr_id": "fossasia/visdom#1952",
+      "url": "https://github.com/fossasia/visdom/pull/1952",
+      "label_count": 0,
+      "model_cards": 1,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 5.13,
+      "metrics": {
+        "full": 0,
+        "partial": 0,
+        "missed": 0,
+        "primary": 0,
+        "duplicate": 0,
+        "non_request": 1,
+        "relevant": 0,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 0
+      },
+      "labels": [],
+      "cards": [
+        {
+          "labels": [],
+          "kind": "non_request",
+          "coverage": "full",
+          "note": "Human invoking a review bot, not a task for PR author.",
+          "card_index": 0,
+          "request_source": "comment:6065673339",
+          "response_source": null
+        }
+      ]
+    },
+    {
+      "set": "v13-final",
+      "pr_id": "fossasia/visdom#1929",
+      "url": "https://github.com/fossasia/visdom/pull/1929",
+      "label_count": 2,
+      "model_cards": 1,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 5.05,
+      "metrics": {
+        "full": 2,
+        "partial": 0,
+        "missed": 0,
+        "primary": 1,
+        "duplicate": 0,
+        "non_request": 0,
+        "relevant": 1,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 0
+      },
+      "labels": [
+        {
+          "label": "remove-del",
+          "coverage": "full",
+          "primary_cards": [
+            0
+          ]
+        },
+        {
+          "label": "rendering-path-coverage",
+          "coverage": "full",
+          "primary_cards": [
+            0
+          ]
+        }
+      ],
+      "cards": [
+        {
+          "labels": [
+            "remove-del",
+            "rendering-path-coverage"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 0,
+          "request_source": "review:5528845515",
+          "response_source": "comment:6188924705",
+          "response_assessment": "relevant",
+          "response_note": "Selected passage addresses the specific ask; this is conversational relevance, not verified code correctness."
+        }
+      ]
+    },
+    {
+      "set": "v13-final",
+      "pr_id": "fossasia/visdom#1954",
+      "url": "https://github.com/fossasia/visdom/pull/1954",
+      "label_count": 2,
+      "model_cards": 2,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 8.601,
+      "metrics": {
+        "full": 1,
+        "partial": 0,
+        "missed": 1,
+        "primary": 1,
+        "duplicate": 1,
+        "non_request": 0,
+        "relevant": 1,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 0
+      },
+      "labels": [
+        {
+          "label": "preserve-options",
+          "coverage": "missed",
+          "primary_cards": []
+        },
+        {
+          "label": "skip-unused-bounds",
+          "coverage": "full",
+          "primary_cards": [
+            0
+          ]
+        }
+      ],
+      "cards": [
+        {
+          "labels": [
+            "skip-unused-bounds"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 0,
+          "request_source": "review:5477821073",
+          "response_source": "comment:6099232284",
+          "response_assessment": "relevant",
+          "response_note": "Selected passage addresses the specific ask; this is conversational relevance, not verified code correctness."
+        },
+        {
+          "labels": [
+            "skip-unused-bounds"
+          ],
+          "kind": "duplicate",
+          "coverage": "full",
+          "note": "AllNaN warning rationale supports same reduction ask.",
+          "card_index": 1,
+          "request_source": "review:5477821073",
+          "response_source": "comment:6099232284"
+        }
+      ]
+    },
+    {
+      "set": "v13-final",
+      "pr_id": "fossasia/visdom#1928",
+      "url": "https://github.com/fossasia/visdom/pull/1928",
+      "label_count": 2,
+      "model_cards": 2,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 7.521,
+      "metrics": {
+        "full": 2,
+        "partial": 0,
+        "missed": 0,
+        "primary": 2,
+        "duplicate": 0,
+        "non_request": 0,
+        "relevant": 1,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 1
+      },
+      "labels": [
+        {
+          "label": "keyed-legends",
+          "coverage": "full",
+          "primary_cards": [
+            0
+          ]
+        },
+        {
+          "label": "pr-template",
+          "coverage": "full",
+          "primary_cards": [
+            1
+          ]
+        }
+      ],
+      "cards": [
+        {
+          "labels": [
+            "keyed-legends"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 0,
+          "request_source": "review:5528835799",
+          "response_source": "comment:6188969729",
+          "response_assessment": "relevant",
+          "response_note": "Selected passage addresses the specific ask; this is conversational relevance, not verified code correctness."
+        },
+        {
+          "labels": [
+            "pr-template"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 1,
+          "request_source": "review:5547274829",
+          "response_source": null,
+          "response_assessment": "correctly_absent",
+          "response_note": "No strictly later relevant author reply is visible under the frozen annotation."
+        }
+      ]
+    },
+    {
+      "set": "v15-unseen",
+      "pr_id": "holoviz/panel#8810",
+      "url": "https://github.com/holoviz/panel/pull/8810",
+      "label_count": 0,
+      "model_cards": 0,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 0.001,
+      "metrics": {
+        "full": 0,
+        "partial": 0,
+        "missed": 0,
+        "primary": 0,
+        "duplicate": 0,
+        "non_request": 0,
+        "relevant": 0,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 0
+      },
+      "labels": [],
+      "cards": []
+    },
+    {
+      "set": "v15-unseen",
+      "pr_id": "fossasia/scrum_helper#904",
+      "url": "https://github.com/fossasia/scrum_helper/pull/904",
+      "label_count": 1,
+      "model_cards": 1,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 4.315,
+      "metrics": {
+        "full": 1,
+        "partial": 0,
+        "missed": 0,
+        "primary": 1,
+        "duplicate": 0,
+        "non_request": 0,
+        "relevant": 0,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 1
+      },
+      "labels": [
+        {
+          "label": "test-only-followup",
+          "coverage": "full",
+          "primary_cards": [
+            0
+          ]
+        }
+      ],
+      "cards": [
+        {
+          "labels": [
+            "test-only-followup"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 0,
+          "request_source": "comment:6118261319",
+          "response_source": null,
+          "response_assessment": "correctly_absent",
+          "response_note": "No strictly later relevant author reply is visible under the frozen annotation."
+        }
+      ]
+    },
+    {
+      "set": "v15-unseen",
+      "pr_id": "fossasia/voxbento#717",
+      "url": "https://github.com/fossasia/voxbento/pull/717",
+      "label_count": 1,
+      "model_cards": 0,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 0.479,
+      "metrics": {
+        "full": 0,
+        "partial": 0,
+        "missed": 1,
+        "primary": 0,
+        "duplicate": 0,
+        "non_request": 0,
+        "relevant": 0,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 0
+      },
+      "labels": [
+        {
+          "label": "respect-coordinated-patch",
+          "coverage": "missed",
+          "primary_cards": []
+        }
+      ],
+      "cards": []
+    },
+    {
+      "set": "v15-unseen",
+      "pr_id": "fossasia/voxbento#716",
+      "url": "https://github.com/fossasia/voxbento/pull/716",
+      "label_count": 1,
+      "model_cards": 1,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 4.499,
+      "metrics": {
+        "full": 1,
+        "partial": 0,
+        "missed": 0,
+        "primary": 1,
+        "duplicate": 0,
+        "non_request": 0,
+        "relevant": 1,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 0
+      },
+      "labels": [
+        {
+          "label": "check-reporter-intent",
+          "coverage": "full",
+          "primary_cards": [
+            0
+          ]
+        }
+      ],
+      "cards": [
+        {
+          "labels": [
+            "check-reporter-intent"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 0,
+          "request_source": "comment:6050609881",
+          "response_source": "comment:6052221006",
+          "response_assessment": "relevant",
+          "response_note": "Selected passage addresses the specific ask; this is conversational relevance, not verified code correctness."
+        }
+      ]
+    },
+    {
+      "set": "v15-unseen",
+      "pr_id": "fossasia/eventyay#6220",
+      "url": "https://github.com/fossasia/eventyay/pull/6220",
+      "label_count": 3,
+      "model_cards": 1,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 4.498,
+      "metrics": {
+        "full": 0,
+        "partial": 0,
+        "missed": 3,
+        "primary": 0,
+        "duplicate": 0,
+        "non_request": 1,
+        "relevant": 0,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 0
+      },
+      "labels": [
+        {
+          "label": "future-screencast-6220",
+          "coverage": "missed",
+          "primary_cards": []
+        },
+        {
+          "label": "address-ai-reviews-6220",
+          "coverage": "missed",
+          "primary_cards": []
+        },
+        {
+          "label": "green-ci-6220",
+          "coverage": "missed",
+          "primary_cards": []
+        }
+      ],
+      "cards": [
+        {
+          "labels": [],
+          "kind": "non_request",
+          "coverage": "full",
+          "note": "Describes competing PR already having screencast and narrower scope, not an instruction to this author.",
+          "card_index": 0,
+          "request_source": "comment:6034680165",
+          "response_source": null
+        }
+      ]
+    },
+    {
+      "set": "v15-unseen",
+      "pr_id": "fossasia/eventyay#6219",
+      "url": "https://github.com/fossasia/eventyay/pull/6219",
+      "label_count": 2,
+      "model_cards": 1,
+      "complete": true,
+      "mechanical_validation": "pass",
+      "seconds": 4.837,
+      "metrics": {
+        "full": 2,
+        "partial": 0,
+        "missed": 0,
+        "primary": 1,
+        "duplicate": 0,
+        "non_request": 0,
+        "relevant": 0,
+        "insufficient_or_wrong": 0,
+        "correctly_absent": 1
+      },
+      "labels": [
+        {
+          "label": "future-screencast-6219",
+          "coverage": "full",
+          "primary_cards": [
+            0
+          ]
+        },
+        {
+          "label": "green-ci-6219",
+          "coverage": "full",
+          "primary_cards": [
+            0
+          ]
+        }
+      ],
+      "cards": [
+        {
+          "labels": [
+            "future-screencast-6219",
+            "green-ci-6219"
+          ],
+          "kind": "primary",
+          "coverage": "full",
+          "note": "",
+          "card_index": 0,
+          "request_source": "comment:6034640134",
+          "response_source": null,
+          "response_assessment": "correctly_absent",
+          "response_note": "No strictly later relevant author reply is visible under the frozen annotation."
+        }
+      ]
+    }
+  ],
+  "postrun_source_and_label_hashes_unchanged": true,
+  "separate_parent_live_comparison": {
+    "kind": "Exposed live operational comparison, outside fixed20pool, not fresh benchmark. Parent ran both versions after model slot released.",
+    "analyses": [
+      {
+        "path": "outputs/upgrade/daily-live-v13-analysis.json",
+        "sha256": "f805ce13b5f1a0c4ab48af29e629c5d21bbb66d0cce1d84f812fc28892ac2860",
+        "analysis_id": "617dbe50c1bc485fa9d903c752e9365f",
+        "snapshot_id": "e70d607bca13241d0a6201ec57e8f781a1dbe8da5a83fbf5dee5f5ffbef5f31d",
+        "prompt_version": "human-review-passages-v13",
+        "created_at": "2026-10-25T15:18:33.585365Z",
+        "complete": true,
+        "cards": 2,
+        "request_sources": [
+          {
+            "pr_id": "fossasia/visdom#1954",
+            "comment_id": "review:5477821073"
+          },
+          {
+            "pr_id": "fossasia/visdom#1954",
+            "comment_id": "review:5477821073"
+          }
+        ]
+      },
+      {
+        "path": "outputs/upgrade/daily-v16-candidate-analysis.json",
+        "sha256": "f3cb9804a480403112be56cb0f7c7cc82ad51deee6de9961bcd65aaf8772a889",
+        "analysis_id": "62e2c604654042eaa12c618af2b61402",
+        "snapshot_id": "e70d607bca13241d0a6201ec57e8f781a1dbe8da5a83fbf5dee5f5ffbef5f31d",
+        "prompt_version": "human-review-passages-v16",
+        "created_at": "2026-10-25T15:19:51.737747Z",
+        "complete": true,
+        "cards": 2,
+        "request_sources": [
+          {
+            "pr_id": "fossasia/visdom#1954",
+            "comment_id": "review:5477821073"
+          },
+          {
+            "pr_id": "fossasia/visdom#1954",
+            "comment_id": "review:5477821073"
+          }
+        ]
+      }
+    ],
+    "finding": "Same two selected Visdom1954 request spans: reduction ask and explanatory duplicate; earlier options-mutation ask remains missed. WPFAevent368 approval context emits zero cards under both."
+  }
+}

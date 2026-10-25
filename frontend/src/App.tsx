@@ -249,10 +249,14 @@ function App() {
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
   const [showImport, setShowImport] = useState(false);
+  const [refreshImport, setRefreshImport] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const historyOpener = useRef<HTMLButtonElement>(null);
   const [history, setHistory] = useState<SavedAnalysis[]>([]);
+  const [historySearch, setHistorySearch] = useState("");
+  const [historyBefore, setHistoryBefore] = useState<string | undefined>();
+  const [historyHasMore, setHistoryHasMore] = useState(false);
   const [owner, setOwner] = useState("");
   const [urlText, setUrlText] = useState("");
   const [importError, setImportError] = useState("");
@@ -483,10 +487,23 @@ function App() {
     warnings.push(
       `${rejectedCount} card${rejectedCount === 1 ? " was" : "s were"} rejected because source evidence could not be verified. Inspect Sources; this view is incomplete.`,
     );
+  const matchingHistory = history.filter((item) =>
+    [item.owner, ...(item.prs ?? []).flatMap((pr) => [pr.id, pr.title])]
+      .join(" ").toLowerCase().includes(historySearch.trim().toLowerCase()),
+  );
   const isBaseline = analysis?.mode === "baseline";
   const modelReady =
     connected && (health?.model_ready ?? health?.model_configured);
 
+  function openImport(refresh = false) {
+    setRefreshImport(refresh);
+    setImportError("");
+    if (refresh && snapshot) {
+      setOwner(snapshot.owner);
+      setUrlText(snapshot.prs.map((pr) => pr.url).join("\n"));
+    }
+    setShowImport(true);
+  }
   async function githubImport(event: FormEvent) {
     event.preventDefault();
     setImportError("");
@@ -666,9 +683,32 @@ function App() {
   }
   async function openHistory() {
     setShowHistory(true);
-    await operation("Loading saved analyses", async () =>
-      setHistory(await api.history()),
-    );
+    setHistorySearch("");
+    setHistory([]);
+    setHistoryBefore(undefined);
+    setHistoryHasMore(false);
+    await operation("Loading saved analyses", async () => {
+      const page = await api.history();
+      setHistory(page);
+      setHistoryBefore(page.at(-1)?.id);
+      setHistoryHasMore(page.length === 100);
+    });
+  }
+  async function loadOlderHistory() {
+    if (!historyBefore || !historyHasMore) return;
+    await operation("Loading older saved analyses", async () => {
+      const page = await api.history(historyBefore);
+      setHistory((current) => {
+        const seen = new Set(current.map((item) => item.id));
+        return [...current, ...page.filter((item) => {
+          if (seen.has(item.id)) return false;
+          seen.add(item.id);
+          return true;
+        })];
+      });
+      setHistoryBefore(page.at(-1)?.id);
+      setHistoryHasMore(page.length === 100);
+    });
   }
   async function restore(id: string) {
     await operation("Restoring a saved analysis", async () => {
@@ -756,7 +796,7 @@ function App() {
                 <button
                   className="button primary"
                   disabled={!connected || !!busy}
-                  onClick={() => setShowImport(true)}
+                  onClick={() => openImport()}
                 >
                   <Glyph name="plus" />
                   Import your PRs
@@ -957,6 +997,16 @@ function App() {
                 </div>
               </div>
               <div className="snapshot-actions">
+                {!REPLAY && (
+                  <button
+                    className="button small"
+                    disabled={!!busy || !connected || pendingSaves.size > 0}
+                    onClick={() => openImport(true)}
+                  >
+                    Check these PRs again
+                    <Glyph name="arrow" />
+                  </button>
+                )}
                 <span
                   className={`coverage-label ${snapshot.complete ? "" : "caution"}`}
                 >
@@ -1316,12 +1366,29 @@ function App() {
                               Reset filters
                             </button>
                           ) : (
-                            <button
-                              className="button small"
-                              onClick={() => setView("sources")}
-                            >
-                              Inspect Sources
-                            </button>
+                            <>
+                              <button
+                                className="button small"
+                                onClick={() => setView("sources")}
+                              >
+                                Inspect Sources
+                              </button>
+                              {!REPLAY && !isBaseline && (
+                                <>
+                                  <button
+                                    className="button small"
+                                    disabled={!!busy || !connected}
+                                    onClick={() => void run("baseline")}
+                                  >
+                                    Read reviewer comments without AI
+                                  </button>
+                                  <p className="small-copy">
+                                    Creates a separate reading list, including approvals and context.
+                                    Your model result stays in Saved analyses; decisions start independently.
+                                  </p>
+                                </>
+                              )}
+                            </>
                           )}
                         </div>
                       )}
@@ -1434,7 +1501,7 @@ function App() {
       </footer>
       {showImport && (
         <Modal
-          title="Bring a few conversations."
+          title={refreshImport ? "Check these PRs again." : "Bring a few conversations."}
           onClose={() => setShowImport(false)}
           busy={!!busy}
         >
@@ -1443,6 +1510,14 @@ function App() {
             remain in your local CLI. No comments, code or review states will be
             changed.
           </p>
+          {refreshImport && (
+            <p className="small-copy">
+              These account and PR URLs come from your current capture. Importing
+              fetches a new snapshot; it does not update this saved reading. Saved
+              notes stay with the original evidence and are not applied to new
+              sources. Save typed notes before continuing.
+            </p>
+          )}
           <form onSubmit={(event) => void githubImport(event)}>
             <label className="field">
               GitHub account
@@ -1531,8 +1606,21 @@ function App() {
               model first.
             </p>
           )}
+          <label className="field">
+            Search loaded readings
+            <input
+              value={historySearch}
+              onChange={(event) => setHistorySearch(event.target.value)}
+              placeholder="Account, repository, PR number or title"
+              type="search"
+            />
+          </label>
+          <p className="small-copy">
+            {history.length} saved readings loaded, newest first. Search applies
+            only to these loaded readings. Load older readings to search further.
+          </p>
           <div className="history-list">
-            {history.map((item) => (
+            {matchingHistory.map((item) => (
               <button
                 key={item.id}
                 className="history-item"
@@ -1540,19 +1628,34 @@ function App() {
                 onClick={() => void restore(item.id)}
               >
                 <span>
-                  <strong>
-                    {item.mode === "baseline"
-                      ? "Chronology baseline"
-                      : (item.model ?? "Local model")}
-                  </strong>
+                  <strong>{item.owner ? `${item.owner}'s conversations` : "Saved conversation"}</strong>
+                  {(item.prs ?? []).map((pr) => (
+                    <small key={pr.id}>{pr.id} · {pr.title}</small>
+                  ))}
                   <small>
-                    {displayDate(item.created_at)} · {item.id.slice(0, 12)}
+                    Captured {displayDate(item.fetched_at)} · Analysed {displayDate(item.created_at)}
+                  </small>
+                  <small>
+                    {item.mode === "baseline" ? "Chronology baseline" : (item.model ?? "Local model")}
+                    {item.complete === false ? " · incomplete" : ""} · {item.id.slice(0, 12)}
                   </small>
                 </span>
                 <Glyph name="arrow" />
               </button>
             ))}
+            {!!history.length && historySearch.trim() && !matchingHistory.length && (
+              <p className="empty-copy">No loaded readings match. Older readings may not be loaded yet.</p>
+            )}
           </div>
+          {historyHasMore && (
+            <button
+              className="button small"
+              disabled={!!busy}
+              onClick={() => void loadOlderHistory()}
+            >
+              Load older readings
+            </button>
+          )}
         </Modal>
       )}
       {showHelp && (

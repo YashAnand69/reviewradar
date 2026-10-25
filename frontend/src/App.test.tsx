@@ -22,6 +22,8 @@ vi.mock("./api", () => ({
     dispositions: vi.fn(),
     save: vi.fn(),
     history: vi.fn(),
+    analysis: vi.fn(),
+    snapshot: vi.fn(),
     importGithub: vi.fn(),
     importSnapshot: vi.fn(),
     analyse: vi.fn(),
@@ -84,6 +86,111 @@ async function openSample() {
 }
 
 describe("evidence workbench integration (DOM simulation, not a visual browser audit)", () => {
+  it("prefills a new GitHub capture without changing the reading or unsaved note when refresh fails", async () => {
+    const user = await openSample();
+    await user.type(screen.getByRole("textbox", { name: /Note/ }), "Inspect the screenshot before replying");
+    await user.click(screen.getByRole("button", { name: /Check these PRs again/ }));
+    const dialog = screen.getByRole("dialog");
+    expect((within(dialog).getByRole("textbox", { name: /GitHub account/ }) as HTMLInputElement).value).toBe(packet.snapshot.owner);
+    expect((within(dialog).getByRole("textbox", { name: /Pull-request URLs/ }) as HTMLTextAreaElement).value).toBe(packet.snapshot.prs.map((pr) => pr.url).join("\n"));
+    expect(within(dialog).getByText(/Saved notes stay with the original evidence/)).toBeTruthy();
+    expect(api.importGithub).not.toHaveBeenCalled();
+    vi.mocked(api.importGithub).mockRejectedValueOnce(new Error("GitHub is unavailable; try again later."));
+    await user.click(within(dialog).getByRole("button", { name: /Import public discussions/ }));
+    await within(dialog).findByText("GitHub is unavailable; try again later.");
+    expect(api.importGithub).toHaveBeenCalledExactlyOnceWith(packet.snapshot.owner, packet.snapshot.prs.map((pr) => pr.url));
+    await user.click(within(dialog).getByRole("button", { name: /Close dialog/ }));
+    expect((screen.getByRole("textbox", { name: /Note/ }) as HTMLTextAreaElement).value).toBe("Inspect the screenshot before replying");
+    expect(api.analyse).not.toHaveBeenCalled();
+    expect(api.save).not.toHaveBeenCalled();
+  });
+  it("creates a new capture and independent reading only after refresh succeeds", async () => {
+    const user = await openSample();
+    await user.type(screen.getByRole("textbox", { name: /Note/ }), "Original capture note");
+    await user.click(screen.getByRole("button", { name: /Save decision/ }));
+    await screen.findByText("Saved locally. GitHub was not changed.");
+    const nextSource = structuredClone(packet.snapshot);
+    nextSource.id = "new-capture";
+    nextSource.fetched_at = "2026-10-25T12:00:00Z";
+    vi.mocked(api.importGithub).mockResolvedValueOnce(nextSource as never);
+    await user.click(screen.getByRole("button", { name: /Check these PRs again/ }));
+    await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: /Import public discussions/ }));
+    await screen.findByText("Snapshot imported. Inspect coverage, then choose a local analysis mode.");
+    expect(screen.queryByRole("textbox", { name: /Note/ })).toBeNull();
+    expect(api.analyse).not.toHaveBeenCalled();
+    const nextAnalysis = { ...structuredClone(packet.analysis), id: "new-analysis", snapshot_id: nextSource.id };
+    vi.mocked(api.analyse).mockResolvedValueOnce(nextAnalysis as never);
+    await user.click(screen.getByRole("button", { name: /Analyse locally/ }));
+    await screen.findByRole("textbox", { name: /Note/ });
+    expect(api.analyse).toHaveBeenCalledExactlyOnceWith("new-capture", "model");
+    expect((screen.getByRole("textbox", { name: /Note/ }) as HTMLTextAreaElement).value).toBe("");
+    expect(screen.getByText("Not yet reviewed locally")).toBeTruthy();
+    expect(api.save).toHaveBeenCalledTimes(1);
+  });
+  it("lets a zero-card model reading explicitly become a separate comment reading list", async () => {
+    const zero = structuredClone(packet);
+    zero.analysis.cards = [];
+    vi.mocked(api.sample).mockResolvedValueOnce(zero as never);
+    const user = userEvent.setup();
+    render(<App />);
+    const explore = await screen.findByRole("button", { name: /Explore the historical sample/ });
+    await waitFor(() => expect(explore.hasAttribute("disabled")).toBe(false));
+    await user.click(explore);
+    const action = await screen.findByRole("button", { name: /Read reviewer comments without AI/ });
+    expect(api.analyse).not.toHaveBeenCalled();
+    expect(screen.getByText(/Your model result stays in Saved analyses/)).toBeTruthy();
+    const source = zero.snapshot.prs[0].comments.find((comment) => !comment.is_bot && comment.author !== zero.snapshot.prs[0].author && comment.body.trim())!;
+    const baseline = {
+      ...structuredClone(packet.analysis), id: "manual-reading", mode: "baseline", model: null,
+      cards: [{ ...packet.analysis.cards[0], id: "comment-reading", pr_id: zero.snapshot.prs[0].id,
+        request: { comment_id: source.id, quote: source.body.slice(0, 600) }, response: null,
+        interpretation: "unclear", category: "unclear" }],
+    };
+    vi.mocked(api.analyse).mockResolvedValueOnce(baseline as never);
+    await user.click(action);
+    const note = await screen.findByRole("textbox", { name: /Note/ });
+    expect(api.analyse).toHaveBeenCalledExactlyOnceWith(zero.snapshot.id, "baseline");
+    expect((note as HTMLTextAreaElement).value).toBe("");
+    expect(screen.queryByRole("combobox", { name: /Assessment of this model suggestion/ })).toBeNull();
+    await user.type(note, "Check the original reviewer request");
+    await user.click(screen.getByRole("button", { name: /Save decision/ }));
+    await screen.findByText("Saved locally. GitHub was not changed.");
+    expect(api.save).toHaveBeenCalledExactlyOnceWith("manual-reading", "comment-reading", "open", "Check the original reviewer request", "unassessed");
+    expect(zero.analysis.cards).toEqual([]);
+  });
+  it("identifies saved PR readings, searches only loaded rows and loads older pages without duplicates", async () => {
+    const row = (id: number) => ({
+      id: `reading-${id}`, snapshot_id: `source-${id}`, created_at: "2026-10-25T10:00:00Z",
+      mode: "model", complete: true, model: "Gemma", owner: "Contributor",
+      fetched_at: "2026-10-24T09:00:00Z", card_count: 1,
+      prs: [{ id: `org/repo#${id}`, title: `Review ${id}`, url: `https://github.com/org/repo/pull/${id + 1}` }],
+    });
+    const firstPage = Array.from({ length: 100 }, (_, index) => row(index));
+    vi.mocked(api.history).mockResolvedValueOnce(firstPage).mockResolvedValueOnce([row(99), row(100)]);
+    const user = await openSample();
+    await user.click(screen.getByRole("button", { name: /Saved analyses/ }));
+    const dialog = screen.getByRole("dialog");
+    await within(dialog).findByText(/100 saved readings loaded/);
+    expect(within(dialog).getAllByText(/Captured.*Analysed/)).toHaveLength(100);
+    const search = within(dialog).getByRole("searchbox", { name: /Search loaded readings/ });
+    await user.type(search, "org/repo#100");
+    expect(within(dialog).getByText(/No loaded readings match/)).toBeTruthy();
+    await user.click(within(dialog).getByRole("button", { name: /Load older readings/ }));
+    await within(dialog).findByRole("button", { name: /org\/repo#100.*Review 100/ });
+    expect(api.history).toHaveBeenNthCalledWith(2, "reading-99");
+    expect(within(dialog).getByText(/101 saved readings loaded/)).toBeTruthy();
+    expect(within(dialog).queryByRole("button", { name: /Load older readings/ })).toBeNull();
+    await user.clear(search);
+    expect(within(dialog).getAllByText("org/repo#99 · Review 99")).toHaveLength(1);
+    vi.mocked(api.analysis).mockResolvedValueOnce({ ...structuredClone(packet.analysis), id: "reading-100", snapshot_id: "source-100" } as never);
+    vi.mocked(api.snapshot).mockResolvedValueOnce({ ...structuredClone(packet.snapshot), id: "source-100" } as never);
+    const saved = { analysis_id: "reading-100", card_id: packet.analysis.cards[0].id, state: "reviewed", note: "Saved next step", assessment: "unassessed", updated_at: "2026-10-25T10:01:00Z" };
+    vi.mocked(api.dispositions).mockResolvedValueOnce([saved] as never);
+    await user.click(within(dialog).getByRole("button", { name: /org\/repo#100.*Review 100/ }));
+    await screen.findByRole("button", { name: /Reopen locally/ });
+    expect(api.analysis).toHaveBeenCalledWith("reading-100");
+    expect((screen.getByRole("textbox", { name: /Note/ }) as HTMLTextAreaElement).value).toBe("Saved next step");
+  });
   it("shows captured reviewer sources omitted from a model's zero-card result without inventing tasks", async () => {
     const changed = structuredClone(packet);
     const source = changed.snapshot.prs[0].comments.find((comment) =>

@@ -101,7 +101,10 @@ export interface SavedAnalysis {
   created_at: string;
   mode: string;
   complete?: boolean;
-  cards_count?: number;
+  card_count?: number;
+  owner: string;
+  fetched_at: string;
+  prs: { id: string; title: string; url: string }[];
   model?: string | null;
 }
 export interface Sample {

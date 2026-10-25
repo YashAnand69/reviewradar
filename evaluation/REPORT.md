@@ -1,5 +1,7 @@
 # Current release: source inspection and retained model failures — 25 October 2026
 
+A later [four-call diagnosis](v16-diagnosis/REPORT.md) isolated extraction-prompt sensitivity on one exposed Eventyay source. A [20-PR regression study](v16-candidate/REPORT.md) then rejected the proposed prompt restoration: some requests recovered, but new false tasks and wrong replies remained. The default is still unchanged v13. No revised model accuracy or saved-effort claim follows from the daily-use interface upgrade.
+
 **ReviewRadar is a source-linked reading aid, not an exhaustive task list.** The shipped inference path remains v13. Both v14 and v15 are archived experiments, not promoted defaults. No further semantic tuning is part of this release.
 
 | Evidence | Actual result |

@@ -1,5 +1,7 @@
 # Three remaining gaps: action and verified status
 
+Later same-day daily-use changes and current verification are recorded in [the daily-use upgrade](21-DAILY-USE-UPGRADE.md). Counts and checkpoints below remain dated earlier observations, not the latest release totals.
+
 25 October 2026 (Asia/Kolkata). This is a factual release record, not a declaration of perfection or a predicted judging outcome.
 
 ## 1. Missed requests and misleading matches

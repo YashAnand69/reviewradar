@@ -22,6 +22,14 @@ async function connect() {
   fetchMock.mockClear();
 }
 describe("local connection recovery", () => {
+  it("requests older history through an encoded opaque cursor", async () => {
+    await connect();
+    fetchMock.mockResolvedValueOnce(json([])).mockResolvedValueOnce(json([]));
+    await api.history();
+    await api.history("reading/id?&before=other");
+    expect(fetchMock.mock.calls[0][0]).toBe("/api/analyses");
+    expect(fetchMock.mock.calls[1][0]).toBe("/api/analyses?before=reading%2Fid%3F%26before%3Dother");
+  });
   it("uses a fixed saved-example endpoint and rejects arbitrary paths before fetch", async () => {
     await connect();
     fetchMock.mockResolvedValueOnce(json({snapshot: {}}));
@@ -43,7 +51,7 @@ describe("local connection recovery", () => {
       api.save("analysis", "card", "reviewed", "keep note"),
     ).rejects.toMatchObject({
       name: "LocalConnectionError",
-      message: expect.stringContaining("typed notes remain"),
+      message: expect.stringContaining("Start ReviewRadar.command"),
     });
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
