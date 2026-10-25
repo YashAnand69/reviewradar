@@ -68,3 +68,10 @@ See [remaining-gap record](20-REMAINING-GAPS.md) and [all evaluation results](..
 ### Verified follow-up deployment
 
 Source checkpoint `0f143c110e63d775795546b2840c0bc82297f170`: [Linux CI 40127077510](https://github.com/YashAnand69/reviewradar/actions/runs/40127077510) passed. Public Pages checkpoint `32e8cb038f358e547f07a1798a7e479af780a2bf`: [deployment 40127122147](https://github.com/YashAnand69/reviewradar/actions/runs/40127122147) passed. The deployed index, new JavaScript bundle and trial HTML/JS/CSS returned 200 with bytes identical to the tested build and expected content types. This HTTP artifact check is not a rendered-browser audit. The final real-model smoke failure, absence of genuine feedback and outstanding user-started quit test remain unresolved.
+
+
+## 25 October — user-started session and DEV invitation
+
+The user reported “started and enabled.” Read-only process inspection found the Start launcher, foreground supervisor and app/model children under Terminal login session `ttys002`; legacy launchd jobs were absent and both endpoints healthy. The saved-sample baseline HTTP smoke passed load, local decisions, reopen and export. No child processes were stopped or restarted. An actual ChatGPT-quit survival test remains pending.
+
+The in-app browser connection was unavailable. Native Safari exposed the signed-in DEV entry and zero existing comments; the single authorized invitation was prepared, previewed and submitted. The resulting page showed Top comments (1), Yash Anand, the exact invitation and [comment permalink](https://dev.to/yashanand69/comment/3ipm6). The trial and GitHub issue links were visible. A screenshot and factual process record are retained privately under `outputs/upgrade/`. This is one authored recruitment comment, not independent feedback. Subsequent Safari input was interrupted by user activity; the revised article and current panel/trial rendered checks are not claimed completed.

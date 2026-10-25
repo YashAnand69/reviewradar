@@ -72,8 +72,10 @@ No genuine trial or completed long recording. User-start then ChatGPT-quit check
 - [x] Saved-sample/baseline HTTP persistence/reopen/export smoke passed separately.
 - [ ] Live model request-card smoke: **failed**, confirmed v13 returned zero cards on a fresh Eventyay #6104 import. Not certified reliable.
 - [ ] Actual independent contributor trial: zero responses at latest check.
-- [ ] One authorized DEV invitation and revised article update: prepared, browser access disabled, not posted.
-- [ ] User-started Terminal → ChatGPT quit → independent browser lifecycle check: pending. Agent-started foreground readiness/cleanup is verified separately.
+- [x] One authorized DEV invitation [posted on 25 October](https://dev.to/yashanand69/comment/3ipm6); no participant feedback claimed.
+- [ ] Revised article update: prepared, not yet saved to DEV.
+- [x] User-started Terminal session observed on 25 October; app/model healthy and baseline persistence smoke passed.
+- [ ] ChatGPT quit → independent browser lifecycle check: pending. Terminal ancestry alone does not establish quit survival.
 - [ ] Current rendered-browser audit of trial and source panel: pending browser access.
 
 [Full current record](20-REMAINING-GAPS.md). These open items do not become complete through passing automated tests or publication.

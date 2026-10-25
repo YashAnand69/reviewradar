@@ -18,7 +18,7 @@ A final fresh live Eventyay #6104 import returned zero cards with v14 and, after
 
 Published [self-guided trial](https://yashanand69.github.io/reviewradar/trial.html): no sign-in, model download, private input or analytics. Answers remain in the tab. The participant explicitly prepares, edits, downloads or copies feedback and separately chooses whether to post it publicly. Quotation permission defaults to not granted; edited answers invalidate prepared feedback. The elapsed interval includes reading, pauses and writing and is not a time-saving measurement. Synthetic tests never count as feedback.
 
-The single [GitHub recruitment request](https://github.com/YashAnand69/reviewradar/issues/1) was updated with the live guide. Latest check: zero comments. The user also authorized one DEV invitation. Its exact text is prepared locally, but publication is pending because browser control is disabled in this chat's Work settings. No duplicate issue, repeated maintainer ping, vote request, fabricated participant or testimonial was created. The prior DEV entry remains published; it is not claimed updated with these latest changes while browser access is unavailable.
+The single [GitHub recruitment request](https://github.com/YashAnand69/reviewradar/issues/1) was updated with the live guide. Latest check: zero comments. The user authorized one DEV invitation; it was [posted on 25 October](https://dev.to/yashanand69/comment/3ipm6) through the signed-in Safari session. The one author invitation is outreach, not genuine participant feedback. No duplicate issue, repeated maintainer ping, vote request, fabricated participant or testimonial was created. The prior DEV entry remains published; it is not claimed updated with these latest changes while browser access is unavailable.
 
 Trial HTML/JS/CSS were deployed in Pages commit `3d7f10c1d22bda8536b802a880f8674cc730bf72` and verified HTTP 200 with exact built bytes and correct content types. Four synthetic form tests pass. The current trial's rendered browser check remains pending after browser control became disabled; earlier screenshots do not count as this check.
 
@@ -28,13 +28,15 @@ New Start launcher preflights, stops only exact owned legacy jobs, then keeps a 
 
 Thirty-nine lifecycle tests passed, including a real disposable wrapper/descendant cleanup test preserving an unrelated listener. An actual app/model foreground session reached readiness, cleaned both children on SIGINT, retained identical saved data and restored the prior legacy session. This actual check was agent-started and does not prove independence from the chat app.
 
-**Still requires the user:** independently double-click Start ReviewRadar.command in Finder, keep that Terminal open, quit ChatGPT, and check the app in Safari/Chrome before reopening ChatGPT. This chat's native computer-control tool rejects Terminal access, so the agent cannot perform that independent UI step. The read-only `scripts/probe_local.py` can record endpoint samples in a second independent Terminal; its output alone does not certify that a quit occurred.
+**Independent start now observed on 25 October:** after the user reported starting the launcher, its foreground supervisor and children ran under a Terminal login session on `ttys002`. App/model endpoint checks and the saved-sample baseline save/reopen/export smoke passed. Legacy launchd jobs were absent. This verifies the separate start, not survival through quitting ChatGPT.
+
+**Still requires the user:** keep that Terminal open, quit ChatGPT, and check the app in Safari/Chrome before reopening ChatGPT. This chat's native computer-control tool rejects Terminal access, so the agent cannot perform that independent UI step. The read-only `scripts/probe_local.py` can record endpoint samples in a second independent Terminal; its output alone does not certify that a quit occurred.
 
 ## Verification boundaries
 
 The final retained code passed 165 Python tests and 34 subtests, 66 local frontend tests and six replay tests. Thirty-nine lifecycle tests are included in that backend count. Type/build and source formatting checks passed; the existing Starlette/httpx deprecation warning remains disclosed. The final **live model request-card smoke failed**, as described above; passing structural tests do not override that result. CI/deployment checkpoints are recorded in the execution ledger after release.
 
-No genuine participant feedback, current rendered-browser pass, full screen-reader certification, exhaustive model recall or independent quit-test success is claimed. The DEV invitation is prepared and authorized, but not posted while browser access is disabled.
+No genuine participant feedback, current rendered-browser pass, full screen-reader certification, exhaustive model recall or independent quit-test success is claimed. The DEV invitation is posted; the current trial/source-panel rendered audit and revised article update remain outstanding. The in-app browser connection was unavailable; Safari allowed posting before subsequent input was interrupted by user activity.
 
 ## Released checkpoint
 
