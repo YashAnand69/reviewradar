@@ -1,6 +1,6 @@
-# Prepared revision — 25 October 2026
+# Published revision — prepared 25 October, saved 26 October 2026
 
-For the existing Week 3 article only. Not claimed saved to DEV until browser verification is recorded. Preserve the current title, URL, cover, tags, challenge association and Fully Autonomous disclosure. No second entry.
+Saved to the existing Week 3 article after preview and verified on its public page on 26 October. The current title, URL, cover, tags, challenge association and Fully Autonomous disclosure were preserved. No second entry. See docs/21-DAILY-USE-UPGRADE.md for release evidence.
 
 <!-- ARTICLE START -->
 *This is a submission for the [Hacktoberfest Open-Source AI Challenge Week 3: Slow and Steady](https://dev.to/challenges/hacktoberfest-week3-2026-10-19).*
@@ -58,7 +58,7 @@ The alternative is a simple chronology of reviewer comments. Gemma's substantive
 
 The daily-use upgrade fixed a practical history defect: after 100 analyses, older notes still existed in SQLite but their readings disappeared from the UI. Keyset pagination now keeps them reachable, with source-bound titles and dates. New regressions cover tied timestamps, new inserts between pages and preservation of old notes.
 
-The release checks passed **174 backend tests and 34 subtests, plus 71 local frontend and six replay tests**, type/build, focused lint and a dependency audit. Two agents cross-reviewed the daily-use changes. These are structural and workflow checks, not model-accuracy measurements. The new complete rendered-browser workflow is still awaiting verification; earlier screenshots do not certify it.
+The release checks passed **174 backend tests and 34 subtests, plus 71 local frontend and six replay tests**, type/build, focused lint and a dependency audit. Two agents cross-reviewed the daily-use changes. These are structural and workflow checks, not model-accuracy measurements. On 26 October, an agent operated the browser workflow against my actual public PRs: reopened a saved note, marked/reopened it locally, explicitly refreshed the selection, created a separate chronology reading, saved a next-inspection note and downloaded its source-linked sheet. This confirms that bounded flow, not a full accessibility audit or a participant trial.
 
 The [evaluation record](https://github.com/YashAnand69/reviewradar/blob/main/evaluation/REPORT.md) retains missed asks, duplicates and weak replies. In the frozen v13 six-PR study, five of eight assistant-labelled actions were covered. Later candidates were archived rather than promoted. A 25 October controlled diagnosis recovered one exposed request with an earlier prompt, but a broader 20-PR regression retained misses and introduced other errors. The default remains v13 with those limitations disclosed. These small studies use one contributor's history and assistant annotations, not independent human ground truth.
 
