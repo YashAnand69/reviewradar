@@ -1,0 +1,9 @@
+# v17 isolated-comment extraction — exposed regression protocol
+
+Freeze the candidate file, original source/label identities and the complete 20-case plan before the first model call. Use the same exposed eight v10, six v13 and six v15 cases, once each, without retry, selective case removal, label changes or tuning after observations. This is development regression, not a fresh evaluation or human ground truth.
+
+Hypothesis: v14 included all reviewer comments on every focused extraction; later approvals and unrelated reviewer text can distract a small model. This candidate provides only the entire originating reviewer comment, with its deterministic passage keys and earlier accepted request quotes for deduplication. It uses the earlier v10 extraction prompt together with focused-only instructions. Original whole-PR reviewer context and author updates remain available during response matching. This combined candidate cannot isolate causal attribution between the older prompt and reduced extraction context.
+
+Reuse v14's 12 eligible-comment and 40 request caps, exact focus binding/schema, actual templated-token checks and cooperative 90-second whole-PR deadline. No silent truncation, new external model service, source fetching, user database mutation or active backend edit is part of this study. Every output and failure is retained. A blocked network read remains bounded by the configured timeout; this is not an OS hard-cancellation guarantee.
+
+Score request coverage, duplicate/non-request extras, relevant/insufficient/absent response selections separately against unchanged labels. Prefer the clearest request representation before reviewing its selected reply; never choose a duplicate merely because it has a better reply. Independent agent review is required before any default promotion. Broad regression, bounded failure behavior and practical effort matter; recovering one exposed ask is insufficient for promotion.

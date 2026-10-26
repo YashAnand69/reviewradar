@@ -728,3 +728,31 @@ describe("evidence workbench integration (DOM simulation, not a visual browser a
     expect(api.sample).toHaveBeenCalledTimes(1);
   });
 });
+
+it("saves a regular selection and compares an explicit refresh without carrying decisions", async () => {
+  localStorage.clear();
+  const initial = structuredClone(packet.snapshot);
+  initial.source = "github";
+  const next = structuredClone(initial);
+  next.id = "b".repeat(64);
+  next.fetched_at = "2026-10-26T10:00:00Z";
+  next.prs[0].comments[0].body += " Please check this new detail.";
+  vi.mocked(api.importGithub).mockResolvedValueOnce(initial as never).mockResolvedValueOnce(next as never);
+  vi.mocked(api.snapshot).mockResolvedValue(initial as never);
+  render(<App />);
+  await userEvent.click(await screen.findByRole("button", { name: "Import your PRs" }));
+  await userEvent.type(screen.getByLabelText("GitHub account"), initial.owner);
+  await userEvent.type(screen.getByLabelText("Pull-request URLs"), initial.prs.map(pr => pr.url).join("\n"));
+  await userEvent.click(screen.getByRole("button", {name:"Import public discussions"}));
+  await userEvent.click(await screen.findByRole("button", {name:"Save PR selection"}));
+  const selection = screen.getByRole("region",{name:"Saved PR selections"});
+  await userEvent.click(within(selection).getAllByRole("button")[0]);
+  expect(api.importGithub).toHaveBeenCalledTimes(1);
+  expect((await screen.findByLabelText("Pull-request URLs") as HTMLTextAreaElement).value).toBe(initial.prs.map(pr=>pr.url).join("\n"));
+  await userEvent.click(screen.getByRole("button",{name:"Import public discussions"}));
+  expect(await screen.findByRole("heading",{name:"What changed since the previous capture?"})).toBeTruthy();
+  expect(screen.getByText(/1 new or changed reviewer comments/)).toBeTruthy();
+  expect(api.analyse).not.toHaveBeenCalled();
+  expect(api.save).not.toHaveBeenCalled();
+  localStorage.clear();
+});

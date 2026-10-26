@@ -2579,3 +2579,9 @@ main {
   font-size: 10px;
   letter-spacing: 1px;
 }
+
+.saved-selections, .capture-changes { padding: 1.25rem; margin-block: 1rem; }
+.selection-row { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; margin-block: .75rem; }
+.selection-row button { white-space: normal; overflow-wrap: anywhere; min-width: 0; max-width: 100%; text-align: left; }
+.capture-change { margin-block: .75rem; }
+.capture-change blockquote { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 20rem; overflow: auto; }

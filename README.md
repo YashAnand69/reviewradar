@@ -113,3 +113,11 @@ See [evaluation results](evaluation/REPORT.md) and [release audit](docs/13-INDEP
 Original application code: MIT. Gemma and llama.cpp are separately licensed upstream dependencies; weights/runtime binaries are not included. Public discussion excerpts retain their original authorship and are not relicensed by this repository. The source manifest and notices will identify any bundled historical material.
 
 Yash selected the product direction and its real contribution-history problem. AI agents assisted research, planning, implementation and review. Engineering checks are distinguished from genuine human trials.
+
+## Follow-up daily workflow (after the contest cutoff)
+
+The `improve/daily-use-followup` branch adds saved PR selections and exact capture differences. See [stage gates](docs/23-STAGED-PRACTICAL-UPGRADE.md). These changes are not part of the deadline submission.
+
+Run `.venv/bin/python scripts/doctor.py` for offline setup diagnosis. Add `--verify-artifacts` to check the configured model/runtime hashes without executing them. Once dependencies are installed, double-click `Start Reading.command` on macOS to start source reading without downloading or starting a model. It leaves existing services untouched and fails if the port is occupied. Keep the Terminal open. The full model launcher remains separate.
+
+The [comparative trial protocol](docs/24-COMPARATIVE-TRIAL.md) measures reading, correction and setup effort against direct source reading. No completed participant comparison is claimed.

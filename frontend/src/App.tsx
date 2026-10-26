@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { api } from "./api";
+import { CaptureChanges } from "./CaptureChanges";
+import { compareCaptures, parseSelections, selectionFrom, selectionKey, WATCHLIST_KEY } from "./daily";
+import type { SavedSelection, CaptureChanges as CaptureDifference } from "./daily";
 import {
   analysisWarnings,
   assessmentFor,
@@ -250,6 +253,15 @@ function App() {
   const [status, setStatus] = useState("");
   const [showImport, setShowImport] = useState(false);
   const [refreshImport, setRefreshImport] = useState(false);
+  const [savedSelections, setSavedSelections] = useState<SavedSelection[]>([]);
+  const [selectionMessage, setSelectionMessage] = useState("");
+  const [captureDifference, setCaptureDifference] = useState<CaptureDifference | null>(null);
+  const comparisonSource = useRef<Snapshot | null>(null);
+  useEffect(() => {
+    if (REPLAY) return;
+    try { setSavedSelections(parseSelections(localStorage.getItem(WATCHLIST_KEY))); }
+    catch { setSelectionMessage("Saved selections could not be read. Import your PRs to save a new selection."); }
+  }, []);
   const [showHelp, setShowHelp] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const historyOpener = useRef<HTMLButtonElement>(null);
@@ -283,6 +295,7 @@ function App() {
     nextManifest: Record<string, unknown> | null = null,
   ) {
     setSnapshot(nextSnapshot);
+    setCaptureDifference(null);
     activeAnalysisId.current = nextAnalysis?.id ?? null;
     setAnalysis(nextAnalysis);
     setDecisions(
@@ -495,7 +508,35 @@ function App() {
   const modelReady =
     connected && (health?.model_ready ?? health?.model_configured);
 
+  function persistSelections(next: SavedSelection[], message = "Selection saved in this browser. Checking GitHub is always explicit.") {
+    try {
+      localStorage.setItem(WATCHLIST_KEY, JSON.stringify({ version: 1, selections: next }));
+      setSavedSelections(next);
+      setSelectionMessage(message);
+    } catch { setSelectionMessage("Browser storage is unavailable. Your current reading is still available."); }
+  }
+  function saveSelection() {
+    if (!snapshot) return;
+    try {
+      const next = selectionFrom(snapshot);
+      const key = selectionKey(next.owner, next.urls);
+      const others = savedSelections.filter(item => selectionKey(item.owner, item.urls) !== key);
+      if (others.length >= 5) { setSelectionMessage("You can save five selections. Remove one before adding another."); return; }
+      persistSelections([next, ...others]);
+    } catch (cause) { setSelectionMessage(cause instanceof Error ? cause.message : "Could not save this selection."); }
+  }
+  async function openSelection(item: SavedSelection) {
+    await operation("Loading the previous capture", async () => {
+      const prior = await api.snapshot(item.snapshotId);
+      if (prior.source !== "github" || selectionKey(prior.owner, prior.prs.map(pr => pr.url)) !== selectionKey(item.owner, item.urls))
+        throw new Error("The saved selection does not match its capture. Import the PRs again.");
+      comparisonSource.current = prior;
+      setOwner(item.owner); setUrlText(item.urls.join("\n"));
+      setRefreshImport(true); setImportError(""); setShowImport(true);
+    });
+  }
   function openImport(refresh = false) {
+    comparisonSource.current = refresh ? snapshot : null;
     setRefreshImport(refresh);
     setImportError("");
     if (refresh && snapshot) {
@@ -518,7 +559,12 @@ function App() {
     }
     await operation("Reading public GitHub discussions", async () => {
       const next = await api.importGithub(owner.trim(), urls);
+      const previous = comparisonSource.current;
       install(next, null);
+      setCaptureDifference(previous ? compareCaptures(previous, next) : null);
+      const key = selectionKey(next.owner, next.prs.map(pr => pr.url));
+      if (savedSelections.some(item => selectionKey(item.owner, item.urls) === key))
+        persistSelections(savedSelections.map(item => selectionKey(item.owner, item.urls) === key ? selectionFrom(next) : item));
       setShowImport(false);
       setStatus(
         "Snapshot imported. Inspect coverage, then choose a local analysis mode.",
@@ -825,6 +871,18 @@ function App() {
             )}
           </div>
         </section>
+        {!REPLAY && (savedSelections.length > 0 || selectionMessage) && <section className="panel saved-selections" aria-label="Saved PR selections">
+          <h2>Your regular PR selections</h2>
+          <p className="small-copy">Stored in this browser. Open a selection to confirm a fresh import and compare it with its last capture.</p>
+          {selectionMessage && <p role="status">{selectionMessage}</p>}
+          {savedSelections.map(item => <div className="selection-row" key={selectionKey(item.owner, item.urls)}>
+            <button className="button" disabled={!!busy || !connected || pendingSaves.size > 0} onClick={() => void openSelection(item)}>
+              {item.owner}: {item.urls.map(url => url.replace("https://github.com/", "").replace("/pull/", "#")).join(", ")}
+            </button>
+            <span className="small-copy">Last capture {displayDate(item.capturedAt)}</span>
+            <button className="text-button" disabled={!!busy} aria-label={`Remove saved selection for ${item.owner}: ${item.urls.join(", ")}`} onClick={() => persistSelections(savedSelections.filter(other => other !== item), "Selection removed. Saved readings and notes are unchanged.")}>Remove selection</button>
+          </div>)}
+        </section>}
         {REPLAY && (
           <Note title="A real historical sample, not a live inbox">
             <p>
@@ -977,6 +1035,7 @@ function App() {
         )}
         {snapshot && (
           <>
+            {captureDifference && <CaptureChanges changes={captureDifference} />}
             <section className="snapshot-bar panel">
               <div className="snapshot-heading">
                 <span className="document-icon">
@@ -997,6 +1056,7 @@ function App() {
                 </div>
               </div>
               <div className="snapshot-actions">
+                {!REPLAY && snapshot.source === "github" && <button className="button small" disabled={!!busy} onClick={saveSelection}>Save PR selection</button>}
                 {!REPLAY && (
                   <button
                     className="button small"
